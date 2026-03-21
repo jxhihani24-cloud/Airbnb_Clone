@@ -12,17 +12,12 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
-/* Hostera title */
-.title {
-    font-weight: bold;
-    font-size: 18px;
-}
-
 /* Links */
 .nav-links {
+    font-size: 23px;
     list-style: none;
     display: flex;
-    gap: 30px;
+    gap: 40px;
 }
 
 .nav-links a {
@@ -57,12 +52,12 @@
 .brand{
     display:flex;
     align-items:center;
-    gap:2px;        
+    gap:3px;        
     font-weight: bold;
 }
 
 /* Logo */
 .brand img{
-    height:65px;  
+    height:90px;  
     width:auto;
 }
