@@ -4,19 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hostera</title>
-    <link rel="icon" type="image/png" href="images/logo2.png"> 
-    <link rel="stylesheet" href="../css/main.css">
-</head>
-<body>
-    <label class="theme-switch">
-    <input type="checkbox" id="themeToggle">
-    <span class="slider"></span>
-</label>
-    <h3>HOMEPAGE</h3> 
 
-<a href="pages/listings.html">Listings</a><br>
-<a href="pages/login.html">Login</a><br>
-<a href="pages/property.html">Property</a><br>
+    <link rel="icon" type="image/png" href="images/logo2.png"> 
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/navbar.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo">HOSTERA</div>
+
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="pages/listings.html">Listings</a></li>
+        <li><a href="pages/property.html">Property</a></li>
+        <li><a href="pages/login.html">Login</a></li>
+    </ul>
+
+    <div class="right-side">
+        <!-- Theme toggle -->
+        <label class="theme-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+
+        <!-- Button -->
+        <button class="nav-btn">Contact</button>
+    </div>
+</nav>
+
+
+<h3 style="text-align:center; margin-top:40px;">HOMEPAGE</h3> 
+
 <button>Click here</button> <br>
 
 <h2>Theme Test Area</h2>
@@ -59,7 +82,8 @@
     <p>Price: €180 / night</p>
 </div>
 
-<!-- Link JS -->
-    <script src="../script/main.js"></script>
+
+<script src="script/main.js"></script>
+
 </body>
 </html>

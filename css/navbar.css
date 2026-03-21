@@ -1,0 +1,54 @@
+.navbar {
+    width: 90%;
+    margin: 20px auto;
+    padding: 15px 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: var(--card-bg);
+    border-radius: 50px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Logo */
+.logo {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* Links */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Right side */
+.right-side {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Button */
+.nav-btn {
+    background-color: var(--button-color);
+    color: var(--button-text);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+/* Optional homepage title */
+.home-title {
+    text-align: center;
+    margin-top: 100px;
+}

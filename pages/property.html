@@ -6,16 +6,38 @@
     <title>Hostera - Property</title>
     <link rel="icon" type="image/png" href="../images/logo2.png">
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/navbar.css">
 </head>
 <body>
-    <script src="../script/main.js"></script>
-    <label class="theme-switch">
-    <input type="checkbox" id="themeToggle">
-    <span class="slider"></span>
-</label>
-    <h3>TREGON PROPERTY</h3>
-        <a href="../index.html">Home Page</a><br>
-        <a href="listings.html">Listed property</a><br>
-        <a href="login.html">Log In Page</a>
+
+<!-- ===== NAVBAR START ===== -->
+<nav class="navbar">
+    <div class="logo">HOSTERA</div>
+
+    <!-- Navigation links -->
+    <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="listings.html">Listings</a></li>
+        <li><a href="property.html">Property</a></li>
+        <li><a href="login.html">Login</a></li>
+    </ul>
+
+    <!-- Right side: theme toggle + button -->
+    <div class="right-side">
+
+        <!-- Dark/Light mode switch -->
+        <label class="theme-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+
+            
+        <button class="nav-btn">Contact</button>
+    </div>
+</nav>
+
+<h3 style="text-align:center; margin-top:40px;">TREGON PROPERTY</h3>
+
+<script src="../script/main.js"></script>
 </body>
 </html>
