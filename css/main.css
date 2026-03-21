@@ -112,12 +112,7 @@ a {
    ========================= */
 
 /* THEME VARIABLES (Default = Dark Mode) */
-:root {
-    --bg-color: #0b0b0b; /* Main background color */
-    --text-color: #ffffff; /* Default text color */
-    --fade-overlay: rgba(0,0,0,0.4); /* Overlay for gradients */ 
-    --fade-end: #0b0b0b; /* Ending color for gradients */
-}
+
 
 /* LIGHT MODE VARIABLES (Overrides when body has .light class) */
 body.light {
@@ -142,7 +137,7 @@ body {
    HERO SECTION
    ========================= */
 
-DARK MODE (Default Hero Style) 
+/*DARK MODE (Default Hero Style) */
 .hero {
     height: 90vh; /* Takes 90% of viewport height 
 
