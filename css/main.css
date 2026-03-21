@@ -105,3 +105,168 @@ input {
 a {
     color: var(--text-color);
 }
+
+
+/* =========================
+   HERO SECTION STYLING
+   ========================= */
+
+/* THEME VARIABLES (Default = Dark Mode) */
+:root {
+    --bg-color: #0b0b0b; /* Main background color */
+    --text-color: #ffffff; /* Default text color */
+    --fade-overlay: rgba(0,0,0,0.4); /* Overlay for gradients */
+    --fade-end: #0b0b0b; /* Ending color for gradients */
+}
+
+/* LIGHT MODE VARIABLES (Overrides when body has .light class) */
+body.light {
+    --bg-color: #ffffff; /* Light background */
+    --text-color: #000000; /* Dark text */
+    --fade-overlay: rgba(255,255,255,0.4); /* Light overlay */
+    --fade-end: #ffffff; /* Gradient end color */
+}
+
+/* =========================
+   BODY STYLING
+   ========================= */
+body {
+    background: var(--bg-color); /* Uses dynamic theme background */
+    color: var(--text-color); /* Uses dynamic text color */
+    margin: 0; /* Removes default spacing */
+    font-family: Arial, sans-serif; /* Sets base font */
+    transition: background 0.4s ease, color 0.4s ease; /* Smooth theme switching */
+}
+
+/* =========================
+   HERO SECTION
+   ========================= */
+
+/* DARK MODE (Default Hero Style) */
+.hero {
+    height: 90vh; /* Takes 90% of viewport height */
+
+    /* Background = gradient overlay + image */
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.2), /* Light fade at top */
+            rgba(0,0,0,0.5), /* Stronger fade mid */
+            #0b0b0b /* Solid fade at bottom */
+        ),
+        url('https://bit.ly/4lJHYAp') center/cover no-repeat; /* Background image */
+
+    display: flex; /* Enables flexbox layout */
+    justify-content: center; /* Centers content horizontally */
+    align-items: center; /* Centers content vertically */
+    text-align: center; /* Centers text */
+    color: white; /* Text color for dark mode */
+
+    transition: all 0.4s ease; /* Smooth transition on theme change */
+}
+
+/* LIGHT MODE HERO (Overrides when .light is active) */
+body.light .hero {
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.2), /* Light fade at top */
+            rgba(255,255,255,0.6), /* Stronger light fade */
+            #ffffff /* Solid white bottom */
+        ),
+        url('https://bit.ly/4lJHYAp') center/cover no-repeat;
+
+    color: black; /* Switch text to dark for readability */
+}
+
+/* HERO TEXT */
+.hero h1 {
+    font-size: 3.5rem; /* Large heading */
+}
+
+.hero p {
+    margin: 15px 0; /* Spacing above/below */
+    font-size: 1.2rem; /* Medium text size */
+}
+
+/* =========================
+   SEARCH BOX
+   ========================= */
+.search-box {
+    margin-top: 20px; /* Space above search box */
+    display: flex; /* Align input + button horizontally */
+    gap: 10px; /* Space between elements */
+    background: var(--bg-color); /* Matches current theme */
+    padding: 10px; /* Inner spacing */
+    border-radius: 50px; /* Rounded pill shape */
+    transition: background 0.4s ease; /* Smooth theme transition */
+}
+
+.search-box input {
+    border: none; /* Removes border */
+    padding: 10px; /* Inner spacing */
+    outline: none; /* Removes focus outline */
+}
+
+.search-box button {
+    background: #ff5a5f; /* Button color */
+    border: none; /* Removes border */
+    padding: 10px 20px; /* Button size */
+    border-radius: 20px; /* Rounded button */
+    color: white; /* Text color */
+    cursor: pointer; /* Pointer on hover */
+}
+
+/* =========================
+   LISTINGS SECTION
+   ========================= */
+.listings {
+    padding: 60px 50px; /* Space inside section */
+}
+
+.cards {
+    display: flex; /* Layout cards in a row */
+    gap: 30px; /* Space between cards */
+    margin-top: 20px; /* Space above cards */
+}
+
+/* INDIVIDUAL CARD */
+.card {
+    background: #1a1a1a; /* Dark card background */
+    border-radius: 20px; /* Rounded corners */
+    overflow: hidden; /* Ensures content stays inside */
+    width: 300px; /* Fixed card width */
+    transition: 0.3s; /* Smooth hover effect */
+}
+
+/* LIGHT MODE CARD OVERRIDE */
+body.light .card {
+    background: #f2f2f2; /* Light card background */
+}
+
+.card img {
+    width: 100%; /* Makes image fit card width */
+}
+
+.card h3, .card p {
+    padding: 10px; /* Space inside text */
+}
+
+/* HOVER EFFECT */
+.card:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+.footer {
+    text-align: center; /* Center text */
+    padding: 20px; /* Inner spacing */
+    background: #111; /* Dark footer */
+}
+
+/* LIGHT MODE FOOTER */
+body.light .footer {
+    background: #eee; /* Light footer background */
+}
