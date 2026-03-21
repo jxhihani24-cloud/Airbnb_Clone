@@ -14,7 +14,7 @@
     --text-color: #ffffff;
     --button-color: #e0262d;
     --button-text: white;
-    --card-bg: #1e1e1e;
+    --card-bg: #2c2b2b;
     --border-color: #333333;
 }
 
@@ -92,7 +92,7 @@ input {
 
 .card {
     background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
 }
 
 a {
