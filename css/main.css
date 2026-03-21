@@ -108,7 +108,26 @@ a {
 
 
 /* =========================
+<<<<<<< HEAD
    GLOBAL / BODY
+=======
+   HERO SECTION STYLING
+   ========================= */
+
+/* THEME VARIABLES (Default = Dark Mode) */
+
+
+/* LIGHT MODE VARIABLES (Overrides when body has .light class) */
+body.light {
+    --bg-color: #ffffff; /* Light background */
+    --text-color: #000000; /* Dark text */
+    --fade-overlay: rgba(255,255,255,0.4); /* Light overlay */
+    --fade-end: #ffffff; /* Gradient end color */
+}
+
+/* =========================
+   BODY STYLING
+>>>>>>> 4297a703532160d96600d77bc020c31eced83c76
    ========================= */
 body {
     background: #f5f5f5; /* Neutral light gray background */
@@ -123,6 +142,7 @@ body {
 .hero {
     height: 90vh;
 
+<<<<<<< HEAD
     /* Neutral overlay that works on any screen */
     background:
         linear-gradient(
@@ -138,6 +158,39 @@ body {
     align-items: center;
     text-align: center;
     color: white; /* Always readable on dark overlay */
+=======
+    /* Background = gradient overlay + image */
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.2), /* Light fade at top */ 
+            rgba(0,0,0,0.5), /* Stronger fade mid */
+            #0b0b0b /* Solid fade at bottom */
+        ),
+        url('https://bit.ly/4lJHYAp') center/cover no-repeat; /* Background image */ 
+
+    display: flex; /* Enables flexbox layout */
+    justify-content: center; /* Centers content horizontally */
+    align-items: center; /* Centers content vertically */
+    text-align: center; /* Centers text */
+    color: white; /* Text color for dark mode */ 
+
+    transition: all 0.4s ease; /* Smooth transition on theme change */
+}
+
+/* LIGHT MODE HERO (Overrides when .light is active)  */
+body.light .hero {
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.2), /* Light fade at top */
+            rgba(255,255,255,0.6), /* Stronger light fade */
+            #ffffff /* Solid white bottom */
+        ),
+        url('https://bit.ly/4lJHYAp') center/cover no-repeat;
+
+    color: black; /* Switch text to dark for readability */ 
+>>>>>>> 4297a703532160d96600d77bc020c31eced83c76
 }
 
 .hero h1 {
