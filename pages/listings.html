@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="../images/Logo2.png">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/cards.css">
 </head>
 <body>
 <!-- ===== NAVBAR START ===== -->
@@ -42,6 +43,22 @@
 
 <h3 style="text-align:center; margin-top:40px;">LISTINGS PAGE</h3>
 
+
+<div class="listings-container">
+
+    <!-- Filters -->
+    <div class="filters">
+    <input type="text" placeholder="Search location...">
+    <input type="number" placeholder="Max price">
+    <button onclick="addListing()">Add Listing</button>
+</div>
+
+<div class="listings-grid"></div>
+    </div>
+
+
 <script src="../script/main.js"></script>
+<script src="../script/listings.js"></script>
+<script src="../script/search.js"></script>
 </body>
 </html>

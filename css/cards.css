@@ -1,1 +1,45 @@
+/* cards.css */
 
+.listings-container {
+    padding: 40px;
+}
+
+.listings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* CARD */
+.card {
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* IMAGE */
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* INFO */
+.card-info {
+    padding: 15px;
+}
+
+.card-info h4 {
+    margin-bottom: 5px;
+}
+
+.card-info p {
+    font-size: 14px;
+    opacity: 0.8;
+}
