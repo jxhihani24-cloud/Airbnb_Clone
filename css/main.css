@@ -69,33 +69,39 @@ input:checked + .slider {
     background: linear-gradient(45deg, #200423, #7b00fe);
 }
 
+/* body */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
 }
 
+/* button */
 button {
     background-color: var(--button-color);
     color: var(--button-text);
     border: none;
+    font-weight:bold ;
 }
 
+/* text */
 h1, h2, h3, h4, h5, h6, p, a, span, label {
     color: var(--text-color);
 }
 
+/* user input */
 input {
     background-color: var(--card-bg);
     color: var(--text-color);
     border: 1px solid var(--border-color);
 }
 
+/* cards */
 .card {
     background-color: var(--card-bg);
     border: 2px solid var(--border-color);
 }
 
+/* links */
 a {
     color: var(--text-color);
 }
-

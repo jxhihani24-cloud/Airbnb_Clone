@@ -12,8 +12,8 @@
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
-/* Logo */
-.logo {
+/* Hostera title */
+.title {
     font-weight: bold;
     font-size: 18px;
 }
@@ -51,4 +51,18 @@
 .home-title {
     text-align: center;
     margin-top: 100px;
+}
+
+/* Logo and hostera title next to each other*/
+.brand{
+    display:flex;
+    align-items:center;
+    gap:2px;        
+    font-weight: bold;
+}
+
+/* Logo */
+.brand img{
+    height:65px;  
+    width:auto;
 }
