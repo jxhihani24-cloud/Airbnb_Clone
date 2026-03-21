@@ -112,11 +112,11 @@ a {
    ========================= */
 
 /* THEME VARIABLES (Default = Dark Mode) */
-:root {
-    --bg-color: #0b0b0b; /* Main background color */
-    --text-color: #ffffff; /* Default text color */
-    --fade-overlay: rgba(0,0,0,0.4); /* Overlay for gradients */
-    --fade-end: #0b0b0b; /* Ending color for gradients */
+/*:root {
+    --bg-color: #0b0b0b; /* Main background color 
+    --text-color: #ffffff; /* Default text color 
+    --fade-overlay: rgba(0,0,0,0.4); /* Overlay for gradients 
+    --fade-end: #0b0b0b; /* Ending color for gradients 
 }
 
 /* LIGHT MODE VARIABLES (Overrides when body has .light class) */
@@ -140,43 +140,43 @@ body {
 
 /* =========================
    HERO SECTION
-   ========================= */
+   ========================= 
 
-/* DARK MODE (Default Hero Style) */
+DARK MODE (Default Hero Style) 
 .hero {
-    height: 90vh; /* Takes 90% of viewport height */
+    height: 90vh; /* Takes 90% of viewport height 
 
-    /* Background = gradient overlay + image */
+    /* Background = gradient overlay + image 
     background:
         linear-gradient(
             to bottom,
-            rgba(0,0,0,0.2), /* Light fade at top */
-            rgba(0,0,0,0.5), /* Stronger fade mid */
-            #0b0b0b /* Solid fade at bottom */
+            rgba(0,0,0,0.2), /* Light fade at top 
+            rgba(0,0,0,0.5), /* Stronger fade mid 
+            #0b0b0b /* Solid fade at bottom 
         ),
-        url('https://bit.ly/4lJHYAp') center/cover no-repeat; /* Background image */
+        url('https://bit.ly/4lJHYAp') center/cover no-repeat; /* Background image 
 
-    display: flex; /* Enables flexbox layout */
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    text-align: center; /* Centers text */
-    color: white; /* Text color for dark mode */
+    display: flex; /* Enables flexbox layout 
+    justify-content: center; /* Centers content horizontally 
+    align-items: center; /* Centers content vertically 
+    text-align: center; /* Centers text 
+    color: white; /* Text color for dark mode 
 
-    transition: all 0.4s ease; /* Smooth transition on theme change */
+    transition: all 0.4s ease; /* Smooth transition on theme change
 }
 
-/* LIGHT MODE HERO (Overrides when .light is active) */
+/* LIGHT MODE HERO (Overrides when .light is active) 
 body.light .hero {
     background:
         linear-gradient(
             to bottom,
-            rgba(255,255,255,0.2), /* Light fade at top */
-            rgba(255,255,255,0.6), /* Stronger light fade */
-            #ffffff /* Solid white bottom */
+            rgba(255,255,255,0.2), /* Light fade at top 
+            rgba(255,255,255,0.6), /* Stronger light fade 
+            #ffffff /* Solid white bottom 
         ),
         url('https://bit.ly/4lJHYAp') center/cover no-repeat;
 
-    color: black; /* Switch text to dark for readability */
+    color: black; /* Switch text to dark for readability 
 }
 
 /* HERO TEXT */
