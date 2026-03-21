@@ -11,4 +11,18 @@ global spacing
 
 layout rules
 
-resets 
+resets */
+body {
+    background-color: #E6F0FA;
+}
+
+/* Dark mode */
+.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+/* Optional: fix link colors in dark mode */
+.dark-mode a {
+    color: lightblue;
+}
