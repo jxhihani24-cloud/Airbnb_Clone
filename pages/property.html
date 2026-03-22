@@ -7,9 +7,9 @@
     <link rel="icon" type="image/png" href="../images/Logo.png">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/cards.css">
 </head>
-<body>
-
+<body> 
 <!-- ===== NAVBAR START ===== -->
 <nav class="navbar">
     
@@ -41,8 +41,28 @@
 </nav>
 
 <h3 style="text-align:center; margin-top:40px;">PROPERTY PAGE</h3>
-
+<h2 style="text-align:center;">My Properties</h2>
+<div id="myProperties" class="listings-grid"></div>
 <!-- ===== ENABLING THE SWITCH FROM LIGHT TO DARK MODE ===== -->
 <script src="../script/main.js"></script>
+<!-- FLOAT BUTTON -->
+<button class="fab" onclick="toggleModal()">＋</button>
+
+<!-- POPUP -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="toggleModal()">×</span>
+
+    <h2>Add Property</h2>
+
+    <input type="text" id="title" placeholder="Name">
+    <input type="text" id="city" placeholder="City">
+    <input type="number" id="price" placeholder="Price">
+    <input type="text" id="images" placeholder="Image URLs (comma separated)">
+    <button onclick="postProperty()">Post</button>
+  </div>
+</div>
+
+<script src="../script/property.js"></script>
 </body>
 </html>

@@ -43,3 +43,218 @@
     font-size: 14px;
     opacity: 0.8;
 }
+/* FLOAT BUTTON */
+.fab {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+
+    background: #8f1229;
+    color: white;
+    font-size: 26px;
+
+    border: none;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+    z-index: 2000;
+
+    transition: all 0.3s ease;
+}
+
+.fab:hover {
+    transform: scale(1.15);
+}
+
+/* MODAL BACKGROUND (soft, not too dark) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.15);
+    backdrop-filter: blur(3px);
+}
+
+/* MODAL BOX */
+.modal-content {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 25px;
+    border-radius: 20px;
+    width: 320px;
+    margin: 100px auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+/* TITLE */
+.modal-content h2 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+/* CLOSE BUTTON */
+.close {
+    color: var(--text-color);
+    font-size: 20px;
+    cursor: pointer;
+
+    position: absolute;
+    top: 15px;
+    right: 20px;
+}
+
+/* INPUTS */
+.modal-content input {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+
+    background: var(--card-bg);
+    color: var(--text-color);
+
+    outline: none;
+    transition: 0.2s;
+}
+
+/* INPUT FOCUS */
+.modal-content input:focus {
+    border-color: #ff385c;
+    box-shadow: 0 0 5px rgba(255,56,92,0.3);
+}
+
+/* BUTTON */
+.modal-content button {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+
+    background: #ff385c;
+    color: white;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.modal-content button:hover {
+    background: #e03150;
+    transform: scale(1.03);
+}
+
+/* GRID (CENTERED + INSTAGRAM STYLE) */
+.listings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+
+    max-width: 1000px;
+    margin: 40px auto; /* centers grid */
+}
+
+/* CARD */
+.card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    overflow: hidden;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* IMAGE */
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* INFO */
+.card-info {
+    padding: 12px;
+}
+
+.card-info h4 {
+    margin-bottom: 5px;
+}
+
+.card-info p {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* DELETE BUTTON */
+.card button {
+    margin-top: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+/* REMOVE BLUE STYLE FROM SLIDER BUTTONS */
+.image-slider button {
+    background: rgba(0, 0, 0, 0.4) !important;
+    color: white !important;
+    border: none;
+}
+
+/* OPTIONAL: HIDE ARROWS COMPLETELY */
+.image-slider button {
+    display: none !important;
+}
+.image-slider {
+    position: relative;
+}
+
+.image-slider {
+    position: relative;
+}
+/* DOTS CONTAINER */
+.dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+}
+
+/* DOT */
+.dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* ACTIVE DOT */
+.dot.active {
+    background: white;
+    transform: scale(1.2);
+}
