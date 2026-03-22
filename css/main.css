@@ -324,7 +324,7 @@ body {
 }
 
 
-/* SECTION */
+
 /* SECTION */
 .reviews {
     padding: 80px 50px 100px; /* more breathing room */
@@ -428,25 +428,35 @@ body {
     margin: 20px auto;
     border-radius: 20px;
 }
+
+
+/* =========================
+   FAQ SECTION
+   ========================= */
 .faq {
     padding: 60px 50px;
     max-width: 900px;
     margin: 0 auto 80px;
+    text-align: center;
+    font-family: Arial, sans-serif;
 }
 
 .faq h2 {
-    text-align: center;
     font-size: 2rem;
     margin-bottom: 40px;
 }
 
+/* Each FAQ item container */
 .faq-item {
     margin-bottom: 20px;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid rgba(0,0,0,0.1);
+    background: #fff; /* light mode background */
+    transition: all 0.3s ease;
 }
 
+/* The question button */
 .faq-question {
     width: 100%;
     background: #ff5a5f;
@@ -456,18 +466,50 @@ body {
     text-align: left;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    outline: none;
+    transition: background 0.3s ease;
 }
 
 .faq-question:hover {
     background: #ff787a;
 }
 
+/* The answer section (collapsed by default) */
 .faq-answer {
-    display: none;
-    padding: 15px 20px;
+    max-height: 0; /* collapsed */
+    overflow: hidden;
+    padding: 0 20px; /* horizontal padding always */
     background: #f5f5f5;
     color: #333;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+}
+
+/* When active, expand */
+.faq-item.active .faq-answer {
+    max-height: 500px; /* adjust if answer is longer */
+    padding: 15px 20px; /* restore vertical padding */
+}
+
+/* Optional: small arrow indicator on the right of the question */
+.faq-question::after {
+    content: '\25BC'; /* down arrow */
+    float: right;
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-question::after {
+    transform: rotate(180deg); /* flips arrow when open */
+}
+
+/* Answer text */
+.faq-answer p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+
+    /* use inherited text color so it adapts to dark/light mode */
+    color: inherit;
+    opacity: 0.9;
 }
 .newsletter {
     text-align: center;
