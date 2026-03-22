@@ -10,6 +10,8 @@
     <!-- CSS -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <script>
 function goToListings() {
@@ -91,7 +93,7 @@ function goToListings() {
         </div>
 
         <div class="card">
-            <img src="https://bit.ly/41jwQAT">
+            <img src="https://th.bing.com/th/id/R.884ee6730df0d9a1450e15cff40d6582?rik=7cKmbRU%2BNHh92w&pid=ImgRaw&r=0">
             <h3>City Apartment</h3>
             <p>$150 / night</p>
         </div>
@@ -111,10 +113,70 @@ function goToListings() {
     </div>
 </section>
 
+<!-- map-->
+<section class="map">
+    <h2>Explore locations</h2>
+    <div id="map"></div>
+</section>
+
+<!-- Why choose us section -->
+<section class="why">
+    <h2>Why choose us?</h2>
+    <p class="section-sub">Simple, reliable, and built for travelers</p>
+
+    <div class="why-container">
+        <div class="why-item">
+            <h3>Best prices</h3>
+            <p>We compare listings to get you the best deals.</p>
+        </div>
+
+        <div class="why-item">
+            <h3>Verified stays</h3>
+            <p>All properties are checked for quality.</p>
+        </div>
+
+        <div class="why-item">
+            <h3>Easy booking</h3>
+            <p>Fast and simple booking process.</p>
+        </div>
+    </div>
+</section>
+
+<!-- reviews-->
+<section class="reviews">
+    <h2>Reviews from guests after booking through us:</h2>
+
+    <div class="reviews-container">
+        <div class="review-card">
+            <p>“Amazing experience! Booking was quick and everything was exactly as shown.”</p>
+            <span>— Sarah M.</span>
+        </div>
+
+        <div class="review-card">
+            <p>“Super easy to use and great prices. Found my stay in minutes.”</p>
+            <span>— Daniel K.</span>
+        </div>
+
+        <div class="review-card">
+            <p>“Clean listings and smooth booking. Definitely using this again.”</p>
+            <span>— Elena R.</span>
+        </div>
+    </div>
+</section>
+
+
+
 <!-- footer -->
 <footer class="footer">
     <p style="font-weight: bold;">© 2026 HOSTERA. All rights reserved.</p>
 </footer>
 
+<!-- PRICE INFO POPUP -->
+<div id="pricePopup" class="popup">
+    <div class="popup-content">
+        <p>Now you’ll see the total price for your trip, including all fees.</p>
+        <button id="closePopup">Got it</button>
+    </div>
+</div>
 </body>
 </html>
