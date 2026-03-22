@@ -101,12 +101,6 @@ input {
     border: 1px solid var(--border-color);
 }
 
-/* cards */
-.card {
-    background-color: var(--card-bg);
-    border: 2px solid var(--border-color);
-}
-
 /* links */
 a {
     color: var(--text-color);

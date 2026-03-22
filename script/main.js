@@ -23,4 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
    
 });
 
+// ===== FUNCTION TO SHOW OR HIDE PASSWORD USING THE EYE ICON ===== //
+function showPassword(){
+    const pass=document.getElementById("password");
+    if(password.type==="password")
+        password.type="text";
+    else
+        password.type="password";
+
+}
+
  
