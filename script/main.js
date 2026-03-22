@@ -96,6 +96,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+const newsletterForm = document.querySelector('.newsletter-form');
+if (newsletterForm) {
+    const newsletterInput = newsletterForm.querySelector('input');
+    const newsletterButton = newsletterForm.querySelector('button');
+
+    newsletterButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        const email = newsletterInput.value.trim();
+
+        if (email && email.includes('@')) {
+            // Get existing emails from localStorage
+            const emails = JSON.parse(localStorage.getItem('subscribedEmails') || '[]');
+            if (!emails.includes(email)) {
+                emails.push(email);
+                localStorage.setItem('subscribedEmails', JSON.stringify(emails));
+                alert(`Thanks! ${email} has been registered for updates.`);
+                newsletterInput.value = '';
+            } else {
+                alert('You are already subscribed!');
+            }
+            console.log('Subscribed Emails:', emails); // Just for demo
+        } else {
+            alert('Please enter a valid email address.');
+        }
+    });
+}
+
 
 
 

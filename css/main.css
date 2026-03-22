@@ -264,6 +264,10 @@ body {
     transform: scale(1.2);
 }
 
+.map {
+    padding: 100px 50px 60px; /* more space */
+    text-align: center;
+}
 /* Why choose us css*/
 
 /* SECTION */
@@ -511,6 +515,8 @@ body {
     color: inherit;
     opacity: 0.9;
 }
+
+/*news letter*/
 .newsletter {
     text-align: center;
     padding: 60px 50px;
