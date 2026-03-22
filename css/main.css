@@ -6,6 +6,7 @@
     --button-text: white;
     --card-bg: #d6f1fa;
     --border-color: #dddddd;
+    --calendar-icon-filter: none;
 }
 
 /* Dark Mode colors */
@@ -16,8 +17,13 @@
     --button-text: white;
     --card-bg: #2c2b2b;
     --border-color: #333333;
+    --calendar-icon-filter: invert(1);
 }
 
+/* Makes sure calendar icon is white when dark mode and vice-versa*/
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: var(--calendar-icon-filter);
+}
 
 .theme-switch {
     position: relative;
@@ -106,44 +112,18 @@ a {
     color: var(--text-color);
 }
 
-
-/* =========================
-<<<<<<< HEAD
-   GLOBAL / BODY
-=======
-   HERO SECTION STYLING
-   ========================= */
-
-/* THEME VARIABLES (Default = Dark Mode) */
-
-
-/* LIGHT MODE VARIABLES (Overrides when body has .light class) */
-body.light {
-    --bg-color: #ffffff; /* Light background */
-    --text-color: #000000; /* Dark text */
-    --fade-overlay: rgba(255,255,255,0.4); /* Light overlay */
-    --fade-end: #ffffff; /* Gradient end color */
+/* CHECK IN AND CHECK OUT */
+.date-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 /* =========================
-   BODY STYLING
->>>>>>> 4297a703532160d96600d77bc020c31eced83c76
-   ========================= */
-body {
-    background: #f5f5f5; /* Neutral light gray background */
-    color: #222; /* Dark readable text */
-    margin: 0;
-    font-family: Arial, sans-serif;
-}
-
-/* =========================
-   HERO SECTION
-   ========================= */
+   HERO SECTION controls the background image that appears
+   ========================= */ 
 .hero {
     height: 90vh;
-
-<<<<<<< HEAD
-    /* Neutral overlay that works on any screen */
     background:
         linear-gradient(
             to bottom,
@@ -157,46 +137,38 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    color: white; /* Always readable on dark overlay */
-=======
-    /* Background = gradient overlay + image */
+    color: white; 
+    
     background:
         linear-gradient(
             to bottom,
-            rgba(0,0,0,0.2), /* Light fade at top */ 
-            rgba(0,0,0,0.5), /* Stronger fade mid */
-            #0b0b0b /* Solid fade at bottom */
+            rgba(0,0,0,0.2),  
+            rgba(0,0,0,0.5), 
+            #0b0b0b 
         ),
-        url('https://bit.ly/4lJHYAp') center/cover no-repeat; /* Background image */ 
+        url('https://bit.ly/4lJHYAp') center/cover no-repeat;  
 
-    display: flex; /* Enables flexbox layout */
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    text-align: center; /* Centers text */
-    color: white; /* Text color for dark mode */ 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+    color: white;  
 
-    transition: all 0.4s ease; /* Smooth transition on theme change */
+    transition: all 0.4s ease; 
 }
 
-/* LIGHT MODE HERO (Overrides when .light is active)  */
-body.light .hero {
-    background:
-        linear-gradient(
-            to bottom,
-            rgba(255,255,255,0.2), /* Light fade at top */
-            rgba(255,255,255,0.6), /* Stronger light fade */
-            #ffffff /* Solid white bottom */
-        ),
-        url('https://bit.ly/4lJHYAp') center/cover no-repeat;
 
-    color: black; /* Switch text to dark for readability */ 
->>>>>>> 4297a703532160d96600d77bc020c31eced83c76
+/* Makes image as wide as the screen */
+body {
+    margin: 0;
 }
 
+/* Controls the h1 inside hero, Find your stay h1 */
 .hero h1 {
     font-size: 3.5rem;
 }
 
+/* Controls the p inside hero,Discover unique homes, villas, and apartments worldwide p*/
 .hero p {
     margin: 15px 0;
     font-size: 1.2rem;
@@ -204,12 +176,13 @@ body.light .hero {
 
 /* =========================
    SEARCH BOX
-   ========================= */
+   ========================= 
+*/
 .search-box {
     margin-top: 20px;
     display: flex;
     gap: 10px;
-    background: white; /* Clean neutral */
+    background: var(--card-bg);
     padding: 10px;
     border-radius: 50px;
 }
@@ -221,13 +194,14 @@ body.light .hero {
 }
 
 .search-box button {
-    background: #ff5a5f;
+    background: var(--button-color);
     border: none;
     padding: 10px 20px;
     border-radius: 20px;
     color: white;
     cursor: pointer;
 }
+
 
 /* =========================
    LISTINGS
@@ -243,7 +217,7 @@ body.light .hero {
 }
 
 .card {
-    background: white; /* Neutral card */
+    background: var(--card-bg); 
     border-radius: 20px;
     overflow: hidden;
     width: 300px;
@@ -256,6 +230,7 @@ body.light .hero {
 
 .card h3, .card p {
     padding: 10px;
+    color:var(--text-color);
 }
 
 .card:hover {
@@ -268,5 +243,5 @@ body.light .hero {
 .footer {
     text-align: center;
     padding: 20px;
-    background: #eaeaea; /* Soft neutral footer */
+    background: var(--card-bg); 
 }

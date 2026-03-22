@@ -54,6 +54,8 @@
     align-items:center;
     gap:3px;        
     font-weight: bold;
+    font-family: 'Cinzel Bold';
+    letter-spacing: 1px;
 }
 
 /* Logo */

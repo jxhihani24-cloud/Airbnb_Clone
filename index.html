@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hostera - Home Page</title>
 
-    <link rel="icon" type="image/png" href="images/Logo2.png"> 
+    <link rel="icon" type="image/png" href="images/Logo.png"> 
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/main.css">
@@ -19,7 +19,7 @@
 <nav class="navbar">
    
     <div class="brand">
-    <img src="images/Logo2.png" alt="Hostera logo">
+    <img src="images/Logo.png" alt="Hostera logo">
     <span style="font-size: 28px;">HOSTERA</span>
 </div>
 
@@ -41,20 +41,28 @@
         <button class="nav-btn">Contact</button>
     </div>
 </nav>
-<h3 class="h3" style="text-align: center;">HOME PAGE</h3>
+
 
 <script src="script/main.js"></script>
 
 <!-- form search box -->
 <section class="hero">
     <div class="hero-content">
-        <h1>Find your next stay</h1>
-        <p>Discover unique homes, villas, and apartments worldwide</p>
+        <h1 style="color:white">Find your next stay</h1>
+        <p style="color:white">Discover unique homes, villas, and apartments worldwide</p>
 
         <div class="search-box">
-            <input type="text" placeholder="Where are you going?">
-            <input type="date">
-            <input type="date">
+            <input type="text" placeholder="Where are you going?" style="font-weight:bold;">
+            
+            <div class="date-group">
+        <label style="font-weight: bold;">Check in </label>
+        <input type="date" style="font-weight: bold;">
+    </div>
+
+    <div class="date-group">
+        <label style="font-weight: bold;">Check out </label>
+        <input type="date" style="font-weight: bold;">
+    </div>
             <button>Search</button>
         </div>
     </div>
@@ -82,17 +90,25 @@
             <h3>City Apartment</h3>
             <p>$150 / night</p>
         </div>
-         <div class="card">
+        
+        <div class="card">
             <img src="https://tinyurl.com/bdetzwrv">
-            <h3>Apartment in Tokyo<T/h3>
+            <h3>Apartment in Tokyo</h3>
             <p>$80 / night</p>
         </div>
+
+        <div class="card">
+            <img src="images/skyscraper.webp">
+            <h3>Skyscraper studio apartment</h3>
+            <p>$145 / night</p>
+        </div>
+        
     </div>
 </section>
 
 <!-- footer -->
 <footer class="footer">
-    <p>© 2026 HOSTERA. All rights reserved.</p>
+    <p style="font-weight: bold;">© 2026 HOSTERA. All rights reserved.</p>
 </footer>
 
 </body>
