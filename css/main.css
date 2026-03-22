@@ -127,7 +127,7 @@ a {
             rgba(0,0,0,0.4),
             rgba(0,0,0,0.6)
         ),
-        url('https://bit.ly/4lJHYAp') center/cover no-repeat;
+        url('https://tinyurl.com/36h8vz8w') center/cover no-repeat;
 
     display: flex;
     justify-content: center;
@@ -142,7 +142,7 @@ a {
             rgba(0,0,0,0.5), 
             #0b0b0b 
         ),
-        url('https://bit.ly/4lJHYAp') center/cover no-repeat;  
+        url('https://tinyurl.com/36h8vz8w') center/cover no-repeat;  
 
     display: flex; 
     justify-content: center; 
@@ -240,4 +240,169 @@ body {
     text-align: center;
     padding: 20px;
     background: var(--card-bg); 
+}
+
+/* Why choose us css*/
+
+/* SECTION */
+/* SECTION */
+.why {
+    padding: 100px 50px 60px; /* more space */
+    text-align: center;
+}
+
+/* CONTAINER */
+.why-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* more spacing between cards */
+    flex-wrap: wrap;
+}
+
+/* CARD */
+.why-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid #000; /* BLACK OUTLINE */
+
+    padding: 30px;
+    border-radius: 20px;
+
+    width: 300px; /* bigger cards */
+
+    text-align: left;
+
+    transition: all 0.3s ease;
+}
+
+/* HOVER */
+.why-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+}
+
+/* TITLE */
+.why-item h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+}
+
+/* TEXT */
+.why-item p {
+    font-size: 1rem;
+    opacity: 0.75;
+}
+
+/* ICON */
+.why-item::before {
+    content: "✔";
+    display: block;
+    margin-bottom: 12px;
+    color: #ff5a5f;
+    font-size: 1.3rem;
+}
+
+
+/* SECTION */
+/* SECTION */
+.reviews {
+    padding: 80px 50px 100px; /* more breathing room */
+    text-align: center;
+    margin-top: 40px; /* separates from WHY section */
+}
+
+/* TITLE */
+.reviews h2 {
+    margin-bottom: 40px;
+    font-size: 2rem;
+}
+
+/* CONTAINER */
+.reviews-container {
+    display: flex;
+    justify-content: center;
+    gap: 35px; /* more spacing */
+    flex-wrap: wrap;
+}
+
+/* CARD */
+.review-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid #000; /* BLACK OUTLINE */
+
+    padding: 25px;
+    border-radius: 18px;
+
+    max-width: 300px; /* bigger */
+
+    font-size: 1rem;
+    line-height: 1.5;
+
+    transition: all 0.3s ease;
+}
+
+/* HOVER */
+.review-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* TEXT */
+.review-card p {
+    margin: 0;
+}
+
+/* AUTHOR */
+.review-card span {
+    display: block;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    opacity: 0.7;
+}
+
+/* ===== POPUP ===== */
+.popup {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background: #222;
+    color: white;
+
+    padding: 15px 20px;
+    border-radius: 15px;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+
+    display: none; /* hidden initially */
+    z-index: 9999;
+}
+
+.popup-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.popup p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.popup button {
+    background: #ff5a5f;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+#map {
+    height: 500px; /* Important: map won't show without height */
+    width: 100%;
+    max-width: 1000px;
+    margin: 20px auto;
+    border-radius: 20px;
 }

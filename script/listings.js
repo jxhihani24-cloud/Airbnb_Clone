@@ -1,8 +1,8 @@
 // GLOBAL DATA (accessible from other files)
 window.listings = [
-  { id: 1, title: "Modern Apartment", city: "Tirana", price: 45, img: "../images/house1.jpg" },
-  { id: 2, title: "Beach House", city: "Durres", price: 80, img: "../images/house2.jpg" },
-  { id: 3, title: "Cozy Studio", city: "Vlora", price: 35, img: "../images/house3.jpg" }
+  { id: 1, title: "Modern Apartment", city: "Tirana", price: 45, img: "../images/Logo.png" },
+  { id: 2, title: "Beach House", city: "Durres", price: 80, img: "../images/Logo.png" },
+  { id: 3, title: "Cozy Studio", city: "Vlora", price: 35, img: "../images/Logo.png" }
 ];
 
 // RENDER FUNCTION (can render ALL or FILTERED)
