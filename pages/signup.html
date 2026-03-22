@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="../images/Logo.png">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
     <!-- ===== NAVIGATION BAR ===== -->
@@ -40,7 +41,60 @@
 </nav>
 <!-- ===== END OF NAVIGATION BAR ===== -->
 
-<h2 style="text-align: center;">Sign Up Page</h2>
+<!-- ===== CREATING SIGN UP BOX ===== -->
+<div class="login-container">
+    <div class="login-card">
+        <h2>Create Your Account</h2>
+        <p>Join the Hostera family</p>
+        <form class="login-form">
+            
+            <!-- ===== FIRST NAME ===== -->
+            <label for="Fname">First Name</label>
+            <input type="text" id="Fname" class="input" placeholder="Enter first name" oninput="formatName(this)">
+            
+            <!-- ===== LAST NAME ===== -->
+            <label for="Lname">Last Name</label>
+            <input type="text" id="Fname" class="input" placeholder="Enter last name" oninput="formatName(this)">
+            
+            <!-- ===== USERNAME ===== -->
+             
+             <label for="username">Username</label>
+             <input type="text" id="username" class="input"  placeholder="Enter username">
+             <p id="username-message"></p>
+            
+             <!-- ===== EMAIL ===== -->
+              <label for="email">Email</label>
+              <input type="email" id="email" class="input" placeholder="Enter email">
+              <p id="email-message"></p>
+
+             <!-- ===== PASSWORD =====-->
+              <label for="password">Password</label>
+             <div class="password-container">
+    <input type="password" id="password" class="input" placeholder="Create password" onblur="validatePassword()">
+    <span class="toggle-password" onclick="showPassword()">👁</span>
+           </div> 
+           <p id="password-message"></p>
+           
+           <!-- ===== CONFIRM PASSWORD ===== -->
+             <label for="confirmpass">Confirm Password</label>
+             <div class="password-container">
+    <input type="password" id="confirmpass" class="input" placeholder="Confirm password" onblur="checkConfirmPassword()">
+    <span class="toggle-password" onclick="showConfirmPassword()">👁</span>
+           </div> 
+           <p id="confirm-password-message"></p>
+          
+           <!-- ===== SIGN UP BUTTON ===== -->
+            <button type="submit" class="login-btn">Sign Up</button>
+        </form>
+
+        <!-- ===== OPTION TO GO BACK TO LOG IN ===== -->
+        <div class="signup-text">
+            Already have an account?
+            <a href="login.html">Log in</a>
+
+        </div>
+    </div>
+</div>
 
 <!-- ===== ENABLING THE SWITCH FROM LIGHT TO DARK MODE ===== -->
  <script src="../script/main.js"></script>

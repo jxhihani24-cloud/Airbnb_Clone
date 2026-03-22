@@ -103,8 +103,36 @@ body {
 .toggle-password {
     position: absolute;
     right: 12px;
-    top: 48%;
-    transform: translateY(-55%);
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
     font-size: 23px;
+}
+
+#username-message {
+    margin-top: 1px;
+    margin-bottom: 4px;
+    font-size: 14px;
+     margin: 2px 0;
+}
+
+#email-message {
+    margin-top: 1px;
+    margin-bottom: 4px;
+    font-size: 14px;
+     margin: 2px 0;
+}
+
+#password-message {
+    margin-top: 1px;
+    margin-bottom: 4px;
+    font-size: 14px;
+     margin: 2px 0;
+}
+
+#confirm-password-message{
+    margin-top: 1px;
+    margin-bottom: 4px;
+    font-size: 14px;
+     margin: 2px 0;
 }
