@@ -180,3 +180,58 @@ function checkConfirmPassword() {
         message.textContent = "";
     }, 3000);
 }
+// ===== HANDLE SIGNUP FORM SUBMISSION ===== //
+document.querySelector('.login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const firstName = document.getElementById('Fname').value.trim();
+    const lastName = document.getElementById('Lname').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const confirmPassword = document.getElementById('confirmpass').value.trim();
+    
+    if (!firstName || !lastName || !username || !email || !password) {
+        alert('❌ Please fill in all fields!');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('❌ Passwords do not match!');
+        return;
+    }
+    
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    const usernameExists = users.some(user => user.username.toLowerCase() === username.toLowerCase());
+    if (usernameExists) {
+        alert('❌ Username already taken!');
+        return;
+    }
+    
+    const emailExists = users.some(user => user.email.toLowerCase() === email.toLowerCase());
+    if (emailExists) {
+        alert('❌ Email already registered!');
+        return;
+    }
+    
+    const newUser = {
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        password: password,
+        createdAt: new Date().toISOString()
+    };
+    
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    
+    // ✅ SET AS CURRENTLY LOGGED-IN USER (BEFORE REDIRECT)
+    localStorage.setItem('currentUser', JSON.stringify(newUser));
+    
+    alert('✅ Account created successfully! Welcome ' + firstName + '!');
+    
+    // ✅ REDIRECT TO HOME (WILL AUTO-LOGIN BECAUSE currentUser IS SET)
+    window.location.href = '../index.html';
+});

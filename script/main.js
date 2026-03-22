@@ -1,3 +1,31 @@
+// ===== UPDATE NAVBAR WITH LOGIN STATUS ===== //
+document.addEventListener('DOMContentLoaded', () => {
+    const currentUser = localStorage.getItem('currentUser');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (currentUser) {
+        // User is logged in
+        const user = JSON.parse(currentUser);
+        
+        // Find the "Log In" link
+        const loginLink = navLinks.querySelector('li:last-child a');
+        
+        // Replace it with user's name and logout button
+        loginLink.innerHTML = `<strong>${user.firstName} ${user.lastName}</strong>`;
+        loginLink.href = '#'; // Prevent navigation
+        loginLink.style.cursor = 'pointer';
+        
+        // Add logout functionality
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'pages/login.html'; // Redirect to login
+            }
+        });
+    }
+});
+
 //set dark mode on page load
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('themeToggle');
@@ -47,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('seenPopup', 'true');
     });
 });
+
 //map
 document.addEventListener('DOMContentLoaded', () => {
     // Create map
@@ -76,19 +105,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ===== Newsletter Subscription Handler =====
     const newsletterForm = document.querySelector('.newsletter-form');
-    if(newsletterForm) {
+    if (newsletterForm) {
         const newsletterInput = newsletterForm.querySelector('input');
         const newsletterButton = newsletterForm.querySelector('button');
 
         newsletterButton.addEventListener('click', (e) => {
-            e.preventDefault(); // prevent page reload
+            e.preventDefault();
             const email = newsletterInput.value.trim();
 
-            if(email && email.includes('@')) {
-                alert(`Thanks! ${email} has been registered for updates.`);
-
-                // Optional: clear input
-                newsletterInput.value = '';
+            if (email && email.includes('@')) {
+                // Get existing emails from localStorage
+                const emails = JSON.parse(localStorage.getItem('subscribedEmails') || '[]');
+                if (!emails.includes(email)) {
+                    emails.push(email);
+                    localStorage.setItem('subscribedEmails', JSON.stringify(emails));
+                    alert(`Thanks! ${email} has been registered for updates.`);
+                    newsletterInput.value = '';
+                } else {
+                    alert('You are already subscribed!');
+                }
+                console.log('Subscribed Emails:', emails); // Just for demo
             } else {
                 alert('Please enter a valid email address.');
             }
@@ -96,35 +132,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-const newsletterForm = document.querySelector('.newsletter-form');
-if (newsletterForm) {
-    const newsletterInput = newsletterForm.querySelector('input');
-    const newsletterButton = newsletterForm.querySelector('button');
-
-    newsletterButton.addEventListener('click', (e) => {
+// ===== LOGIN FORM HANDLER ===== //
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.querySelector('.login-form');
+    
+    // Only run if login form exists (on login.html page)
+    if (!loginForm) return;
+    
+    loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const email = newsletterInput.value.trim();
-
-        if (email && email.includes('@')) {
-            // Get existing emails from localStorage
-            const emails = JSON.parse(localStorage.getItem('subscribedEmails') || '[]');
-            if (!emails.includes(email)) {
-                emails.push(email);
-                localStorage.setItem('subscribedEmails', JSON.stringify(emails));
-                alert(`Thanks! ${email} has been registered for updates.`);
-                newsletterInput.value = '';
-            } else {
-                alert('You are already subscribed!');
-            }
-            console.log('Subscribed Emails:', emails); // Just for demo
-        } else {
-            alert('Please enter a valid email address.');
+        
+        // 1. GET INPUT VALUES
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        
+        // 2. VALIDATE FIELDS ARE FILLED
+        if (!username || !password) {
+            alert('❌ Please enter username and password!');
+            return;
         }
+        
+        // 3. GET ALL USERS FROM LOCALSTORAGE
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        
+        // 4. FIND USER BY USERNAME
+        const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+        
+        // 5. CHECK IF USER EXISTS
+        if (!user) {
+            alert('❌ Username not found! Please sign up first.');
+            return;
+        }
+        
+        // 6. CHECK IF PASSWORD MATCHES
+        if (user.password !== password) {
+            alert('❌ Incorrect password!');
+            return;
+        }
+        
+        // 7. SAVE LOGGED-IN USER TO LOCALSTORAGE
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        // 8. SUCCESS & REDIRECT
+        alert('✅ Welcome back, ' + user.firstName + '!');
+        window.location.href = '../index.html';
     });
-}
-
-
-
-
+});
 
  
