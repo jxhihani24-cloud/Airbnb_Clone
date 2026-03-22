@@ -11,7 +11,12 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/navbar.css">
 </head>
-
+<script>
+function goToListings() {
+    const city = document.getElementById("homeCity").value;
+    window.location.href = "pages/listings.html?city=" + encodeURIComponent(city);
+}
+</script>
 <body>
     
 
@@ -52,7 +57,7 @@
         <p style="color:white">Discover unique homes, villas, and apartments worldwide</p>
 
         <div class="search-box">
-            <input type="text" placeholder="Where are you going?" style="font-weight:bold;">
+            <input type="text" id="homeCity" placeholder="Where are you going?" style="font-weight:bold;"> 
             
             <div class="date-group">
         <label style="font-weight: bold;">Check in </label>
@@ -63,7 +68,7 @@
         <label style="font-weight: bold;">Check out </label>
         <input type="date" style="font-weight: bold;">
     </div>
-            <button>Search</button>
+            <button onclick="goToListings()">Search</button>
         </div>
     </div>
 </section>
