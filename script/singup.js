@@ -127,7 +127,7 @@ function validatePassword() {
     const message = document.getElementById("password-message");
 
     const hasNumber = /\d/;
-    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/;
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>-_]/;
 
     if (password === "") {
         message.textContent = "";

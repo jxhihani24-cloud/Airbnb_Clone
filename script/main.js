@@ -50,11 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Are you sure you want to log out?')) {
-                localStorage.removeItem('currentUser');
-                window.location.href = 'login.html';
-            }
-        });
+    if (confirm('Are you sure you want to log out?')) {
+
+        localStorage.removeItem('currentUser');
+
+        if (window.location.pathname.includes('/pages/')) {
+            window.location.href = 'login.html';
+        } else {
+            window.location.href = 'pages/login.html';
+        }
+
+    }
+});
 
         // Close dropdown when clicking elsewhere
         document.addEventListener('click', (e) => {
