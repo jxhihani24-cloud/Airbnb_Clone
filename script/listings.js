@@ -49,8 +49,8 @@ function displayListings(list) {
                 <h4>${property.title}</h4>
                 <p><strong>Location:</strong> ${property.city}</p>
                 <p><strong>Price:</strong> €${property.price} / night</p>
-                <p style="font-size:12px; color:gray;">By: ${property.ownerName}</p>
-                <button class="book-btn">📅 Book Now</button>
+                <p style="font-size:12px; color:var(--text-color);"><b>By:</b> ${property.ownerName}</p>
+                <button class="book-btn" style="background-color:var(--button-color)">📅 Book Now</button>
             </div>
         `;
 
