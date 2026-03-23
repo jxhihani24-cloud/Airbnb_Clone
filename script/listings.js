@@ -1,91 +1,85 @@
-// ===== DISPLAY ALL PROPERTIES (EXCEPT OWN) ===== //
-function displayAllListings() {
-    const container = document.querySelector('.listings-grid');
-    if (!container) return;
+// ===== READ COUNTRY FROM URL =====
+function getCountryFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("country") || "";
+}
 
-    const currentUser = localStorage.getItem('currentUser');
-    const allProperties = JSON.parse(localStorage.getItem('properties')) || [];
-    
-    // Filter: only show properties from OTHER users
-    let otherUsersProperties = allProperties;
-    
-    if (currentUser) {
-        const user = JSON.parse(currentUser);
-        otherUsersProperties = allProperties.filter(prop => prop.owner !== user.username);
+// ===== INITIAL LOAD WITH COUNTRY FILTER =====
+document.addEventListener("DOMContentLoaded", () => {
+    const initialCountry = getCountryFromURL();
+    if (initialCountry) {
+        document.getElementById("countryFilter").value = initialCountry;
     }
+    filterListings({country: initialCountry});
+});
 
+
+// ===== SAMPLE PROPERTIES =====
+const properties = [
+    { id: 1, title: "Cozy Apartment in Paris", city: "Paris", country: "france", owner: "alice", ownerName: "Alice", price: 120, images: ["https://picsum.photos/400/300?random=1"] },
+    { id: 2, title: "Modern Loft in New York", city: "New York", country: "usa", owner: "bob", ownerName: "Bob", price: 150, images: ["https://picsum.photos/400/300?random=2"] },
+    { id: 3, title: "Traditional House in Tokyo", city: "Tokyo", country: "japan", owner: "carol", ownerName: "Carol", price: 100, images: ["https://picsum.photos/400/300?random=3"] },
+    { id: 4, title: "Beach House in Bali", city: "Bali", country: "indonesia", owner: "dave", ownerName: "Dave", price: 180, images: ["https://picsum.photos/400/300?random=4"] },
+    { id: 5, title: "Mountain Cabin in Switzerland", city: "Zermatt", country: "switzerland", owner: "eve", ownerName: "Eve", price: 220, images: ["https://picsum.photos/400/300?random=5"] },
+    { id: 6, title: "Luxury Apartment in Paris", city: "Paris", country: "france", owner: "frank", ownerName: "Frank", price: 200, images: ["https://picsum.photos/400/300?random=6"] },
+    { id: 7, title: "Penthouse in New York", city: "New York", country: "usa", owner: "grace", ownerName: "Grace", price: 300, images: ["https://picsum.photos/400/300?random=7"] },
+    { id: 8, title: "Ryokan in Kyoto", city: "Kyoto", country: "japan", owner: "haru", ownerName: "Haru", price: 130, images: ["https://picsum.photos/400/300?random=8"] },
+    { id: 9, title: "Villa in Ubud", city: "Ubud", country: "indonesia", owner: "ivan", ownerName: "Ivan", price: 210, images: ["https://picsum.photos/400/300?random=9"] },
+    { id: 10, title: "Chalet in Geneva", city: "Geneva", country: "switzerland", owner: "julia", ownerName: "Julia", price: 250, images: ["https://picsum.photos/400/300?random=10"] }
+];
+
+// ===== DISPLAY LISTINGS =====
+function displayListings(list) {
+    const container = document.querySelector(".listings-grid");
     container.innerHTML = "";
 
-    if (otherUsersProperties.length === 0) {
-        container.innerHTML = "<p style='text-align:center; font-size:18px;'>No properties available right now.</p>";
+    if (!list || list.length === 0) {
+        container.innerHTML = "<p style='text-align:center; font-size:18px;'>No properties found.</p>";
         return;
     }
 
-    otherUsersProperties.forEach(property => {
-        const img = property.images && property.images.length 
-            ? property.images[0] 
-            : '../images/Logo.png';
+    list.forEach(property => {
+        const img = property.images && property.images.length ? property.images[0] : "https://picsum.photos/400/300?random=99";
 
-        container.innerHTML += `
-            <div class="card">
-                <div class="image-slider">
-                    <img id="img-${property.id}" src="${img}">    
-                    <div class="dots">
-                    ${(property.images && property.images.length ? property.images : ['../images/Logo.png']).map((_, index) => `
-                        <span class="dot ${index === 0 ? 'active' : ''}" 
-                              onclick="goToListingImg(${property.id}, ${index})"></span>
-                    `).join('')}
-                    </div>
-                </div>
-
-                <div class="card-info">
-                    <h4>${property.title}</h4>
-                    <p><strong>Location:</strong> ${property.city}</p>
-                    <p><strong>Price:</strong> €${property.price} / night</p>
-                    <p style="font-size:12px; color:gray;">By: ${property.ownerName}</p>
-                    <button onclick="bookProperty(${property.id})" class="book-btn">📅 Book Now</button>
-                </div>
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <img src="${img}" alt="${property.title}">
+            <div class="card-info">
+                <h4>${property.title}</h4>
+                <p><strong>Location:</strong> ${property.city}</p>
+                <p><strong>Price:</strong> €${property.price} / night</p>
+                <p style="font-size:12px; color:gray;">By: ${property.ownerName}</p>
+                <button class="book-btn">📅 Book Now</button>
             </div>
         `;
+
+        // Book button
+        card.querySelector(".book-btn").addEventListener("click", () => {
+            alert(`Booking request sent for "${property.title}" in ${property.city}!\nContact: ${property.ownerName}`);
+        });
+
+        container.appendChild(card);
     });
 }
 
-// ===== IMAGE SLIDER FOR LISTINGS ===== //
-function goToListingImg(id, index) {
-    const allProperties = JSON.parse(localStorage.getItem('properties')) || [];
-    const property = allProperties.find(p => p.id === id);
-    if (!property || !property.images) return;
+// ===== INITIAL DISPLAY =====
+document.addEventListener("DOMContentLoaded", () => {
+    displayListings(properties);
+});
 
-    document.getElementById(`img-${id}`).src = property.images[index];
+// ===== FILTER FUNCTIONALITY =====
+document.getElementById("applyFilters").addEventListener("click", () => {
+    const city = document.getElementById("searchCity").value.toLowerCase();
+    const maxPrice = parseFloat(document.getElementById("maxPrice").value);
+    const country = document.getElementById("countryFilter").value;
 
-    const slider = document.getElementById(`img-${id}`).parentElement;
-    const dots = slider.querySelectorAll(".dot");
-
-    dots.forEach((dot, i) => {
-        if (i === index) {
-            dot.classList.add("active");
-        } else {
-            dot.classList.remove("active");
-        }
+    const filtered = properties.filter(prop => {
+        const matchesCity = city ? prop.city.toLowerCase().includes(city) : true;
+        const matchesPrice = maxPrice ? prop.price <= maxPrice : true;
+        const matchesCountry = country ? prop.country === country : true;
+        return matchesCity && matchesPrice && matchesCountry;
     });
-}
 
-// ===== BOOK PROPERTY ===== //
-function bookProperty(propertyId) {
-    const currentUser = localStorage.getItem('currentUser');
-    if (!currentUser) {
-        alert('❌ Please log in to book a property!');
-        window.location.href = 'login.html';
-        return;
-    }
-
-    const allProperties = JSON.parse(localStorage.getItem('properties')) || [];
-    const property = allProperties.find(p => p.id === propertyId);
-    
-    if (!property) return;
-
-    alert(`✅ Booking request sent for "${property.title}" in ${property.city}!\n\nContact owner: ${property.ownerName}`);
-}
-
-// ===== LOAD ON PAGE LOAD ===== //
-document.addEventListener('DOMContentLoaded', displayAllListings);
+    displayListings(filtered);
+});

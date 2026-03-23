@@ -122,20 +122,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-//map
-document.addEventListener('DOMContentLoaded', () => {
-    // Create map
+// ===== INITIALIZE MAP =====
+document.addEventListener("DOMContentLoaded", () => {
     const map = L.map('map').setView([20, 0], 2);
 
-    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Example markers
-    L.marker([48.8566, 2.3522]).addTo(map).bindPopup('Paris');
-    L.marker([40.7128, -74.0060]).addTo(map).bindPopup('New York');
-    L.marker([35.6762, 139.6503]).addTo(map).bindPopup('Tokyo'); 
+    const locations = [
+        { name: "France", coords: [46.2276, 2.2137], country: "france" },
+        { name: "USA", coords: [37.0902, -95.7129], country: "usa" },
+        { name: "Japan", coords: [36.2048, 138.2529], country: "japan" },
+        { name: "Indonesia", coords: [-0.7893, 113.9213], country: "indonesia" },
+        { name: "Switzerland", coords: [46.8182, 8.2275], country: "switzerland" }
+    ];
+
+    locations.forEach(loc => {
+        const marker = L.marker(loc.coords).addTo(map);
+        marker.bindPopup(`
+    <strong>${loc.name}</strong><br>
+    <a href="./pages/listings.html?country=${loc.country}" style="color:#ff385c; text-decoration:none;">See Listings</a>
+`);
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const country = urlParams.get("country") || "";
+    if (country) document.getElementById("countryFilter").value = country;
+    filterListings({ country });
 });
 
 // ===== FAQ Accordion with slide effect =====
