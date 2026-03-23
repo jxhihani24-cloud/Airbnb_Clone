@@ -1,0 +1,68 @@
+.account-page {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.account-card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 35px 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.account-card h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 34px;
+}
+
+#accountDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.account-row {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 16px;
+}
+
+.account-row strong {
+    margin-right: 8px;
+}
+
+#deleteAccountBtn {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    background: #d62828;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+#deleteAccountBtn:hover {
+    transform: translateY(-2px);
+    opacity: 0.92;
+}
+
+.account-row {
+    border: 1px solid #000;
+}
+
+.dark-mode .account-row {
+    border: 1px solid #444;
+}

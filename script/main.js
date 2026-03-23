@@ -24,13 +24,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const dropdown = document.createElement('div');
         dropdown.classList.add('user-dropdown');
         dropdown.innerHTML = `
+            <button class="dropdown-item" id="accountBtn">Account</button>
             <button class="dropdown-item" id="logoutBtn">Log Out</button>
-            <button class="dropdown-item delete-account" id="deleteAccountBtn">Delete Account</button>
         `;
 
-        // Make li relative so dropdown positions correctly
+         // Make li relative so dropdown positions correctly
         loginItem.style.position = 'relative';
         loginItem.appendChild(dropdown);
+
+        // Account page redirect
+        document.getElementById('accountBtn').addEventListener('click', () => {
+
+    if (window.location.pathname.includes('/pages/')) {
+        window.location.href = 'account.html';
+    } else {
+        window.location.href = 'pages/account.html';
+    }
+      });
 
         // Toggle dropdown on name click
         loginLink.addEventListener('click', (e) => {
@@ -44,29 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.removeItem('currentUser');
                 window.location.href = 'login.html';
             }
-        });
-
-        // Delete account
-        document.getElementById('deleteAccountBtn').addEventListener('click', () => {
-            const confirmDelete = confirm('Are you sure you want to delete your account? This cannot be undone.');
-
-            if (!confirmDelete) return;
-
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-            let properties = JSON.parse(localStorage.getItem('properties')) || [];
-
-            // Remove user from users list
-            users = users.filter(u => u.username !== user.username);
-
-            // Remove user's properties too
-            properties = properties.filter(p => p.owner !== user.username);
-
-            localStorage.setItem('users', JSON.stringify(users));
-            localStorage.setItem('properties', JSON.stringify(properties));
-            localStorage.removeItem('currentUser');
-
-            alert('✅ Account deleted successfully.');
-            window.location.href = '../index.html';
         });
 
         // Close dropdown when clicking elsewhere

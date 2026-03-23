@@ -114,5 +114,6 @@
 }
 
 .delete-account {
-    color: red;
+    font-weight: bold;
+    color: rgb(240, 21, 21);
 }
