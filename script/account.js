@@ -21,28 +21,33 @@ container.innerHTML = `
 
 });
 
+// Delete account
 document.getElementById("deleteAccountBtn").addEventListener("click", () => {
 
-const confirmDelete = confirm("Are you sure you want to delete your account?");
+    const confirmDelete = confirm("Are you sure you want to delete your account?");
+    if (!confirmDelete) return;
 
-if (!confirmDelete) return;
+    const user = JSON.parse(localStorage.getItem("currentUser"));
 
-const user = JSON.parse(localStorage.getItem("currentUser"));
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let properties = JSON.parse(localStorage.getItem("properties")) || [];
 
-let users = JSON.parse(localStorage.getItem("users")) || [];
-let properties = JSON.parse(localStorage.getItem("properties")) || [];
+    // remove user
+    users = users.filter(u => u.username !== user.username);
 
-users = users.filter(u => u.username !== user.username);
-properties = properties.filter(p => p.owner !== user.username);
+    // remove user's properties
+    properties = properties.filter(p => p.owner !== user.username);
 
-localStorage.setItem("users", JSON.stringify(users));
-localStorage.setItem("properties", JSON.stringify(properties));
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("properties", JSON.stringify(properties));
 
-localStorage.removeItem("currentUser");
+    // logout user
+    localStorage.removeItem("currentUser");
 
-alert("Account deleted.");
+    alert("Your account has been deleted.");
 
-window.location.href = "../index.html";
+    // redirect to login page
+    window.location.href = "login.html";
 
 });
 

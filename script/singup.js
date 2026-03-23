@@ -2,11 +2,12 @@
 function showPassword(){
     const pass=document.getElementById("password");
     if(pass.type==="password")
-        password.type="text";
+        pass.type="text";
     else
-        password.type="password";
+        pass.type="password";
 
 }
+
 // ===== FUNCTION TO SHOW OR HIDE CONFIRM PASSWORD ===== //
 function showConfirmPassword(){
     const pass=document.getElementById("confirmpass");
