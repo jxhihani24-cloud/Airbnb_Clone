@@ -1,26 +1,78 @@
-// ===== UPDATE NAVBAR WITH LOGIN STATUS ===== //
+
+// ===== UPDATE NAVBAR WITH LOGIN STATUS + DROPDOWN MENU ===== //
 document.addEventListener('DOMContentLoaded', () => {
     const currentUser = localStorage.getItem('currentUser');
     const navLinks = document.querySelector('.nav-links');
-    
+
+    if (!navLinks) return;
+
     if (currentUser) {
-        // User is logged in
         const user = JSON.parse(currentUser);
-        
+
         // Find the "Log In" link
         const loginLink = navLinks.querySelector('li:last-child a');
-        
-        // Replace it with user's name and logout button
+        const loginItem = navLinks.querySelector('li:last-child');
+
+        if (!loginLink || !loginItem) return;
+
+        // Replace text with user's name
         loginLink.innerHTML = `<strong>${user.firstName} ${user.lastName}</strong>`;
-        loginLink.href = '#'; // Prevent navigation
+        loginLink.href = '#';
         loginLink.style.cursor = 'pointer';
-        
-        // Add logout functionality
+
+        // Create dropdown
+        const dropdown = document.createElement('div');
+        dropdown.classList.add('user-dropdown');
+        dropdown.innerHTML = `
+            <button class="dropdown-item" id="logoutBtn">Log Out</button>
+            <button class="dropdown-item delete-account" id="deleteAccountBtn">Delete Account</button>
+        `;
+
+        // Make li relative so dropdown positions correctly
+        loginItem.style.position = 'relative';
+        loginItem.appendChild(dropdown);
+
+        // Toggle dropdown on name click
         loginLink.addEventListener('click', (e) => {
             e.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
+            dropdown.classList.toggle('show');
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to log out?')) {
                 localStorage.removeItem('currentUser');
-                window.location.href = 'pages/login.html'; // Redirect to login
+                window.location.href = 'login.html';
+            }
+        });
+
+        // Delete account
+        document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+            const confirmDelete = confirm('Are you sure you want to delete your account? This cannot be undone.');
+
+            if (!confirmDelete) return;
+
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let properties = JSON.parse(localStorage.getItem('properties')) || [];
+
+            // Remove user from users list
+            users = users.filter(u => u.username !== user.username);
+
+            // Remove user's properties too
+            properties = properties.filter(p => p.owner !== user.username);
+
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('properties', JSON.stringify(properties));
+            localStorage.removeItem('currentUser');
+
+            alert('✅ Account deleted successfully.');
+            window.location.href = '../index.html';
+        });
+
+        // Close dropdown when clicking elsewhere
+        document.addEventListener('click', (e) => {
+            if (!loginItem.contains(e.target)) {
+                dropdown.classList.remove('show');
             }
         });
     }
