@@ -84,16 +84,103 @@ body {
 }
 
 /* button */
-button {
+/* NAV BUTTON */
+.nav-btn {
+    padding: 10px 20px;
+    cursor: pointer;
     background-color: var(--button-color);
     color: var(--button-text);
     border: none;
-    font-weight:bold ;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
 }
 
-/* text */
-h1, h2, h3, h4, h5, h6, p, a, span, label {
-    color: var(--text-color);
+.nav-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* subtle black shadow */
+}
+
+/* MODAL BACKGROUND */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+/* MODAL BOX */
+.modal-content {
+    background: #fff;
+    color: #111; /* darker black accent text */
+    padding: 25px;
+    width: 340px; /* slightly wider */
+    border-radius: 16px;
+    position: relative;
+
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25); /* stronger black shadow for depth */
+    border-top: 4px solid #000; /* black accent bar at the top */
+
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+/* TITLE */
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #000; /* stronger accent for header */
+}
+
+/* SUPPORT SECTIONS */
+.support-section {
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+
+    transition: background 0.2s ease, border-left 0.2s ease;
+    cursor: pointer;
+}
+
+.support-section:hover {
+    background: #f5f5f5;
+    border-left: 4px solid #000; /* subtle black accent on hover */
+}
+
+/* OPTIONAL DIVIDER LOOK */
+.support-section:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}
+
+/* CLOSE BUTTON */
+.close {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    font-size: 18px;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close:hover {
+    color: #000; /* black accent on hover */
 }
 
 /* user input */

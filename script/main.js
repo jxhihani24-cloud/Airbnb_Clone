@@ -225,4 +225,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Wait until page is fully loaded
+document.addEventListener("DOMContentLoaded", function () {
+
+    const modal = document.getElementById("contactModal");
+    const openBtn = document.querySelector(".nav-btn");
+    const closeBtn = document.querySelector(".close");
+
+    // Open modal
+    openBtn.addEventListener("click", function () {
+        modal.classList.add("show");
+    });
+
+    // Close modal (X button)
+    closeBtn.addEventListener("click", function () {
+        modal.classList.remove("show");
+    });
+
+    // Close when clicking outside modal content
+    window.addEventListener("click", function (e) {
+        if (e.target === modal) {
+            modal.classList.remove("show");
+        }
+    });
+
+});
+
  
