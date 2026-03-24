@@ -98,26 +98,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // POPUP LOGIC
+// ===== POPUP LOGIC ===== //
 document.addEventListener('DOMContentLoaded', () => {
-
     const popup = document.getElementById('pricePopup');
     const closeBtn = document.getElementById('closePopup');
 
-    // Check if popup was already shown
+    // STOP if popup does not exist on this page
+    if (!popup || !closeBtn) return;
+
     const seen = localStorage.getItem('seenPopup');
 
     if (!seen) {
-        // Show popup after 1 second
         setTimeout(() => {
             popup.style.display = 'block';
         }, 1000);
     }
 
-    // Close popup when button clicked
     closeBtn.addEventListener('click', () => {
         popup.style.display = 'none';
-
-        // Save that user has seen it
         localStorage.setItem('seenPopup', 'true');
     });
 });

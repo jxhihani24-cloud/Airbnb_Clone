@@ -153,7 +153,8 @@ function postProperty() {
 function toggleModal() {
     const modal = document.getElementById("modal");
     if (!modal) return;
-    modal.style.display = modal.style.display === "block" ? "none" : "block";
+
+    modal.classList.toggle("show");
 }
 
 // ===== REMOVE PROPERTY ===== //

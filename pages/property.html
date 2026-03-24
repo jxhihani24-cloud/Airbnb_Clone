@@ -45,20 +45,20 @@
 <!-- ===== ENABLING THE SWITCH FROM LIGHT TO DARK MODE ===== -->
 <script src="../script/main.js"></script>
 <!-- FLOAT BUTTON -->
-<button class="fab" onclick="toggleModal()">＋</button>
+<button class="fab" onclick="toggleModal()" style="background-color: var(--button-color);">+</button>
 
 <!-- POPUP -->
 <div id="modal" class="modal">
   <div class="modal-content">
-    <span class="close" onclick="toggleModal()">×</span>
+    <span class="close" onclick="toggleModal()">x</span>
 
-    <h2>Add Property</h2>
+    <h2 style="color:var(--text-color)">Add Property</h2>
 
     <input type="text" id="title" placeholder="Name">
     <input type="text" id="city" placeholder="City">
     <input type="number" id="price" placeholder="Price">
     <input type="text" id="images" placeholder="Image URLs (comma separated)">
-    <button onclick="postProperty()">Post</button>
+    <button onclick="postProperty()" style="background-color: var(--button-color);">Post</button>
   </div>
 </div>
 
