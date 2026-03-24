@@ -46,16 +46,16 @@
 /* FLOAT BUTTON */
 .fab {
     position: fixed;
-    bottom: 25px;
-    right: 25px;
+    bottom: 150px;
+    right: 40px;
 
-    width: 50px;
-    height: 50px;
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
 
     background: #8f1229;
     color: white;
-    font-size: 26px;
+    font-size: 36px;
 
     border: none;
     cursor: pointer;
@@ -165,7 +165,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 25px;
-
+    color:var(--text-color);
     max-width: 1000px;
     margin: 40px auto; /* centers grid */
 }
@@ -175,6 +175,10 @@
     background: var(--card-bg);
     border-radius: 14px;
     overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transition: 0.2s;
@@ -194,11 +198,14 @@
 
 /* INFO */
 .card-info {
-    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .card-info h4 {
     margin-bottom: 5px;
+    color:var(--text-color);
 }
 
 .card-info p {
@@ -296,21 +303,24 @@
     transform: scale(1.05);
 }
 /* Book Button */
+/* BOOK BUTTON */
 .book-btn {
-    width: 100%;
-    padding: 10px;
-    background-color: #ff6b6b;
-    color: white;
+    margin-top: auto;
+    padding: 8px 12px;
+    border-radius: 10px;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    background: var(--button-color);
+    color: var(--button-text);
     font-weight: bold;
-    font-size: 16px;
-    transition: 0.3s;
-    margin-top: 10px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .book-btn:hover {
     background-color: #ff5252;
     transform: scale(1.05);
+}
+
+.card-info button {
+    margin-top: auto;
 }
