@@ -4,72 +4,60 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUser = localStorage.getItem('currentUser');
     const navLinks = document.querySelector('.nav-links');
 
-    if (!navLinks) return;
+    if (!currentUser || !navLinks) return;
 
-    if (currentUser) {
-        const user = JSON.parse(currentUser);
+    const user = JSON.parse(currentUser);
+    const loginItem = navLinks.querySelector('li:last-child');
+    const loginLink = loginItem ? loginItem.querySelector('a') : null;
 
-        // Find the "Log In" link
-        const loginLink = navLinks.querySelector('li:last-child a');
-        const loginItem = navLinks.querySelector('li:last-child');
+    if (!loginItem || !loginLink) return;
 
-        if (!loginLink || !loginItem) return;
+    loginLink.innerHTML = `<strong>${user.firstName} ${user.lastName}</strong>`;
+    loginLink.href = '#';
 
-        // Replace text with user's name
-        loginLink.innerHTML = `<strong>${user.firstName} ${user.lastName}</strong>`;
-        loginLink.href = '#';
-        loginLink.style.cursor = 'pointer';
-
-        // Create dropdown
-        const dropdown = document.createElement('div');
-        dropdown.classList.add('user-dropdown');
+    let dropdown = loginItem.querySelector('.user-dropdown');
+    if (!dropdown) {
+        dropdown = document.createElement('div');
+        dropdown.className = 'user-dropdown';
         dropdown.innerHTML = `
-            <button class="dropdown-item" id="accountBtn">Account</button>
-            <button class="dropdown-item" id="logoutBtn">Log Out</button>
+            <button class="dropdown-item" id="accountBtn" type="button">Account</button>
+            <button class="dropdown-item" id="logoutBtn" type="button">Log Out</button>
         `;
-
-         // Make li relative so dropdown positions correctly
         loginItem.style.position = 'relative';
         loginItem.appendChild(dropdown);
-
-        // Account page redirect
-        document.getElementById('accountBtn').addEventListener('click', () => {
-
-    if (window.location.pathname.includes('/pages/')) {
-        window.location.href = 'account.html';
-    } else {
-        window.location.href = 'pages/account.html';
     }
-      });
 
-        // Toggle dropdown on name click
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            dropdown.classList.toggle('show');
-        });
+    loginLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+    });
 
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-    if (confirm('Are you sure you want to log out?')) {
+    dropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
 
-        localStorage.removeItem('currentUser');
-
-        if (window.location.pathname.includes('/pages/')) {
-            window.location.href = 'login.html';
-        } else {
-            window.location.href = 'pages/login.html';
+        if (e.target.id === 'accountBtn') {
+            window.location.href = window.location.pathname.includes('/pages/')
+                ? 'account.html'
+                : 'pages/account.html';
         }
 
-    }
-});
+        if (e.target.id === 'logoutBtn') {
+    const confirmLogout = confirm("Are you sure you want to log out?");
+    
+    if (!confirmLogout) return;
 
-        // Close dropdown when clicking elsewhere
-        document.addEventListener('click', (e) => {
-            if (!loginItem.contains(e.target)) {
-                dropdown.classList.remove('show');
-            }
-        });
-    }
+    localStorage.removeItem('currentUser');
+
+    window.location.href = window.location.pathname.includes('/pages/')
+        ? 'login.html'
+        : 'pages/login.html';
+}
+    });
+
+    document.addEventListener('click', () => {
+        dropdown.classList.remove('show');
+    });
 });
 
 //set dark mode on page load
