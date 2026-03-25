@@ -225,3 +225,56 @@ body {
         font-size: 15px;
     }
 }
+
+.password-rules {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.password-rules .list-group-item {
+    background: var(--bg-color);
+    color: var(--text-color);
+    border-color: var(--border-color);
+    font-size: 14px;
+    padding: 10px 14px;
+}
+
+.rule-valid {
+    color: #198754 !important;
+    font-weight: 600;
+}
+
+.rule-invalid {
+    color: #dc3545 !important;
+    font-weight: 600;
+}
+
+.input-group .btn.toggle-pass {
+    border-color: var(--border-color);
+    color: var(--text-color);
+    background: var(--bg-color);
+}
+
+.input-group .btn.toggle-pass:hover {
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+.dark-mode input.form-control,
+.dark-mode .input {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.dark-mode input.form-control:focus,
+.dark-mode .input:focus {
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color);
+    box-shadow: none;
+}
+
+.dark-mode input::placeholder {
+    color: rgba(255,255,255,0.75);
+}

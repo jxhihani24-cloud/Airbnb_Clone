@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.querySelector('.login-form');
     
     // Only run if login form exists (on login.html page)
-    if (!loginForm) return;
+    if (!loginForm || !window.location.pathname.includes('login.html')) return;
     
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -222,7 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('currentUser', JSON.stringify(user));
         
         // 8. SUCCESS & REDIRECT
-        alert('✅ Welcome back, ' + user.firstName + '!');
+        if (!localStorage.getItem('justSignedUp')) {
+    alert('✅ Welcome back, ' + user.firstName + '!');
+}
+localStorage.removeItem('justSignedUp');
         window.location.href = '../index.html';
     });
 });
