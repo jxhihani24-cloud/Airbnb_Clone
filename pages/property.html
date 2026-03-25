@@ -55,10 +55,28 @@
 
     <h2 style="color:var(--text-color)">Add Property</h2>
 
-    <input type="text" id="title" placeholder="Name">
+    <input type="text" id="title" placeholder="Property name">
     <input type="text" id="city" placeholder="City">
-    <input type="number" id="price" placeholder="Price">
+    <input type="text" id="country" placeholder="Country">
+
+    <select id="propertyType">
+      <option value="" style="font-weight: bold;">Select property type</option>
+      <option value="Apartment">Apartment</option>
+      <option value="House">House</option>
+      <option value="Villa">Villa</option>
+      <option value="Cabin">Cabin</option>
+      <option value="Studio">Studio</option>
+    </select>
+
+    <input type="number" id="price" placeholder="Price per night">
+    <input type="number" id="guests" placeholder="Guests">
+    <input type="number" id="bedrooms" placeholder="Bedrooms">
+    <input type="number" id="bathrooms" placeholder="Bathrooms">
+
+    <textarea id="description" placeholder="Description" rows="4"></textarea>
+    <input type="text" id="amenities" placeholder="Amenities (WiFi, Parking, Pool)">
     <input type="text" id="images" placeholder="Image URLs (comma separated)">
+
     <button onclick="postProperty()" style="background-color: var(--button-color);">Post</button>
   </div>
 </div>

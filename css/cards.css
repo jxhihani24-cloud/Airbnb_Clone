@@ -438,3 +438,23 @@
         bottom: 85px;
     }
 }
+
+.modal-content select,
+.modal-content textarea {
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid var(--button-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    resize: vertical;
+}
+
+/* focus effect same as buttons */
+.modal-content select:focus {
+    border-color: var(--button-color);
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+}
