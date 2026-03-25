@@ -158,7 +158,9 @@ function postProperty() {
 
     alert('✅ Property posted!');
     clearPropertyForm();
-    toggleModal();
+    //toggleModal();
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
+modal.hide();
     renderMyProperties();
 }
 
@@ -219,7 +221,9 @@ function editProperty(id) {
     postBtn.textContent = 'Update';
     postBtn.onclick = () => updateProperty(id);
 
-    toggleModal();
+    //toggleModal();
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
+modal.hide();
 }
 
 // ===== UPDATE PROPERTY ===== //
@@ -274,7 +278,9 @@ function updateProperty(id) {
         postBtn.onclick = postProperty;
 
         clearPropertyForm();
-        toggleModal();
+        //toggleModal();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
+modal.hide();
         renderMyProperties();
     }
 }
@@ -298,6 +304,3 @@ function goToImg(id, index) {
         }
     });
 }
-
-// ===== LOAD ON PAGE LOAD ===== //
-document.addEventListener("DOMContentLoaded", renderMyProperties);

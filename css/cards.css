@@ -458,3 +458,114 @@
     border-color: var(--button-color);
     box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
 }
+
+
+
+
+/* BOOTSTRAP PROPERTY MODAL */
+.property-modal-content {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+.property-modal-content .modal-title {
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+/* Better X close button */
+.custom-close-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 30px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.custom-close-btn:hover {
+    background: rgba(0,0,0,0.08);
+    transform: scale(1.05);
+}
+
+.dark-mode .custom-close-btn:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+/* Inputs */
+.property-input,
+.property-select,
+.property-textarea {
+    background: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    border-radius: 12px;
+    box-shadow: none !important;
+}
+
+/* Keep normal input borders */
+.property-input {
+    border: 1px solid var(--border-color) !important;
+}
+
+/* Remove border from select + description */
+.property-select,
+.property-textarea {
+    border: none !important;
+}
+
+/* Theme-adaptive placeholder color */
+.property-input::placeholder,
+.property-textarea::placeholder {
+    color: var(--text-color) !important;
+    opacity: 0.65;
+}
+
+/* Select text + arrow adaptation */
+.property-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 42px;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-color) 50%),
+        linear-gradient(135deg, var(--text-color) 50%, transparent 50%);
+    background-position:
+        calc(100% - 20px) calc(50% - 3px),
+        calc(100% - 14px) calc(50% - 3px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+/* Focus state */
+.property-input:focus,
+.property-select:focus,
+.property-textarea:focus {
+    background: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Post button */
+.property-post-btn {
+    background: var(--button-color);
+    color: var(--button-text);
+    border: none;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 10px 18px;
+}
+
+.property-post-btn:hover {
+    opacity: 0.92;
+}
