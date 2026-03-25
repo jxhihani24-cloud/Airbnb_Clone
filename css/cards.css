@@ -167,7 +167,8 @@
     gap: 25px;
     color:var(--text-color);
     max-width: 1000px;
-    margin: 40px auto; /* centers grid */
+    margin: 40px auto;
+    
 }
 
 /* CARD */
@@ -175,6 +176,7 @@
     background: var(--card-bg);
     border-radius: 14px;
     overflow: hidden;
+    border-color: black;
 
     display: flex;
     flex-direction: column;

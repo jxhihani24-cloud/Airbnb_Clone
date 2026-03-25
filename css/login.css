@@ -19,6 +19,7 @@ body {
     padding: 45px 35px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.12);
     text-align: center;
+    border-color: black;
 }
 
 .login-card h2 {

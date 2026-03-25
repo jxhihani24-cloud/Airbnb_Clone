@@ -64,13 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('themeToggle');
 
-    // Load saved theme
+    /* Load saved theme */
     const savedTheme = localStorage.getItem('theme') || 'dark';
 
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
         toggle.checked = true;
     }
+   
 
     // Toggle event
     toggle.addEventListener('change', () => {
