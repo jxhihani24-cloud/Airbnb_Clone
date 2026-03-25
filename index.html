@@ -22,7 +22,6 @@ function goToListings() {
 </script>
 <body>
     
-
 <!-- NAVBAR -->
 <nav class="navbar shadow-sm">
    
@@ -36,15 +35,14 @@ function goToListings() {
         <li class="nav-item"><a href="pages/listings.html" class="nav-link" style="color:var(--text-color)"><strong>Listings</strong></a></li>
         <li class="nav-item"><a href="pages/property.html" class="nav-link" style="color:var(--text-color)"><strong>Property</strong></a></li>
         <li class="nav-item dropdown" id="userMenu">
-<a class="nav-link dropdown-toggle" href="#" id="userDropdown"data-bs-toggle="dropdown" style="color:var(--text-color)"><strong>Account</strong></a>
 
-<ul class="dropdown-menu dropdown-menu-end">
-<li><a class="dropdown-item" href="pages/account.html">Account</a></li>
-<li><button class="dropdown-item" id="logoutBtn">Log Out</button></li>
-</ul>
+<li class="nav-item">
+    <a href="pages/login.html" class="nav-link" style="color:var(--text-color)">
+        <strong>Log In</strong>
+    </a>
+</li>
 </li>
     </ul>
-
     <div class="right-side">
         <!-- Theme toggle --> 
         <label class="theme-switch">
@@ -52,11 +50,8 @@ function goToListings() {
             <span class="slider"></span>
         </label>
 
-        
-
         <!-- Button -->
         <button class="nav-btn" onclick="openModal()">Contact</button>
-
     </div>
 </nav>
 
@@ -64,154 +59,224 @@ function goToListings() {
 <script src="script/main.js"></script>
  
 <section class="hero">
-    <div class="hero-content">
-        <h1 style="color:white">Find your next stay</h1>
-        <p style="color:white">Discover unique homes, villas, and apartments worldwide</p>
+    <div class="hero-overlay"></div>
 
-        <div class="search-box">
-            <input type="text" id="homeCity" placeholder="Where are you going?" style="font-weight:bold;"> 
-            
-            <div class="date-group">
-        <label style="font-weight: bold;color:var(--text-color)">Check in </label>
-        <input type="date" style="font-weight: bold;">
-    </div>
+    <div class="container hero-content">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="hero-panel text-center">
+                    <span class="hero-badge">Trusted stays around the world</span>
+                    <h1>Find your next stay</h1>
+                    <p>Discover unique homes, villas, and apartments worldwide.</p>
 
-    <div class="date-group">
-        <label style="font-weight: bold;color:var(--text-color)">Check out </label>
-        <input type="date" style="font-weight: bold;">
-    </div>
-            <button onclick="goToListings()" style="font-weight: bold;">Search</button>
-        </div>
-    
-    </div>
-</section> 
+                    <div class="search-box">
+                        <div class="search-field grow-field">
+                            <label for="homeCity">Destination</label>
+                            <input type="text" id="homeCity" placeholder="Where are you going?">
+                        </div>
 
-</div>
+                        <div class="search-field">
+                            <label>Check in</label>
+                            <input type="date">
+                        </div>
 
+                        <div class="search-field">
+                            <label>Check out</label>
+                            <input type="date">
+                        </div>
 
-<!-- popular listings -->
-<section class="listings">
-    <h2>Popular Stays</h2>
-
-    <div class="cards">
-        <div class="card">
-            <img src="https://tinyurl.com/4sz54rfv">
-            <h3>Beach House</h3>
-            <p>$120 / night</p>
-        </div>
-
-        <div class="card">
-            <img src="https://tinyurl.com/h8nbnw6z">
-            <h3>Mountain Cabin</h3>
-            <p>$90 / night</p>
-        </div>
-
-        <div class="card">
-            <img src="https://th.bing.com/th/id/R.884ee6730df0d9a1450e15cff40d6582?rik=7cKmbRU%2BNHh92w&pid=ImgRaw&r=0">
-            <h3>City Apartment</h3>
-            <p>$150 / night</p>
-        </div>
-        
-        <div class="card">
-            <img src="https://tinyurl.com/bdetzwrv">
-            <h3>Apartment in Tokyo</h3>
-            <p>$80 / night</p>
-        </div>
-
-        <div class="card">
-            <img src="images/skyscraper.webp">
-            <h3>Skyscraper studio apartment</h3>
-            <p>$145 / night</p>
-        </div>
-        
-    </div>
-</section>
-
-<!-- map-->
-<section class="map">
-    <h2>Explore locations</h2>
-    <div id="map"></div>
-</section>
-
-<!-- Why choose us section -->
-<section class="why">
-    <h2>Why choose us?</h2>
-    <p class="section-sub">Simple, reliable, and built for travelers</p>
-
-    <div class="why-container">
-        <div class="why-item">
-            <h3>Best prices</h3>
-            <p>We compare listings to get you the best deals.</p>
-        </div>
-
-        <div class="why-item">
-            <h3>Verified stays</h3>
-            <p>All properties are checked for quality.</p>
-        </div>
-
-        <div class="why-item">
-            <h3>Easy booking</h3>
-            <p>Fast and simple booking process.</p>
+                        <button onclick="goToListings()" class="search-btn-home">Search</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- reviews-->
-<section class="reviews">
-    <h2>Reviews from guests after booking through us:</h2>
-
-    <div class="reviews-container">
-        <div class="review-card">
-            <p>“Amazing experience! Booking was quick and everything was exactly as shown.”</p>
-            <span>— Sarah M.</span>
+<section class="listings home-section">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <h2>Popular Stays</h2>
+            </div>
         </div>
 
-        <div class="review-card">
-            <p>“Super easy to use and great prices. Found my stay in minutes.”</p>
-            <span>— Daniel K.</span>
-        </div>
+        <div class="row g-4">
+            <div class="col-12 col-sm-6 col-xl-4">
+                <div class="home-card">
+                    <img src="https://tinyurl.com/4sz54rfv" alt="Beach House">
+                    <div class="home-card-body">
+                        <h3>Beach House</h3>
+                        <p>$120 / night</p>
+                    </div>
+                </div>
+            </div>
 
-        <div class="review-card">
-            <p>“Clean listings and smooth booking. Definitely using this again.”</p>
-            <span>— Elena R.</span>
+            <div class="col-12 col-sm-6 col-xl-4">
+                <div class="home-card">
+                    <img src="https://tinyurl.com/h8nbnw6z" alt="Mountain Cabin">
+                    <div class="home-card-body">
+                        <h3>Mountain Cabin</h3>
+                        <p>$90 / night</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <div class="home-card">
+                    <img src="https://th.bing.com/th/id/R.884ee6730df0d9a1450e15cff40d6582?rik=7cKmbRU%2BNHh92w&pid=ImgRaw&r=0" alt="City Apartment">
+                    <div class="home-card-body">
+                        <h3>City Apartment</h3>
+                        <p>$150 / night</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <div class="home-card">
+                    <img src="https://tinyurl.com/bdetzwrv" alt="Apartment in Tokyo">
+                    <div class="home-card-body">
+                        <h3>Apartment in Tokyo</h3>
+                        <p>$80 / night</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-xl-4">
+                <div class="home-card">
+                    <img src="images/skyscraper.webp" alt="Skyscraper studio apartment">
+                    <div class="home-card-body">
+                        <h3>Skyscraper studio apartment</h3>
+                        <p>$145 / night</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- FREQUENTLY ASKED QUESTIONS SECTION -->
-<section class="faq">
-    <h2>Frequently Asked Questions</h2>
-
-    <div class="faq-item">
-        <button class="faq-question" style="background-color: var(--button-color);font-weight: bold;">How do I book a listing?</button>
-        <div class="faq-answer">
-            <p>Simply search for a location, choose a listing, and follow the booking steps.</p>
+<section class="map home-section">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                
+                <h2>Explore locations</h2>
+            </div>
         </div>
+        <div id="map"></div>
     </div>
+</section>
 
-    <div class="faq-item">
-        <button class="faq-question" style="background-color: var(--button-color);font-weight: bold;">Are there cancellation fees?</button>
-        <div class="faq-answer">
-            <p>Most listings allow free cancellation within a certain time frame. Check the listing details.</p>
+<section class="why home-section">
+    <div class="container">
+        <div class="section-heading centered-heading">
+            <span class="section-kicker" style="color:red">Why Hostera</span>
+            <h2>Why choose us?</h2>
+            <p class="section-sub">Simple, reliable, and built for travelers</p>
         </div>
-    </div>
 
-    <div class="faq-item">
-        <button class="faq-question" style="background-color: var(--button-color);font-weight: bold;">Is it safe to book?</button>
-        <div class="faq-answer">
-            <p>Yes! All hosts are verified, and your payment is secure.</p>
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="why-item">
+                    <h3>Best prices</h3>
+                    <p>We compare listings to get you the best deals.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="why-item">
+                    <h3>Verified stays</h3>
+                    <p>All properties are checked for quality.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="why-item">
+                    <h3>Easy booking</h3>
+                    <p>Fast and simple booking process.</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="newsletter">
-    <h2>Get the best deals straight to your inbox</h2>
-    <p>Subscribe and stay updated with our latest listings and promotions.</p>
-    <div class="newsletter-form">
-        <input type="email" placeholder="Enter your email">
-        <button style="font-weight: bold;">Subscribe</button>
+<section class="reviews home-section">
+    <div class="container">
+        <div class="section-heading centered-heading">
+            <span class="section-kicker" style="color:red">Guest feedback</span>
+            <h2>Reviews from guests after booking through us</h2>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="review-card">
+                    <p>“Amazing experience! Booking was quick and everything was exactly as shown.”</p>
+                    <span>— Sarah M.</span>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="review-card">
+                    <p>“Super easy to use and great prices. Found my stay in minutes.”</p>
+                    <span>— Daniel K.</span>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="review-card">
+                    <p>“Clean listings and smooth booking. Definitely using this again.”</p>
+                    <span>— Elena R.</span>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+
+<section class="faq home-section">
+    <div class="container faq-wrap">
+        <div class="section-heading centered-heading">
+            <span class="section-kicker" style="color:red">Help</span>
+            <h2>Frequently Asked Questions</h2>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" style="background-color: var(--button-color);">How do I book a listing?   <span class="faq-arrow">▼</span> </button>
+            <div class="faq-answer">
+                <p>Simply search for a location, choose a listing, and follow the booking steps.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">Are there cancellation fees? <span class="faq-arrow">▼</span> </button>
+            <div class="faq-answer">
+                <p>Most listings allow free cancellation within a certain time frame. Check the listing details.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">Is it safe to book? <span class="faq-arrow">▼</span> </button>
+            <div class="faq-answer">
+                <p>Yes! All hosts are verified, and your payment is secure.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="newsletter home-section">
+    <div class="container">
+        <div class="newsletter-box">
+            <span class="section-kicker" style="color:red">Stay updated</span>
+            <h2>Get the best deals straight to your inbox</h2>
+            <p>Subscribe and stay updated with our latest listings and promotions.</p>
+
+            <div class="newsletter-form">
+                <input type="email" placeholder="Enter your email">
+                <button>Subscribe</button>
+            </div>
+        </div>
+    </div>
+</section>
+
 
 <!-- FOOTER -->
 <footer class="footer">
@@ -219,18 +284,10 @@ function goToListings() {
    
     <div class="social">
         <a href="#"><img src="https://img.icons8.com/color/24/000000/facebook.png"/></a>
-        <a href="#"><img src="images/tiktok.png"/></a>
+        <a href="#"><img src="images/tiktok.png"></a>
         <a href="#"><img src="https://img.icons8.com/color/24/000000/instagram-new.png"/></a>
     </div>
 </footer>
-
-<!-- PRICE INFO POPUP -->
-<div id="pricePopup" class="popup">
-    <div class="popup-content">
-        <p>Now you'll see the total price for your trip, including all fees.</p>
-        <button id="closePopup">Got it</button>
-    </div>
-</div>
 
 <!-- CONTACT BUTTON ON NAVIGATION BAR -->
 <div id="contactModal" class="modal">

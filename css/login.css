@@ -137,3 +137,91 @@ body {
     font-size: 14px;
      margin: 2px 0;
 }
+
+/* =========================
+   RESPONSIVE LOGIN / SIGNUP
+   ========================= */
+
+.login-card,
+.input,
+.login-btn {
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        min-height: auto;
+        padding: 30px 16px 50px;
+    }
+
+    .login-card {
+        max-width: 100%;
+        padding: 30px 22px;
+        border-radius: 18px;
+    }
+
+    .login-card h2 {
+        font-size: 32px;
+    }
+
+    .login-card p {
+        font-size: 16px;
+    }
+
+    .login-form label {
+        font-size: 20px;
+    }
+
+    .input {
+        font-size: 14px;
+    }
+
+    .signup-text {
+        font-size: 16px;
+    }
+
+    .toggle-password {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 20px 12px 40px;
+    }
+
+    .login-card {
+        padding: 24px 16px;
+        border-radius: 16px;
+    }
+
+    .login-card h2 {
+        font-size: 26px;
+    }
+
+    .login-card p {
+        font-size: 15px;
+        margin-bottom: 18px;
+    }
+
+    .login-form {
+        gap: 8px;
+    }
+
+    .login-form label {
+        font-size: 17px;
+    }
+
+    .input {
+        padding: 11px 12px;
+    }
+
+    .login-btn {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .signup-text {
+        font-size: 15px;
+    }
+}

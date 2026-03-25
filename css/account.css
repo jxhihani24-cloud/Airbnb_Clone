@@ -67,3 +67,60 @@
 .dark-mode .account-row {
     border: 1px solid #444;
 }
+
+/* =========================
+   RESPONSIVE ACCOUNT PAGE
+   ========================= */
+
+@media (max-width: 768px) {
+    .account-page {
+        min-height: auto;
+        padding: 30px 16px 50px;
+    }
+
+    .account-card {
+        max-width: 100%;
+        padding: 26px 20px;
+        border-radius: 18px;
+    }
+
+    .account-card h2 {
+        font-size: 28px;
+    }
+
+    .account-row {
+        font-size: 15px;
+        padding: 12px 14px;
+    }
+
+    #deleteAccountBtn {
+        padding: 13px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-page {
+        padding: 20px 12px 40px;
+    }
+
+    .account-card {
+        padding: 22px 14px;
+        border-radius: 16px;
+    }
+
+    .account-card h2 {
+        font-size: 24px;
+    }
+
+    .account-row {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    #deleteAccountBtn {
+        margin-top: 18px;
+        padding: 12px;
+        font-size: 14px;
+    }
+}

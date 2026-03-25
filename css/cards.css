@@ -326,3 +326,115 @@
 .card-info button {
     margin-top: auto;
 }
+
+/* =========================
+   RESPONSIVE LISTINGS / PROPERTY
+   ========================= */
+
+.listings-container {
+    padding: 40px 20px;
+}
+
+.listings-grid {
+    width: min(100%, 1100px);
+    margin: 40px auto;
+}
+
+.modal-content {
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
+}
+
+.card img {
+    display: block;
+}
+
+.property-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.property-actions button,
+.card button {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+    .listings-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .fab {
+        right: 24px;
+        bottom: 110px;
+    }
+}
+
+@media (max-width: 768px) {
+    .listings-container {
+        padding: 24px 16px;
+    }
+
+    .listings-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin: 24px auto;
+    }
+
+    .card {
+        border-radius: 16px;
+    }
+
+    .card img {
+        height: 220px;
+    }
+
+    .modal-content {
+        width: calc(100vw - 24px);
+        margin: 70px auto;
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .fab {
+        width: 58px;
+        height: 58px;
+        font-size: 30px;
+        right: 18px;
+        bottom: 95px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card img {
+        height: 200px;
+    }
+
+    .card-info {
+        padding: 14px;
+    }
+
+    .modal-content {
+        width: calc(100vw - 16px);
+        margin: 50px auto;
+        padding: 16px;
+    }
+
+    .modal-content input,
+    .modal-content button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .fab {
+        width: 54px;
+        height: 54px;
+        font-size: 28px;
+        right: 14px;
+        bottom: 85px;
+    }
+}

@@ -43,16 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (e.target.id === 'logoutBtn') {
-    const confirmLogout = confirm("Are you sure you want to log out?");
-    
-    if (!confirmLogout) return;
+            const confirmLogout = confirm("Are you sure you want to log out?");
+            if (!confirmLogout) return;
 
-    localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUser');
 
-    window.location.href = window.location.pathname.includes('/pages/')
-        ? 'login.html'
-        : 'pages/login.html';
-}
+            window.location.href = window.location.pathname.includes('/pages/')
+                ? 'login.html'
+                : 'pages/login.html';
+        }
     });
 
     document.addEventListener('click', () => {
