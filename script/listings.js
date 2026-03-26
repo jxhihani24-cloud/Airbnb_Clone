@@ -69,11 +69,6 @@ function displayListings(list) {
     });
 }
 
-// ===== INITIAL DISPLAY =====
-document.addEventListener("DOMContentLoaded", () => {
-    displayListings(properties);
-});
-
 // ===== FILTER FUNCTIONALITY =====
 function applyFilters() {
     const city = document.getElementById("searchCity").value.toLowerCase();
