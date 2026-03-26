@@ -7,6 +7,9 @@ function getParamsFromURL() {
     };
 }
 
+// ===== CURRENT PROPERTY FOR BOOKING =====
+let currentProperty = null;
+
 // ===== INITIAL LOAD WITH FILTERS =====
 document.addEventListener("DOMContentLoaded", () => {
     const params = getParamsFromURL();
@@ -17,6 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("countryFilter").value = params.country;
     }
     applyFilters();
+
+    // Setup booking form listeners
+    setupBookingFormListeners();
 });
 
 
@@ -72,7 +78,7 @@ function displayListings(list) {
         // Book button on card
         card.querySelector(".book-btn").addEventListener("click", (e) => {
             e.stopPropagation();
-            alert(`Booking request sent for "${property.title}" in ${property.city}!\nContact: ${property.ownerName}`);
+            openBookingForm(property);
         });
 
         container.appendChild(card);
@@ -93,17 +99,16 @@ function openListingModal(property) {
     document.getElementById("modalImage").src = property.images[0] || "https://picsum.photos/400/300?random=99";
 
     document.getElementById("modalBookBtn").onclick = () => {
-        alert(`Booking request sent for "${property.title}" in ${property.city}!\nContact: ${property.ownerName}`);
-        closeListingModal();
+        openBookingForm(property);
     };
 
-    modal.style.display = "flex";
+    modal.classList.add("show");
 }
 
 // ===== CLOSE LISTING MODAL =====
 function closeListingModal() {
     const modal = document.getElementById("listingModal");
-    modal.style.display = "none";
+    modal.classList.remove("show");
 }
 
 // ===== MODAL CLOSE BUTTON =====
@@ -135,3 +140,195 @@ function applyFilters() {
 }
 
 document.getElementById("applyFilters").addEventListener("click", applyFilters);
+
+// ===== CHECK AVAILABILITY FOR DATES =====
+function checkAvailability(propertyId, checkInDate, checkOutDate) {
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
+    return !bookings.some(booking => {
+        if (booking.propertyId !== propertyId) return false;
+        const bookingCheckIn = new Date(booking.checkInDate);
+        const bookingCheckOut = new Date(booking.checkOutDate);
+
+        // Check for overlap
+        return checkIn < bookingCheckOut && checkOut > bookingCheckIn;
+    });
+}
+
+// ===== SETUP BOOKING FORM LISTENERS =====
+function setupBookingFormListeners() {
+    const checkInInput = document.getElementById("checkInInput");
+    const checkOutInput = document.getElementById("checkOutInput");
+    const guestsInput = document.getElementById("guestsInput");
+
+    // Set minimum date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+    checkInInput.min = minDate;
+
+    checkInInput.addEventListener("change", () => {
+        if (checkInInput.value) {
+            const checkIn = new Date(checkInInput.value);
+            checkIn.setDate(checkIn.getDate() + 1);
+            checkOutInput.min = checkIn.toISOString().split('T')[0];
+        }
+        calculatePropertiesAndAvailability();
+    });
+
+    checkOutInput.addEventListener("change", calculatePropertiesAndAvailability);
+    guestsInput.addEventListener("change", calculatePropertiesAndAvailability);
+
+    // Close button
+    document.querySelector(".booking-form-close").addEventListener("click", closeBookingForm);
+
+    // Confirm booking button
+    document.getElementById("confirmBookBtn").addEventListener("click", confirmBooking);
+
+    // Close when clicking outside
+    document.getElementById("bookingFormModal").addEventListener("click", (e) => {
+        if (e.target.id === "bookingFormModal") {
+            closeBookingForm();
+        }
+    });
+}
+
+// ===== CALCULATE PRICE AND AVAILABILITY =====
+function calculatePropertiesAndAvailability() {
+    if (!currentProperty) return;
+
+    const checkInInput = document.getElementById("checkInInput").value;
+    const checkOutInput = document.getElementById("checkOutInput").value;
+
+    if (!checkInInput || !checkOutInput) {
+        document.getElementById("availabilityStatus").style.display = "none";
+        clearPrices();
+        return;
+    }
+
+    const checkIn = new Date(checkInInput);
+    const checkOut = new Date(checkOutInput);
+
+    // Validate dates
+    if (checkOut <= checkIn) {
+        document.getElementById("availabilityStatus").style.display = "block";
+        document.getElementById("availabilityStatus").textContent = "❌ Check-out must be after check-in";
+        document.getElementById("availabilityStatus").classList.add("unavailable");
+        document.getElementById("confirmBookBtn").disabled = true;
+        return;
+    }
+
+    // Check availability
+    const isAvailable = checkAvailability(currentProperty.id, checkInInput, checkOutInput);
+    const availabilityEl = document.getElementById("availabilityStatus");
+
+    if (isAvailable) {
+        availabilityEl.style.display = "block";
+        availabilityEl.textContent = "✅ Available for selected dates";
+        availabilityEl.classList.remove("unavailable");
+        document.getElementById("confirmBookBtn").disabled = false;
+    } else {
+        availabilityEl.style.display = "block";
+        availabilityEl.textContent = "❌ Not available for selected dates";
+        availabilityEl.classList.add("unavailable");
+        document.getElementById("confirmBookBtn").disabled = true;
+    }
+
+    // Calculate nights and price
+    const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+    const subtotal = nights * currentProperty.price;
+    const serviceFee = Math.round(subtotal * 0.1); // 10% service fee
+    const total = subtotal + serviceFee;
+
+    document.getElementById("pricePerNight").textContent = currentProperty.price;
+    document.getElementById("numberOfNights").textContent = nights;
+    document.getElementById("subtotal").textContent = subtotal;
+    document.getElementById("serviceFee").textContent = serviceFee;
+    document.getElementById("totalPrice").textContent = total;
+}
+
+// ===== CLEAR PRICES =====
+function clearPrices() {
+    document.getElementById("pricePerNight").textContent = "0";
+    document.getElementById("numberOfNights").textContent = "0";
+    document.getElementById("subtotal").textContent = "0";
+    document.getElementById("serviceFee").textContent = "0";
+    document.getElementById("totalPrice").textContent = "0";
+}
+
+// ===== OPEN BOOKING FORM MODAL =====
+function openBookingForm(property) {
+    currentProperty = property;
+    document.getElementById("bookingFormTitle").textContent = `Book "${property.title}"`;
+
+    // Reset form
+    document.getElementById("checkInInput").value = "";
+    document.getElementById("checkOutInput").value = "";
+    document.getElementById("guestsInput").value = "1";
+    document.getElementById("availabilityStatus").style.display = "none";
+    clearPrices();
+    document.getElementById("confirmBookBtn").disabled = true;
+
+    // Set min date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+    document.getElementById("checkInInput").min = minDate;
+
+    document.getElementById("bookingFormModal").classList.add("show");
+    closeListingModal();
+}
+
+// ===== CLOSE BOOKING FORM MODAL =====
+function closeBookingForm() {
+    document.getElementById("bookingFormModal").classList.remove("show");
+}
+
+// ===== CONFIRM BOOKING =====
+function confirmBooking() {
+    const userData = localStorage.getItem("currentUser");
+    if (!userData) {
+        alert("Please log in to make a booking");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const checkInDate = document.getElementById("checkInInput").value;
+    const checkOutDate = document.getElementById("checkOutInput").value;
+    const guests = document.getElementById("guestsInput").value;
+
+    if (!checkInDate || !checkOutDate) {
+        alert("Please select check-in and check-out dates");
+        return;
+    }
+
+    const user = JSON.parse(userData);
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+    const booking = {
+        id: Date.now(),
+        userId: user.username,
+        propertyId: currentProperty.id,
+        propertyTitle: currentProperty.title,
+        city: currentProperty.city,
+        country: currentProperty.country,
+        price: currentProperty.price,
+        owner: currentProperty.ownerName,
+        image: currentProperty.images[0],
+        bookingDate: new Date().toLocaleDateString(),
+        checkInDate: new Date(checkInDate).toLocaleDateString(),
+        checkOutDate: new Date(checkOutDate).toLocaleDateString(),
+        guests: parseInt(guests),
+        status: "Confirmed"
+    };
+
+    bookings.push(booking);
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+
+    alert(`✅ Booking confirmed for "${currentProperty.title}"!\n\nCheck-in: ${booking.checkInDate}\nCheck-out: ${booking.checkOutDate}\nGuests: ${guests}`);
+
+    closeBookingForm();
+    currentProperty = null;
+}

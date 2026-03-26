@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdown.className = 'user-dropdown';
         dropdown.innerHTML = `
             <button class="dropdown-item" id="accountBtn" type="button">Account</button>
+            <button class="dropdown-item" id="bookingsBtn" type="button">My Bookings</button>
             <button class="dropdown-item" id="logoutBtn" type="button">Log Out</button>
         `;
         loginItem.style.position = 'relative';
@@ -42,6 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 : 'pages/account.html';
         }
 
+        if (e.target.id === 'bookingsBtn') {
+            window.location.href = window.location.pathname.includes('/pages/')
+                ? 'bookings.html'
+                : 'pages/bookings.html';
+        }
+
         if (e.target.id === 'logoutBtn') {
             const confirmLogout = confirm("Are you sure you want to log out?");
             if (!confirmLogout) return;
@@ -59,6 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// ===== ACCOUNT DROPDOWN MENU ===== //
+
 //set dark mode on page load
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('themeToggle');
@@ -70,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('dark-mode');
         toggle.checked = true;
     }
-   
+
 
     // Toggle event
     toggle.addEventListener('change', () => {
@@ -82,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('theme', 'light');
         }
     });
-   
+
 });
 
 // POPUP LOGIC
@@ -183,49 +192,49 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===== LOGIN FORM HANDLER ===== //
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.querySelector('.login-form');
-    
+
     // Only run if login form exists (on login.html page)
     if (!loginForm || !window.location.pathname.includes('login.html')) return;
-    
-    loginForm.addEventListener('submit', function(e) {
+
+    loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        
+
         // 1. GET INPUT VALUES
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
-        
+
         // 2. VALIDATE FIELDS ARE FILLED
         if (!username || !password) {
             alert('❌ Please enter username and password!');
             return;
         }
-        
+
         // 3. GET ALL USERS FROM LOCALSTORAGE
         let users = JSON.parse(localStorage.getItem('users')) || [];
-        
+
         // 4. FIND USER BY USERNAME
         const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-        
+
         // 5. CHECK IF USER EXISTS
         if (!user) {
             alert('❌ Username not found! Please sign up first.');
             return;
         }
-        
+
         // 6. CHECK IF PASSWORD MATCHES
         if (user.password !== password) {
             alert('❌ Incorrect password!');
             return;
         }
-        
+
         // 7. SAVE LOGGED-IN USER TO LOCALSTORAGE
         localStorage.setItem('currentUser', JSON.stringify(user));
-        
+
         // 8. SUCCESS & REDIRECT
         if (!localStorage.getItem('justSignedUp')) {
-    alert('✅ Welcome back, ' + user.firstName + '!');
-}
-localStorage.removeItem('justSignedUp');
+            alert('✅ Welcome back, ' + user.firstName + '!');
+        }
+        localStorage.removeItem('justSignedUp');
         window.location.href = '../index.html';
     });
 });
@@ -256,4 +265,3 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
- 

@@ -107,6 +107,52 @@
     </div>
 </div>
 
+<!-- ===== BOOKING FORM MODAL ===== -->
+<div id="bookingFormModal" class="modal-overlay">
+    <div class="listing-modal-content">
+        <button class="modal-close-btn booking-form-close">&times;</button>
+        <div class="modal-details" style="padding: 32px 24px;">
+            <h2 id="bookingFormTitle" style="margin-bottom: 24px;"></h2>
+
+            <div class="booking-form-section">
+                <label class="booking-label">Check-in Date</label>
+                <input type="date" id="checkInInput" class="booking-input" required>
+            </div>
+
+            <div class="booking-form-section">
+                <label class="booking-label">Check-out Date</label>
+                <input type="date" id="checkOutInput" class="booking-input" required>
+            </div>
+
+            <div class="booking-form-section">
+                <label class="booking-label">Number of Guests</label>
+                <input type="number" id="guestsInput" class="booking-input" min="1" value="1" required>
+            </div>
+
+            <div class="booking-availability-status" id="availabilityStatus" style="padding: 14px; border-radius: 12px; margin: 16px 0; background: rgba(25, 135, 84, 0.1); color: #198754; font-weight: 600; display: none;">
+                ✅ Available for selected dates
+            </div>
+
+            <div class="booking-price-breakdown">
+                <div class="price-row">
+                    <span>€<span id="pricePerNight">0</span> × <span id="numberOfNights">0</span> nights</span>
+                    <span>€<span id="subtotal">0</span></span>
+                </div>
+                <div class="price-row">
+                    <span>Service fee</span>
+                    <span>€<span id="serviceFee">0</span></span>
+                </div>
+                <div class="price-row total-row">
+                    <span>Total</span>
+                    <span>€<span id="totalPrice">0</span></span>
+                </div>
+            </div>
+
+            <button id="confirmBookBtn" class="modal-book-btn" style="margin-top: 24px; background-color: var(--button-color);">Confirm Booking</button>
+        </div>
+    </div>
+</div>
+
 <!-- ===== SCRIPTS ===== -->
 <script src="../script/listings.js"></script>
 <script src="../script/main.js"></script>
