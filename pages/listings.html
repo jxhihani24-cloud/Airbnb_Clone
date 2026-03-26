@@ -74,6 +74,39 @@
 <!-- ===== LISTINGS GRID ===== -->
 <div class="listings-grid"></div>
 
+<!-- ===== LISTING DETAILS MODAL ===== -->
+<div id="listingModal" class="modal-overlay">
+    <div class="listing-modal-content">
+        <button class="modal-close-btn">&times;</button>
+        <div id="modalImages" class="modal-image-slider">
+            <img id="modalImage" src="" alt="Listing image">
+        </div>
+        <div class="modal-details">
+            <h2 id="modalTitle"></h2>
+            <p id="modalDesc" class="modal-description"></p>
+            <div class="modal-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Location</span>
+                    <p id="modalLocation"></p>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Country</span>
+                    <p id="modalCountry"></p>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Price per night</span>
+                    <p id="modalPrice" class="price-highlight"></p>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Owner</span>
+                    <p id="modalOwner"></p>
+                </div>
+            </div>
+            <button id="modalBookBtn" class="modal-book-btn">📅 Book Now</button>
+        </div>
+    </div>
+</div>
+
 <!-- ===== SCRIPTS ===== -->
 <script src="../script/listings.js"></script>
 <script src="../script/main.js"></script>

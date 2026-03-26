@@ -56,18 +56,67 @@ function displayListings(list) {
                 <p><strong>Location:</strong> ${property.city}</p>
                 <p><strong>Price:</strong> €${property.price} / night</p>
                 <p style="font-size:12px; color:var(--text-color);"><b>By:</b> ${property.ownerName}</p>
-                <button class="book-btn" style="background-color:var(--button-color)">📅 Book Now</button>
+                <div class="card-buttons">
+                    <button class="view-details-btn" style="background-color: #666;">View Details</button>
+                    <button class="book-btn" style="background-color:var(--button-color)">📅 Book Now</button>
+                </div>
             </div>
         `;
 
-        // Book button
-        card.querySelector(".book-btn").addEventListener("click", () => {
+        // View details button
+        card.querySelector(".view-details-btn").addEventListener("click", (e) => {
+            e.stopPropagation();
+            openListingModal(property);
+        });
+
+        // Book button on card
+        card.querySelector(".book-btn").addEventListener("click", (e) => {
+            e.stopPropagation();
             alert(`Booking request sent for "${property.title}" in ${property.city}!\nContact: ${property.ownerName}`);
         });
 
         container.appendChild(card);
     });
 }
+
+// ===== OPEN LISTING MODAL =====
+function openListingModal(property) {
+    const modal = document.getElementById("listingModal");
+    const country = property.country.charAt(0).toUpperCase() + property.country.slice(1);
+
+    document.getElementById("modalTitle").textContent = property.title;
+    document.getElementById("modalDesc").textContent = `Beautiful ${property.country} property in ${property.city}. Perfect for your next stay!`;
+    document.getElementById("modalLocation").textContent = property.city;
+    document.getElementById("modalCountry").textContent = country;
+    document.getElementById("modalPrice").textContent = `€${property.price} / night`;
+    document.getElementById("modalOwner").textContent = property.ownerName;
+    document.getElementById("modalImage").src = property.images[0] || "https://picsum.photos/400/300?random=99";
+
+    document.getElementById("modalBookBtn").onclick = () => {
+        alert(`Booking request sent for "${property.title}" in ${property.city}!\nContact: ${property.ownerName}`);
+        closeListingModal();
+    };
+
+    modal.style.display = "flex";
+}
+
+// ===== CLOSE LISTING MODAL =====
+function closeListingModal() {
+    const modal = document.getElementById("listingModal");
+    modal.style.display = "none";
+}
+
+// ===== MODAL CLOSE BUTTON =====
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector(".modal-close-btn").addEventListener("click", closeListingModal);
+
+    const modal = document.getElementById("listingModal");
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            closeListingModal();
+        }
+    });
+});
 
 // ===== FILTER FUNCTIONALITY =====
 function applyFilters() {
