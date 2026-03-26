@@ -1,16 +1,22 @@
-// ===== READ COUNTRY FROM URL =====
-function getCountryFromURL() {
+// ===== READ PARAMETERS FROM URL =====
+function getParamsFromURL() {
     const params = new URLSearchParams(window.location.search);
-    return params.get("country") || "";
+    return {
+        city: params.get("city") || "",
+        country: params.get("country") || ""
+    };
 }
 
-// ===== INITIAL LOAD WITH COUNTRY FILTER =====
+// ===== INITIAL LOAD WITH FILTERS =====
 document.addEventListener("DOMContentLoaded", () => {
-    const initialCountry = getCountryFromURL();
-    if (initialCountry) {
-        document.getElementById("countryFilter").value = initialCountry;
+    const params = getParamsFromURL();
+    if (params.city) {
+        document.getElementById("searchCity").value = params.city;
     }
-    filterListings({country: initialCountry});
+    if (params.country) {
+        document.getElementById("countryFilter").value = params.country;
+    }
+    applyFilters();
 });
 
 
@@ -69,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ===== FILTER FUNCTIONALITY =====
-document.getElementById("applyFilters").addEventListener("click", () => {
+function applyFilters() {
     const city = document.getElementById("searchCity").value.toLowerCase();
     const maxPrice = parseFloat(document.getElementById("maxPrice").value);
     const country = document.getElementById("countryFilter").value;
@@ -82,4 +88,6 @@ document.getElementById("applyFilters").addEventListener("click", () => {
     });
 
     displayListings(filtered);
-});
+}
+
+document.getElementById("applyFilters").addEventListener("click", applyFilters);
