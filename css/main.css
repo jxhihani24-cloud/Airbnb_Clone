@@ -906,3 +906,12 @@ img {
 .faq-item.active .faq-arrow {
     transform: rotate(180deg);
 }
+
+.property-type {
+  background-color: var(--button-color);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}

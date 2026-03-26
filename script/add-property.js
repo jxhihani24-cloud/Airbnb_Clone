@@ -1,11 +1,47 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("addPropertyForm");
-    if (!form) return;
+    const cancelBtn = document.getElementById("cancelAddProperty");
+    const editId = localStorage.getItem("editingPropertyId");
 
-    form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        postPropertyFromPage();
-    });
+    // If editing, preload the form
+    if (editId) {
+        const properties = JSON.parse(localStorage.getItem("properties")) || [];
+        const property = properties.find(p => p.id == editId);
+
+        if (property) {
+            document.getElementById("title").value = property.title || "";
+            document.getElementById("city").value = property.city || "";
+            document.getElementById("country").value = property.country || "";
+            document.getElementById("propertyType").value = property.propertyType || "";
+            document.getElementById("price").value = property.price || "";
+            document.getElementById("guests").value = property.guests || "";
+            document.getElementById("bedrooms").value = property.bedrooms || "";
+            document.getElementById("bathrooms").value = property.bathrooms || "";
+            document.getElementById("description").value = property.description || "";
+            document.getElementById("amenities").value = property.amenities ? property.amenities.join(", ") : "";
+            document.getElementById("images").value = property.images ? property.images.join(", ") : "";
+        }
+    }
+
+    if (form) {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            postPropertyFromPage();
+        });
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", () => {
+            const confirmCancel = confirm(
+                "Are you sure you want to cancel?\nYour property details will not be saved."
+            );
+
+            if (confirmCancel) {
+                localStorage.removeItem("editingPropertyId");
+                window.location.href = "property.html";
+            }
+        });
+    }
 });
 
 function postPropertyFromPage() {
@@ -18,6 +54,7 @@ function postPropertyFromPage() {
     }
 
     const user = JSON.parse(currentUser);
+    const editId = localStorage.getItem("editingPropertyId");
 
     const title = document.getElementById("title").value.trim();
     const city = document.getElementById("city").value.trim();
@@ -36,13 +73,51 @@ function postPropertyFromPage() {
         return;
     }
 
-    const images = imagesInput
-        ? imagesInput.split(",").map(img => img.trim()).filter(Boolean)
-        : ["../images/Logo.png"];
-
     const amenities = amenitiesInput
-        ? amenitiesInput.split(",").map(item => item.trim()).filter(Boolean)
-        : [];
+    ? amenitiesInput.split(",").map(item => item.trim()).filter(Boolean)
+    : [];
+
+const images = imagesInput
+    ? imagesInput.split(",").map(img => img.trim()).filter(Boolean)
+    : ["../images/Logo.png"];
+
+    let allProperties = JSON.parse(localStorage.getItem("properties")) || [];
+
+    if (editId) {
+        const existingProperty = allProperties.find(p => p.id == editId);
+
+        if (!existingProperty) {
+            alert("❌ Property not found!");
+            localStorage.removeItem("editingPropertyId");
+            return;
+        }
+
+        const updatedListing = {
+            ...existingProperty,
+            title: title,
+            city: city,
+            country: country,
+            propertyType: propertyType,
+            price: Number(price),
+            guests: guests ? Number(guests) : 0,
+            bedrooms: bedrooms ? Number(bedrooms) : 0,
+            bathrooms: bathrooms ? Number(bathrooms) : 0,
+            description: description,
+            amenities: amenities,
+            images: images
+        };
+
+        allProperties = allProperties.map(p =>
+            p.id == editId ? updatedListing : p
+        );
+
+        localStorage.setItem("properties", JSON.stringify(allProperties));
+        localStorage.removeItem("editingPropertyId");
+
+        alert("✅ Property updated successfully!");
+        window.location.href = "property.html";
+        return;
+    }
 
     const newListing = {
         id: Date.now(),
@@ -62,30 +137,9 @@ function postPropertyFromPage() {
         createdAt: new Date().toISOString()
     };
 
-    let allProperties = JSON.parse(localStorage.getItem("properties")) || [];
     allProperties.push(newListing);
     localStorage.setItem("properties", JSON.stringify(allProperties));
 
     alert("✅ Property posted successfully!");
     window.location.href = "property.html";
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const cancelBtn = document.getElementById("cancelAddProperty");
-
-    if (cancelBtn) {
-        cancelBtn.addEventListener("click", () => {
-
-            const confirmCancel = confirm(
-                "Are you sure you want to cancel?\nYour property details will not be saved."
-            );
-
-            if (confirmCancel) {
-                window.location.href = "property.html";
-            }
-
-        });
-    }
-
-});
