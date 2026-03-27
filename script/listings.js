@@ -344,10 +344,15 @@ function confirmBooking() {
     }
 
     const user = JSON.parse(userData);
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
 
-    const booking = {
-        id: Date.now(),
+    // Calculate nights between check-in and check-out
+    const checkInDateObj = new Date(checkInDate);
+    const checkOutDateObj = new Date(checkOutDate);
+    const nights = Math.ceil((checkOutDateObj - checkInDateObj) / (1000 * 60 * 60 * 24));
+
+    // Create pending booking for payment
+    const pendingBooking = {
+        bookingId: Date.now(),
         userId: user.username,
         propertyId: currentProperty.id,
         propertyTitle: currentProperty.title,
@@ -360,14 +365,11 @@ function confirmBooking() {
         checkInDate: new Date(checkInDate).toLocaleDateString(),
         checkOutDate: new Date(checkOutDate).toLocaleDateString(),
         guests: parseInt(guests),
-        status: "Confirmed"
+        nights: nights,
+        status: "Pending"
     };
 
-    bookings.push(booking);
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-
-    alert(`✅ Booking confirmed for "${currentProperty.title}"!\n\nCheck-in: ${booking.checkInDate}\nCheck-out: ${booking.checkOutDate}\nGuests: ${guests}`);
-
-    closeBookingForm();
-    currentProperty = null;
+    // Store in session storage and redirect to payment
+    sessionStorage.setItem("pendingBooking", JSON.stringify(pendingBooking));
+    window.location.href = "payment.html";
 }

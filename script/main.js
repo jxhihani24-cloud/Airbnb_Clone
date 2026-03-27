@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdown.innerHTML = `
             <button class="dropdown-item" id="accountBtn" type="button">Account</button>
             <button class="dropdown-item" id="bookingsBtn" type="button">My Bookings</button>
+            <button class="dropdown-item" id="messagesBtn" type="button">Messages</button>
             <button class="dropdown-item" id="logoutBtn" type="button">Log Out</button>
         `;
         loginItem.style.position = 'relative';
@@ -47,6 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = window.location.pathname.includes('/pages/')
                 ? 'bookings.html'
                 : 'pages/bookings.html';
+        }
+
+        if (e.target.id === 'messagesBtn') {
+            window.location.href = window.location.pathname.includes('/pages/')
+                ? 'messages.html'
+                : 'pages/messages.html';
         }
 
         if (e.target.id === 'logoutBtn') {
