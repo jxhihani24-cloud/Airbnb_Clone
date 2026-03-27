@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Confirmation - Hostera</title>
+
+<link rel="icon" type="image/png" href="../images/Logo.png">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="../css/navbar.css">
+<link rel="stylesheet" href="../css/payment.css">
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+
+<div class="brand">
+<img src="../images/Logo.png">
+<span style="font-size:28px;">HOSTERA</span>
+</div>
+
+<ul class="nav-links">
+<li><a href="../index.html"><strong>Home</strong></a></li>
+<li><a href="listings.html"><strong>Listings</strong></a></li>
+<li><a href="property.html"><strong>Property</strong></a></li>
+<li><a href="login.html"><strong>Log In</strong></a></li>
+</ul>
+
+<div class="right-side">
+
+<label class="theme-switch">
+<input type="checkbox" id="themeToggle">
+<span class="slider"></span>
+</label>
+
+<button class="nav-btn">Contact</button>
+
+</div>
+
+</nav>
+
+<!-- PAYMENT CONFIRMATION -->
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="confirmation-container">
+        
+        <div class="confirmation-header">
+          <div class="success-icon">✓</div>
+          <h1>Payment Successful!</h1>
+          <p class="confirmation-subtitle">Your booking has been confirmed</p>
+        </div>
+
+        <!-- Confirmation Details -->
+        <div class="confirmation-section">
+          <h3 class="mb-4">Booking Confirmation Details</h3>
+          
+          <div class="confirmation-details">
+            <div class="detail-row">
+              <span class="detail-label">Confirmation Number</span>
+              <span class="detail-value" id="confirmationNumber">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Property</span>
+              <span class="detail-value" id="confirmPropertyName">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Location</span>
+              <span class="detail-value" id="confirmLocation">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Check-in</span>
+              <span class="detail-value" id="confirmCheckIn">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Check-out</span>
+              <span class="detail-value" id="confirmCheckOut">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Guests</span>
+              <span class="detail-value" id="confirmGuests">-</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Host</span>
+              <span class="detail-value" id="confirmHost">-</span>
+            </div>
+            <hr style="margin: 12px 0; border-color: var(--border-color);">
+            <div class="detail-row">
+              <span class="detail-label">Total Amount</span>
+              <span class="detail-value total-amount">€<span id="confirmTotal">0</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guest Information -->
+        <div class="confirmation-section">
+          <h3 class="mb-4">Guest Information</h3>
+          <div class="guest-info">
+            <p><strong>Name:</strong> <span id="confirmGuestName">-</span></p>
+            <p><strong>Email:</strong> <span id="confirmGuestEmail">-</span></p>
+            <p><strong>Phone:</strong> <span id="confirmGuestPhone">-</span></p>
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="next-steps">
+          <h4>What's Next?</h4>
+          <div class="steps-list">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h5>Confirmation Email</h5>
+                <p>Check your email for booking confirmation details</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h5>Contact the Host</h5>
+                <p><a href="messages.html" class="link-btn">Message the host</a> to introduce yourself</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h5>Get Ready to Travel</h5>
+                <p>Prepare for your stay and check the property details</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="confirmation-actions">
+          <a href="bookings.html" class="btn-action btn-primary">View My Bookings</a>
+          <a href="messages.html" class="btn-action btn-secondary">Message Host</a>
+          <a href="listings.html" class="btn-action btn-tertiary">Continue Exploring</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p style="font-weight: bold;color: white;">© 2026 HOSTERA. All rights reserved.</p>
+
+    <div class="social">
+        <a href="#"><img src="https://img.icons8.com/color/24/000000/facebook.png"/></a>
+        <a href="#"><img src="../images/tiktok.png"></a>
+        <a href="#"><img src="https://img.icons8.com/color/24/000000/instagram-new.png"/></a>
+    </div>
+</footer>
+
+<!-- CONTACT BUTTON ON NAVIGATION BAR -->
+<div id="contactModal" class="modal">
+  <div class="contact-modal-content">
+    <span class="contact-close">&times;</span>
+
+    <h2>Contact Support</h2>
+
+    <div class="support-section">
+      <h3>For Hosts</h3>
+      <p>📞 +1 800 123 456</p>
+      <p>📧 hosts@hostera.com</p>
+    </div>
+
+    <div class="support-section">
+      <h3>For Guests</h3>
+      <p>📞 +1 800 987 654</p>
+      <p>📧 support@hostera.com</p>
+    </div>
+
+    <div class="support-section">
+      <h3>General</h3>
+      <p>📧 info@hostera.com</p>
+    </div>
+  </div>
+</div>
+
+<script src="../script/main.js"></script>
+<script src="../script/payment-confirmation.js"></script>
+
+</body>
+</html>
