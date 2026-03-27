@@ -163,6 +163,10 @@ function cancelBooking(bookingId) {
 }
 
 // ===== OPEN BOOKING MODAL =====
+// ===== CURRENT IMAGE INDEX FOR BOOKING CAROUSEL =====
+let currentBookingImageIndex = 0;
+let currentBookingImages = [];
+
 function openBookingModal(booking) {
     const modal = document.getElementById("bookingModal");
     const country = booking.country.charAt(0).toUpperCase() + booking.country.slice(1);
@@ -175,7 +179,34 @@ function openBookingModal(booking) {
     document.getElementById("bookingModalPrice").textContent = `€${booking.price} / night`;
     document.getElementById("bookingModalGuests").textContent = `${booking.guests || 1} guest(s)`;
     document.getElementById("bookingModalOwner").textContent = booking.owner;
-    document.getElementById("bookingModalImage").src = booking.image || "https://picsum.photos/400/300?random=99";
+
+    // Setup image carousel
+    currentBookingImages = booking.images || [booking.image] || ["https://picsum.photos/400/300?random=99"];
+    currentBookingImageIndex = 0;
+    
+    // Display first image
+    document.getElementById("bookingModalImage").src = currentBookingImages[0];
+    updateBookingImageCounter();
+
+    // Create thumbnail gallery
+    const thumbnailGallery = document.getElementById("bookingThumbnailGallery");
+    thumbnailGallery.innerHTML = "";
+
+    currentBookingImages.forEach((img, index) => {
+        const li = document.createElement("li");
+        li.className = "thumbnail";
+        if (index === 0) li.classList.add("active");
+        
+        li.innerHTML = `<img src="${img}" alt="Image ${index + 1}">`;
+        li.addEventListener("click", () => {
+            currentBookingImageIndex = index;
+            displayBookingMainImage();
+            updateBookingThumbnailActive();
+            updateBookingImageCounter();
+        });
+        
+        thumbnailGallery.appendChild(li);
+    });
 
     const cancelBtn = document.getElementById("bookingModalCancelBtn");
     cancelBtn.textContent = status === "Stayed" ? "Write Review" : "Cancel Booking";
@@ -194,6 +225,23 @@ function openBookingModal(booking) {
     };
 
     modal.classList.add("show");
+}
+
+// ===== DISPLAY BOOKING MAIN IMAGE =====
+function displayBookingMainImage() {
+    document.getElementById("bookingModalImage").src = currentBookingImages[currentBookingImageIndex];
+}
+
+// ===== UPDATE BOOKING THUMBNAIL ACTIVE STATE =====
+function updateBookingThumbnailActive() {
+    document.querySelectorAll("#bookingThumbnailGallery .thumbnail").forEach((thumb, index) => {
+        thumb.classList.toggle("active", index === currentBookingImageIndex);
+    });
+}
+
+// ===== UPDATE BOOKING IMAGE COUNTER =====
+function updateBookingImageCounter() {
+    document.getElementById("bookingImageCounter").textContent = `${currentBookingImageIndex + 1}/${currentBookingImages.length}`;
 }
 
 // ===== CLOSE BOOKING MODAL =====

@@ -70,9 +70,24 @@
 <div id="bookingModal" class="modal-overlay">
     <div class="listing-modal-content">
         <button class="modal-close-btn booking-modal-close-btn">&times;</button>
+        
+        <!-- Image Carousel -->
         <div id="bookingModalImages" class="modal-image-slider">
-            <img id="bookingModalImage" src="" alt="Booking image">
+            <div class="image-carousel">
+                <div class="carousel-main-image">
+                    <img id="bookingModalImage" src="" alt="Booking image">
+                </div>
+                <div class="image-counter">
+                    <span id="bookingImageCounter">1/1</span>
+                </div>
+            </div>
         </div>
+
+        <!-- Thumbnail Gallery -->
+        <div style="padding: 12px 24px; background: rgba(0,0,0,0.02); border-bottom: 1px solid var(--border-color);">
+            <ul id="bookingThumbnailGallery" class="thumbnail-gallery"></ul>
+        </div>
+
         <div class="modal-details">
             <h2 id="bookingModalTitle"></h2>
             <p id="bookingModalDesc" class="modal-description"></p>

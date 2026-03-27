@@ -42,16 +42,16 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===== SAMPLE PROPERTIES =====
 const properties = [
     // ORIGINAL
-    { id: 1, title: "Cozy Apartment in Paris", city: "Paris", country: "france", owner: "alice", ownerName: "Alice Dubois", price: 120, images: ["https://picsum.photos/400/300?random=1"] },
-    { id: 2, title: "Modern Loft in New York", city: "New York", country: "usa", owner: "bob", ownerName: "Bob Carter", price: 150, images: ["https://picsum.photos/400/300?random=2"] },
-    { id: 3, title: "Traditional House in Tokyo", city: "Tokyo", country: "japan", owner: "carol", ownerName: "Carol Tanaka", price: 100, images: ["https://picsum.photos/400/300?random=3"] },
-    { id: 4, title: "Beach House in Bali", city: "Bali", country: "indonesia", owner: "dave", ownerName: "Dave Santoso", price: 180, images: ["https://picsum.photos/400/300?random=4"] },
-    { id: 5, title: "Mountain Cabin in Switzerland", city: "Zermatt", country: "switzerland", owner: "eve", ownerName: "Eve Meier", price: 220, images: ["https://picsum.photos/400/300?random=5"] },
-    { id: 6, title: "Luxury Apartment in Paris", city: "Paris", country: "france", owner: "frank", ownerName: "Frank Dupont", price: 200, images: ["https://picsum.photos/400/300?random=6"] },
-    { id: 7, title: "Penthouse in New York", city: "New York", country: "usa", owner: "grace", ownerName: "Grace Miller", price: 300, images: ["https://picsum.photos/400/300?random=7"] },
-    { id: 8, title: "Ryokan in Kyoto", city: "Kyoto", country: "japan", owner: "haru", ownerName: "Haru Sato", price: 130, images: ["https://picsum.photos/400/300?random=8"] },
-    { id: 9, title: "Villa in Ubud", city: "Ubud", country: "indonesia", owner: "ivan", ownerName: "Ivan Wijaya", price: 210, images: ["https://picsum.photos/400/300?random=9"] },
-    { id: 10, title: "Chalet in Geneva", city: "Geneva", country: "switzerland", owner: "julia", ownerName: "Julia Keller", price: 250, images: ["https://picsum.photos/400/300?random=10"] },
+    { id: 1, title: "Cozy Apartment in Paris", city: "Paris", country: "france", owner: "alice", ownerName: "Alice Dubois", price: 120, images: ["https://picsum.photos/400/300?random=1", "https://picsum.photos/400/300?random=1a", "https://picsum.photos/400/300?random=1b", "https://picsum.photos/400/300?random=1c"] },
+    { id: 2, title: "Modern Loft in New York", city: "New York", country: "usa", owner: "bob", ownerName: "Bob Carter", price: 150, images: ["https://picsum.photos/400/300?random=2","https://picsum.photos/400/300?random=2a", "https://picsum.photos/400/300?random=2b"] },
+    { id: 3, title: "Traditional House in Tokyo", city: "Tokyo", country: "japan", owner: "carol", ownerName: "Carol Tanaka", price: 100, images: ["https://picsum.photos/400/300?random=3","https://picsum.photos/400/300?random=3a", "https://picsum.photos/400/300?random=3b", "https://picsum.photos/400/300?random=3c", "https://picsum.photos/400/300?random=3d"] },
+    { id: 4, title: "Beach House in Bali", city: "Bali", country: "indonesia", owner: "dave", ownerName: "Dave Santoso", price: 180, images: ["https://picsum.photos/400/300?random=4","https://picsum.photos/400/300?random=4a"] },
+    { id: 5, title: "Mountain Cabin in Switzerland", city: "Zermatt", country: "switzerland", owner: "eve", ownerName: "Eve Meier", price: 220, images: ["https://picsum.photos/400/300?random=5","https://picsum.photos/400/300?random=5a" ] },
+    { id: 6, title: "Luxury Apartment in Paris", city: "Paris", country: "france", owner: "frank", ownerName: "Frank Dupont", price: 200, images: ["https://picsum.photos/400/300?random=6","https://picsum.photos/400/300?random=6a" ] },
+    { id: 7, title: "Penthouse in New York", city: "New York", country: "usa", owner: "grace", ownerName: "Grace Miller", price: 300, images: ["https://picsum.photos/400/300?random=7", "https://picsum.photos/400/300?random=7a"] },
+    { id: 8, title: "Ryokan in Kyoto", city: "Kyoto", country: "japan", owner: "haru", ownerName: "Haru Sato", price: 130, images: ["https://picsum.photos/400/300?random=8", "https://picsum.photos/400/300?random=8a"] },
+    { id: 9, title: "Villa in Ubud", city: "Ubud", country: "indonesia", owner: "ivan", ownerName: "Ivan Wijaya", price: 210, images: ["https://picsum.photos/400/300?random=9", "https://picsum.photos/400/300?random=9a"] },
+    { id: 10, title: "Chalet in Geneva", city: "Geneva", country: "switzerland", owner: "julia", ownerName: "Julia Keller", price: 250, images: ["https://picsum.photos/400/300?random=10","https://picsum.photos/400/300?random=10a" ] },
 
     // POPULAR STAYS 
     { id: 11, title: "Beach House", city: "Bali", country: "indonesia", owner: "kadek", ownerName: "Kadek Putra", price: 120, images: ["https://tinyurl.com/4sz54rfv"] },
@@ -125,6 +125,10 @@ function displayListings(list) {
 }
 
 // ===== OPEN LISTING MODAL =====
+// ===== CURRENT IMAGE INDEX FOR CAROUSEL =====
+let currentImageIndex = 0;
+let currentPropertyImages = [];
+
 function openListingModal(property) {
     const modal = document.getElementById("listingModal");
     const country = property.country.charAt(0).toUpperCase() + property.country.slice(1);
@@ -135,13 +139,57 @@ function openListingModal(property) {
     document.getElementById("modalCountry").textContent = country;
     document.getElementById("modalPrice").textContent = `€${property.price} / night`;
     document.getElementById("modalOwner").textContent = property.ownerName;
-    document.getElementById("modalImage").src = property.images[0] || "https://picsum.photos/400/300?random=99";
+
+    // Setup image carousel
+    currentPropertyImages = property.images || ["https://picsum.photos/400/300?random=99"];
+    currentImageIndex = 0;
+    
+    // Display first image
+    document.getElementById("modalImage").src = currentPropertyImages[0];
+    updateImageCounter();
+
+    // Create thumbnail gallery
+    const thumbnailGallery = document.getElementById("thumbnailGallery");
+    thumbnailGallery.innerHTML = "";
+
+    currentPropertyImages.forEach((img, index) => {
+        const li = document.createElement("li");
+        li.className = "thumbnail";
+        if (index === 0) li.classList.add("active");
+        
+        li.innerHTML = `<img src="${img}" alt="Image ${index + 1}">`;
+        li.addEventListener("click", () => {
+            currentImageIndex = index;
+            displayMainImage();
+            updateThumbnailActive();
+            updateImageCounter();
+        });
+        
+        thumbnailGallery.appendChild(li);
+    });
 
     document.getElementById("modalBookBtn").onclick = () => {
         openBookingForm(property);
     };
 
     modal.classList.add("show");
+}
+
+// ===== DISPLAY MAIN IMAGE =====
+function displayMainImage() {
+    document.getElementById("modalImage").src = currentPropertyImages[currentImageIndex];
+}
+
+// ===== UPDATE THUMBNAIL ACTIVE STATE =====
+function updateThumbnailActive() {
+    document.querySelectorAll(".thumbnail").forEach((thumb, index) => {
+        thumb.classList.toggle("active", index === currentImageIndex);
+    });
+}
+
+// ===== UPDATE IMAGE COUNTER =====
+function updateImageCounter() {
+    document.getElementById("imageCounter").textContent = `${currentImageIndex + 1}/${currentPropertyImages.length}`;
 }
 
 // ===== CLOSE LISTING MODAL =====
@@ -360,6 +408,7 @@ function confirmBooking() {
         country: currentProperty.country,
         price: currentProperty.price,
         owner: currentProperty.ownerName,
+        images: currentProperty.images,
         image: currentProperty.images[0],
         bookingDate: new Date().toLocaleDateString(),
         checkInDate: new Date(checkInDate).toLocaleDateString(),
