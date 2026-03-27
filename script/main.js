@@ -68,30 +68,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== ACCOUNT DROPDOWN MENU ===== //
 
-//set dark mode on page load
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
 
-    /* Load saved theme */
     const savedTheme = localStorage.getItem('theme') || 'dark';
 
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-        toggle.checked = true;
+    root.classList.toggle('dark-mode', savedTheme === 'dark');
+
+    if (toggle) {
+        toggle.checked = savedTheme === 'dark';
+
+        toggle.addEventListener('change', () => {
+            const isDark = toggle.checked;
+            root.classList.toggle('dark-mode', isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
     }
-
-
-    // Toggle event
-    toggle.addEventListener('change', () => {
-        if (toggle.checked) {
-            document.body.classList.add('dark-mode');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.body.classList.remove('dark-mode');
-            localStorage.setItem('theme', 'light');
-        }
-    });
-
 });
 
 // POPUP LOGIC
@@ -240,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Wait until page is fully loaded
-document.addEventListener("DOMContentLoaded", function () {
+/*document.addEventListener("DOMContentLoaded", function () {
 
     const modal = document.getElementById("contactModal");
     const openBtn = document.querySelector(".nav-btn");
@@ -263,5 +256,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+});*/
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("contactModal");
+    const openBtn = document.querySelector(".nav-btn");
+    const closeBtn = document.querySelector(".contact-close");
+
+    if (!modal || !openBtn || !closeBtn) return;
+
+    openBtn.addEventListener("click", function () {
+        modal.classList.add("show");
+    });
+
+    closeBtn.addEventListener("click", function () {
+        modal.classList.remove("show");
+    });
+
+    window.addEventListener("click", function (e) {
+        if (e.target === modal) {
+            modal.classList.remove("show");
+        }
+    });
 });
 

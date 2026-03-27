@@ -41,12 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const button = document.createElement("button");
         button.textContent = btn.label;
         button.className = btn.class;
-        button.style.cssText = "padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); cursor: pointer; transition: 0.2s; font-weight: 500;";
+        button.style.cssText = "padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color);background: var(--card-bg); color: var(--text-color); cursor: pointer; transition: 0.2s;font-weight: 500;";
 
         button.addEventListener("click", () => {
             document.querySelectorAll(".filter-btn").forEach(b => {
                 b.style.background = "var(--card-bg)";
                 b.style.opacity = "0.7";
+                b.style.color = "var(--text-color)";
             });
             button.style.background = "var(--button-color)";
             button.style.color = "white";
@@ -99,7 +100,7 @@ function displayBookings(userBookings) {
                     <div class="detail-value">${booking.city}, ${booking.country.charAt(0).toUpperCase() + booking.country.slice(1)}</div>
 
                     <div class="detail-label">Price</div>
-                    <div class="detail-value" style="color: var(--button-color); font-weight: 700;">€${booking.price}/night</div>
+                    <div class="detail-value" style="color: red; font-weight: 700;">€${booking.price}/night</div>
 
                     <div class="detail-label">Check-in</div>
                     <div class="detail-value">${booking.checkInDate || booking.bookingDate}</div>
@@ -119,8 +120,8 @@ function displayBookings(userBookings) {
                     </div>
 
                     <div class="card-buttons mt-auto">
-                        <button class="view-details-btn" style="background-color: #666;">View Details</button>
-                        <button class="cancel-booking-btn" style="background-color: #dc3545;">Cancel</button>
+                        <button class="view-details-btn" style="background-color: blue;">View Details</button>
+                        <button class="cancel-booking-btn" style="background-color: red;">Cancel</button>
                     </div>
                 </div>
             </div>

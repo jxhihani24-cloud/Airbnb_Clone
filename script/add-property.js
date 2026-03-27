@@ -3,6 +3,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const cancelBtn = document.getElementById("cancelAddProperty");
     const editId = localStorage.getItem("editingPropertyId");
 
+     if (editId) {
+    const pageTitle = document.getElementById("pageTitle");
+    const formTitle = document.getElementById("formTitle");
+    const submitBtn = document.getElementById("submitBtn");
+
+    if (pageTitle) pageTitle.textContent = "Edit Property";
+    if (formTitle) formTitle.textContent = "Edit Property Details";
+    if (submitBtn) submitBtn.textContent = "Update Property";
+    if(tit) tit.textContent="Hostera - Edit Property";
+}
+
     // If editing, preload the form
     if (editId) {
         const properties = JSON.parse(localStorage.getItem("properties")) || [];
