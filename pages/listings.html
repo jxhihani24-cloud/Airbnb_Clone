@@ -52,11 +52,22 @@
     <div class="col-md-3">
       <select id="countryFilter" class="form-select" style="border-color: black;">
         <option value="">All Countries</option>
+        <option value="albania">Albania</option>
         <option value="france">France</option>
         <option value="usa">USA</option>
         <option value="japan">Japan</option>
         <option value="indonesia">Indonesia</option>
         <option value="switzerland">Switzerland</option>
+        <option value="uk">United Kingdom</option>
+        <option value="italy">Italy</option>
+        <option value="spain">Spain</option>
+        <option value="australia">Australia</option>
+        <option value="canada">Canada</option>
+        <option value="brazil">Brazil</option>
+        <option value="thailand">Thailand</option>
+        <option value="uae">United Arab Emirates</option>
+        <option value="greece">Greece</option>
+        <option value="morocco">Morocco</option>
       </select>
     </div>
 
@@ -117,7 +128,53 @@
                     <p id="modalOwner"></p>
                 </div>
             </div>
-            <button id="modalBookBtn" class="modal-book-btn">📅 Book Now</button>
+
+            <!-- Reviews Section -->
+            <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border-color);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 20px;">Reviews</h3>
+                    <div id="ratingDisplay" style="display: flex; align-items: center; gap: 8px;">
+                        <span id="avgRating" style="font-size: 18px; font-weight: bold; color: var(--button-color);">0</span>
+                        <span id="ratingStars" style="font-size: 14px;">★★★★★</span>
+                        <span id="reviewCount" style="opacity: 0.7; font-size: 12px;">(0 reviews)</span>
+                    </div>
+                </div>
+
+                <button id="addReviewBtn" class="modal-book-btn" style="width: 100%; margin-bottom: 20px; background-color: #666;">✍️ Leave a Review</button>
+
+                <div id="reviewsList" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;"></div>
+            </div>
+
+            <button id="modalBookBtn" class="modal-book-btn" style="margin-top: 20px;">📅 Book Now</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== REVIEW MODAL ===== -->
+<div id="reviewModal" class="modal-overlay">
+    <div class="listing-modal-content" style="max-width: 500px;">
+        <button class="modal-close-btn review-modal-close">&times;</button>
+        <div class="modal-details" style="padding: 32px 24px;">
+            <h2 style="margin-bottom: 24px;">Leave a Review</h2>
+
+            <div class="booking-form-section">
+                <label class="booking-label">Rating</label>
+                <div id="starRating" style="display: flex; gap: 10px; font-size: 32px; margin-bottom: 20px;">
+                    <span class="star" data-value="1" style="cursor: pointer; opacity: 0.3; transition: opacity 0.2s;">★</span>
+                    <span class="star" data-value="2" style="cursor: pointer; opacity: 0.3; transition: opacity 0.2s;">★</span>
+                    <span class="star" data-value="3" style="cursor: pointer; opacity: 0.3; transition: opacity 0.2s;">★</span>
+                    <span class="star" data-value="4" style="cursor: pointer; opacity: 0.3; transition: opacity 0.2s;">★</span>
+                    <span class="star" data-value="5" style="cursor: pointer; opacity: 0.3; transition: opacity 0.2s;">★</span>
+                </div>
+                <span id="selectedRating" style="font-weight: 600; color: var(--button-color);">Select a rating</span>
+            </div>
+
+            <div class="booking-form-section">
+                <label class="booking-label">Your Review</label>
+                <textarea id="reviewText" class="booking-input" style="resize: vertical; min-height: 100px; font-family: inherit;" placeholder="Share your experience..." required></textarea>
+            </div>
+
+            <button id="submitReviewBtn" class="modal-book-btn" style="width: 100%; margin-top: 20px;">Submit Review</button>
         </div>
     </div>
 </div>
