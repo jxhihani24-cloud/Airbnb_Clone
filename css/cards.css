@@ -44,6 +44,11 @@
     font-size: 14px;
     opacity: 0.8;
 }
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
 /* FLOAT BUTTON */
 .fab {
     position: fixed;

@@ -3,7 +3,8 @@ function getParamsFromURL() {
     const params = new URLSearchParams(window.location.search);
     return {
         city: params.get("city") || "",
-        country: params.get("country") || ""
+        country: params.get("country") || "",
+        id: params.get("id") || null   // ✅ ADD THIS
     };
 }
 
@@ -13,32 +14,49 @@ let currentProperty = null;
 // ===== INITIAL LOAD WITH FILTERS =====
 document.addEventListener("DOMContentLoaded", () => {
     const params = getParamsFromURL();
-    if (params.city) {
-        document.getElementById("searchCity").value = params.city;
-    }
-    if (params.country) {
-        document.getElementById("countryFilter").value = params.country;
-    }
-    applyFilters();
 
-    // Setup booking form listeners
+    // 👉 IF ID EXISTS → show only that property
+    if (params.id) {
+        const selected = properties.find(p => p.id == params.id);
+
+        if (selected) {
+            displayListings([selected]);   // show only 1
+            openListingModal(selected);    // open details automatically
+        }
+    } else {
+        // normal behavior (filters)
+        if (params.city) {
+            document.getElementById("searchCity").value = params.city;
+        }
+        if (params.country) {
+            document.getElementById("countryFilter").value = params.country;
+        }
+
+        applyFilters();
+    }
+
     setupBookingFormListeners();
 });
 
 
 // ===== SAMPLE PROPERTIES =====
 const properties = [
+    // EXISTING
     { id: 1, title: "Cozy Apartment in Paris", city: "Paris", country: "france", owner: "alice", ownerName: "Alice", price: 120, images: ["https://picsum.photos/400/300?random=1"] },
     { id: 2, title: "Modern Loft in New York", city: "New York", country: "usa", owner: "bob", ownerName: "Bob", price: 150, images: ["https://picsum.photos/400/300?random=2"] },
-    { id: 3, title: "Traditional House in Tokyo", city: "Tokyo", country: "japan", owner: "carol", ownerName: "Carol", price: 100, images: ["https://picsum.photos/400/300?random=3"] },
-    { id: 4, title: "Beach House in Bali", city: "Bali", country: "indonesia", owner: "dave", ownerName: "Dave", price: 180, images: ["https://picsum.photos/400/300?random=4"] },
-    { id: 5, title: "Mountain Cabin in Switzerland", city: "Zermatt", country: "switzerland", owner: "eve", ownerName: "Eve", price: 220, images: ["https://picsum.photos/400/300?random=5"] },
-    { id: 6, title: "Luxury Apartment in Paris", city: "Paris", country: "france", owner: "frank", ownerName: "Frank", price: 200, images: ["https://picsum.photos/400/300?random=6"] },
-    { id: 7, title: "Penthouse in New York", city: "New York", country: "usa", owner: "grace", ownerName: "Grace", price: 300, images: ["https://picsum.photos/400/300?random=7"] },
-    { id: 8, title: "Ryokan in Kyoto", city: "Kyoto", country: "japan", owner: "haru", ownerName: "Haru", price: 130, images: ["https://picsum.photos/400/300?random=8"] },
-    { id: 9, title: "Villa in Ubud", city: "Ubud", country: "indonesia", owner: "ivan", ownerName: "Ivan", price: 210, images: ["https://picsum.photos/400/300?random=9"] },
-    { id: 10, title: "Chalet in Geneva", city: "Geneva", country: "switzerland", owner: "julia", ownerName: "Julia", price: 250, images: ["https://picsum.photos/400/300?random=10"] }
+
+    // 👉 NEW (YOUR POPULAR STAYS)
+    { id: 11, title: "Beach House", city: "Unknown", country: "indonesia", owner: "host1", ownerName: "Host", price: 120, images: ["https://tinyurl.com/4sz54rfv"] },
+
+    { id: 12, title: "Mountain Cabin", city: "Alps", country: "switzerland", owner: "host2", ownerName: "Host", price: 90, images: ["https://tinyurl.com/h8nbnw6z"] },
+
+    { id: 13, title: "City Apartment", city: "Unknown", country: "usa", owner: "host3", ownerName: "Host", price: 150, images: ["https://th.bing.com/th/id/R.884ee6730df0d9a1450e15cff40d6582?rik=7cKmbRU%2BNHh92w&pid=ImgRaw&r=0"] },
+
+    { id: 14, title: "Apartment in Tokyo", city: "Tokyo", country: "japan", owner: "host4", ownerName: "Host", price: 80, images: ["https://tinyurl.com/bdetzwrv"] },
+
+    { id: 15, title: "Skyscraper studio apartment", city: "New York", country: "usa", owner: "host5", ownerName: "Host", price: 145, images: ["images/skyscraper.webp"] }
 ];
+
 
 // ===== DISPLAY LISTINGS =====
 function displayListings(list) {
