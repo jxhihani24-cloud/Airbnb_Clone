@@ -20,14 +20,27 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
+
 <script>
 function goToListings() {
-    const city = document.getElementById("homeCity").value;
-    window.location.href = "pages/listings.html?city=" + encodeURIComponent(city);
+    const destination = document.getElementById("homeCity").value.trim();
+    const guests = document.getElementById("homeGuests").value.trim();
+    const checkIn = document.getElementById("homeCheckIn").value;
+    const checkOut = document.getElementById("homeCheckOut").value;
+
+    const params = new URLSearchParams();
+
+    if (destination) params.set("city", destination);
+    if (guests) params.set("guests", guests);
+    if (checkIn) params.set("checkIn", checkIn);
+    if (checkOut) params.set("checkOut", checkOut);
+
+    window.location.href = "pages/listings.html?" + params.toString();
 }
 </script>
-<body>
-    
+
+
+<body>    
 <!-- NAVBAR -->
 <nav class="navbar shadow-sm">
    
@@ -72,23 +85,27 @@ function goToListings() {
                     <p>Discover unique homes, villas, and apartments worldwide.</p>
 
                     <div class="search-box">
-                        <div class="search-field grow-field">
-                            <label for="homeCity">Destination</label>
-                            <input type="text" id="homeCity" placeholder="Where are you going?">
-                        </div>
+    <div class="search-field grow-field">
+        <label for="homeCity">Destination</label>
+        <input type="text" id="homeCity" placeholder="Where are you going?">
+    </div>
 
-                        <div class="search-field">
-                            <label>Check in</label>
-                            <input type="date">
-                        </div>
+    <div class="search-field">
+        <label for="homeCheckIn">Check in</label>
+        <input type="date" id="homeCheckIn">
+    </div>
 
-                        <div class="search-field">
-                            <label>Check out</label>
-                            <input type="date">
-                        </div>
+    <div class="search-field">
+        <label for="homeCheckOut">Check out</label>
+        <input type="date" id="homeCheckOut">
+    </div>
+<div class="search-field guests-field">
+    <label for="homeGuests">Guests</label>
+    <input type="number" id="homeGuests" min="1" max="15" value="1" placeholder="Guests">
+</div>
 
-                        <button onclick="goToListings()" class="search-btn-home">Search</button>
-                    </div>
+    <button onclick="goToListings()" class="search-btn-home">Search</button>
+</div>
                 </div>
             </div>
         </div>

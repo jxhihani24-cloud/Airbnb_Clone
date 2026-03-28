@@ -321,7 +321,7 @@ a {
     border-radius: 26px;
     padding: 14px;
     display: grid;
-    grid-template-columns: 1.35fr 1fr 1fr auto;
+    grid-template-columns: minmax(220px, 1.45fr) minmax(150px, 1fr) minmax(150px, 1fr) minmax(120px, 0.75fr) auto;
     gap: 12px;
     align-items: end;
     text-align: left;
@@ -350,6 +350,57 @@ a {
     background: var(--bg-color);
     color: var(--text-color);
     font-weight: 600;
+}
+
+.search-box select {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 14px 16px;
+    outline: none;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-weight: 600;
+    min-height: 52px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.guests-field {
+    min-width: 120px;
+}
+
+.search-field input,
+.search-field select {
+    min-height: 52px;
+    box-sizing: border-box;
+}
+
+.search-box input[type="number"] {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 14px 16px;
+    outline: none;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-weight: 600;
+    min-height: 52px;
+}
+
+/* Remove arrows (Chrome, Safari, Edge) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Remove arrows (Firefox) */
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 .search-btn-home {

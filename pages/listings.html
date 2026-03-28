@@ -72,6 +72,10 @@
     </div>
 
     <div class="col-md-2">
+    <input type="number" id="guestsInput" class="form-control" placeholder="Guests" min="1">
+</div>
+
+    <div class="col-md-2">
       <button id="applyFilters" class="btn btn-primary w-100" style="background-color: var(--button-color);color:white;font-weight: bold;border-color: var(--border-color);">
         Apply Filters
       </button>
@@ -197,8 +201,8 @@
             </div>
 
             <div class="booking-form-section">
-                <label class="booking-label">Number of Guests</label>
-                <input type="number" id="guestsInput" class="booking-input" min="1" value="1" required>
+                <label class="booking-label">Guests</label>
+<input type="text" id="selectedGuestsDisplay" class="booking-input" readonly>
             </div>
 
             <div class="booking-availability-status" id="availabilityStatus" style="padding: 14px; border-radius: 12px; margin: 16px 0; background: rgba(25, 135, 84, 0.1); color: #198754; font-weight: 600; display: none;">

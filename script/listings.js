@@ -4,12 +4,17 @@ function getParamsFromURL() {
     return {
         city: params.get("city") || "",
         country: params.get("country") || "",
-        id: params.get("id") || null   // ✅ ADD THIS
+        guests: params.get("guests") || "",
+        checkIn: params.get("checkIn") || "",
+        checkOut: params.get("checkOut") || "",
+        id: params.get("id") || null
     };
 }
 
 // ===== CURRENT PROPERTY FOR BOOKING =====
 let currentProperty = null;
+let selectedCheckInDate = "";
+let selectedCheckOutDate = "";
 
 // ===== REVIEWS MANAGEMENT =====
 function getReviewsByProperty(propertyId) {
@@ -84,6 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
     properties = loadAllProperties();
 
     const params = getParamsFromURL();
+    selectedCheckInDate = params.checkIn || "";
+    selectedCheckOutDate = params.checkOut || "";
 
     // 👉 IF ID EXISTS → show only that property
     if (params.id) {
@@ -101,6 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (params.country) {
             document.getElementById("countryFilter").value = params.country;
         }
+        if (params.guests) {
+    document.getElementById("guestsInput").value = params.guests;
+}
 
         applyFilters();
     }
@@ -111,41 +121,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ===== SAMPLE PROPERTIES =====
 const defaultProperties = [
-    // ORIGINAL
-    { id: 1, title: "Cozy Apartment in Paris", city: "Paris", country: "france", owner: "alice", ownerName: "Alice Dubois", price: 120, images: ["https://picsum.photos/400/300?random=1", "https://picsum.photos/400/300?random=1a", "https://picsum.photos/400/300?random=1b", "https://picsum.photos/400/300?random=1c"] },
-    { id: 2, title: "Modern Loft in New York", city: "New York", country: "usa", owner: "bob", ownerName: "Bob Carter", price: 150, images: ["https://picsum.photos/400/300?random=2", "https://picsum.photos/400/300?random=2a", "https://picsum.photos/400/300?random=2b"] },
-    { id: 3, title: "Traditional House in Tokyo", city: "Tokyo", country: "japan", owner: "carol", ownerName: "Carol Tanaka", price: 100, images: ["https://picsum.photos/400/300?random=3", "https://picsum.photos/400/300?random=3a", "https://picsum.photos/400/300?random=3b", "https://picsum.photos/400/300?random=3c", "https://picsum.photos/400/300?random=3d"] },
-    { id: 4, title: "Beach House in Bali", city: "Bali", country: "indonesia", owner: "dave", ownerName: "Dave Santoso", price: 180, images: ["https://picsum.photos/400/300?random=4", "https://picsum.photos/400/300?random=4a"] },
-    { id: 5, title: "Mountain Cabin in Switzerland", city: "Zermatt", country: "switzerland", owner: "eve", ownerName: "Eve Meier", price: 220, images: ["https://picsum.photos/400/300?random=5", "https://picsum.photos/400/300?random=5a"] },
-    { id: 6, title: "Luxury Apartment in Paris", city: "Paris", country: "france", owner: "frank", ownerName: "Frank Dupont", price: 200, images: ["https://picsum.photos/400/300?random=6", "https://picsum.photos/400/300?random=6a"] },
-    { id: 7, title: "Penthouse in New York", city: "New York", country: "usa", owner: "grace", ownerName: "Grace Miller", price: 300, images: ["https://picsum.photos/400/300?random=7", "https://picsum.photos/400/300?random=7a"] },
-    { id: 8, title: "Ryokan in Kyoto", city: "Kyoto", country: "japan", owner: "haru", ownerName: "Haru Sato", price: 130, images: ["https://picsum.photos/400/300?random=8", "https://picsum.photos/400/300?random=8a"] },
-    { id: 9, title: "Villa in Ubud", city: "Ubud", country: "indonesia", owner: "ivan", ownerName: "Ivan Wijaya", price: 210, images: ["https://picsum.photos/400/300?random=9", "https://picsum.photos/400/300?random=9a"] },
-    { id: 10, title: "Chalet in Geneva", city: "Geneva", country: "switzerland", owner: "julia", ownerName: "Julia Keller", price: 250, images: ["https://picsum.photos/400/300?random=10", "https://picsum.photos/400/300?random=10a"] },
+    { id: 1, title: "Cozy Apartment in Paris", guests: 4, city: "Paris", country: "france", owner: "alice", ownerName: "Alice Dubois", price: 120, images: ["https://picsum.photos/400/300?random=1", "https://picsum.photos/400/300?random=1a", "https://picsum.photos/400/300?random=1b", "https://picsum.photos/400/300?random=1c"] },
+    { id: 2, title: "Modern Loft in New York", guests: 3, city: "New York", country: "usa", owner: "bob", ownerName: "Bob Carter", price: 150, images: ["https://picsum.photos/400/300?random=2", "https://picsum.photos/400/300?random=2a", "https://picsum.photos/400/300?random=2b"] },
+    { id: 3, title: "Traditional House in Tokyo", guests: 5, city: "Tokyo", country: "japan", owner: "carol", ownerName: "Carol Tanaka", price: 100, images: ["https://picsum.photos/400/300?random=3", "https://picsum.photos/400/300?random=3a", "https://picsum.photos/400/300?random=3b", "https://picsum.photos/400/300?random=3c", "https://picsum.photos/400/300?random=3d"] },
+    { id: 4, title: "Beach House in Bali", guests: 6, city: "Bali", country: "indonesia", owner: "dave", ownerName: "Dave Santoso", price: 180, images: ["https://picsum.photos/400/300?random=4", "https://picsum.photos/400/300?random=4a"] },
+    { id: 5, title: "Mountain Cabin in Switzerland", guests: 5, city: "Zermatt", country: "switzerland", owner: "eve", ownerName: "Eve Meier", price: 220, images: ["https://picsum.photos/400/300?random=5", "https://picsum.photos/400/300?random=5a"] },
+    { id: 6, title: "Luxury Apartment in Paris", guests: 4, city: "Paris", country: "france", owner: "frank", ownerName: "Frank Dupont", price: 200, images: ["https://picsum.photos/400/300?random=6", "https://picsum.photos/400/300?random=6a"] },
+    { id: 7, title: "Penthouse in New York", guests: 6, city: "New York", country: "usa", owner: "grace", ownerName: "Grace Miller", price: 300, images: ["https://picsum.photos/400/300?random=7", "https://picsum.photos/400/300?random=7a"] },
+    { id: 8, title: "Ryokan in Kyoto", guests: 2, city: "Kyoto", country: "japan", owner: "haru", ownerName: "Haru Sato", price: 130, images: ["https://picsum.photos/400/300?random=8", "https://picsum.photos/400/300?random=8a"] },
+    { id: 9, title: "Villa in Ubud", guests: 6, city: "Ubud", country: "indonesia", owner: "ivan", ownerName: "Ivan Wijaya", price: 210, images: ["https://picsum.photos/400/300?random=9", "https://picsum.photos/400/300?random=9a"] },
+    { id: 10, title: "Chalet in Geneva", guests: 5, city: "Geneva", country: "switzerland", owner: "julia", ownerName: "Julia Keller", price: 250, images: ["https://picsum.photos/400/300?random=10", "https://picsum.photos/400/300?random=10a"] },
 
     // POPULAR STAYS 
-    { id: 11, title: "Beach House", city: "Bali", country: "indonesia", owner: "kadek", ownerName: "Kadek Putra", price: 120, images: ["https://tinyurl.com/4sz54rfv", "https://tinyurl.com/4sz54rfv", "https://tinyurl.com/4sz54rfv"] },
-    { id: 12, title: "Mountain Cabin", city: "Zermatt", country: "switzerland", owner: "lukas", ownerName: "Lukas Steiner", price: 90, images: ["https://tinyurl.com/h8nbnw6z", "https://tinyurl.com/h8nbnw6z", "https://tinyurl.com/h8nbnw6z"] },
-    { id: 13, title: "City Apartment", city: "New York", country: "usa", owner: "michael", ownerName: "Michael Johnson", price: 150, images: ["https://th.bing.com/th/id/R.884ee6730df0d9a1450e15cff40d6582?rik=7cKmbRU%2BNHh92w&pid=ImgRaw&r=0", "https://th.bing.com/th/id/R.884ee6730df0d9a1450e15cff40d6582?rik=7cKmbRU%2BNHh92w&pid=ImgRaw&r=0"] },
-    { id: 14, title: "Apartment in Tokyo", city: "Tokyo", country: "japan", owner: "yuki", ownerName: "Yuki Nakamura", price: 80, images: ["https://tinyurl.com/bdetzwrv", "https://tinyurl.com/bdetzwrv"] },
-    { id: 15, title: "Skyscraper Studio Apartment", city: "New York", country: "usa", owner: "david", ownerName: "David Smith", price: 145, images: ["images/skyscraper.webp", "https://images/skyscraper.webp"] },
+    { id: 11, title: "Beach House", guests: 6, city: "Bali", country: "indonesia", owner: "kadek", ownerName: "Kadek Putra", price: 120, images: ["https://tinyurl.com/4sz54rfv", "https://tinyurl.com/4sz54rfv", "https://tinyurl.com/4sz54rfv"] },
+    { id: 12, title: "Mountain Cabin", guests: 4, city: "Zermatt", country: "switzerland", owner: "lukas", ownerName: "Lukas Steiner", price: 90, images: ["https://tinyurl.com/h8nbnw6z", "https://tinyurl.com/h8nbnw6z", "https://tinyurl.com/h8nbnw6z"] },
+    { id: 13, title: "City Apartment", guests: 3, city: "New York", country: "usa", owner: "michael", ownerName: "Michael Johnson", price: 150, images: ["https://th.bing.com/th/id/R.884ee6730df0d9a1450e15cff40d6582?rik=7cKmbRU%2BNHh92w&pid=ImgRaw&r=0", "https://th.bing.com/th/id/R.884ee6730df0d9a1450e15cff40d6582?rik=7cKmbRU%2BNHh92w&pid=ImgRaw&r=0"] },
+    { id: 14, title: "Apartment in Tokyo", guests: 2, city: "Tokyo", country: "japan", owner: "yuki", ownerName: "Yuki Nakamura", price: 80, images: ["https://tinyurl.com/bdetzwrv", "https://tinyurl.com/bdetzwrv"] },
+    { id: 15, title: "Skyscraper Studio Apartment", guests: 2, city: "New York", country: "usa", owner: "david", ownerName: "David Smith", price: 145, images: ["images/skyscraper.webp", "https://images/skyscraper.webp"] },
 
-    // NEW GLOBAL LISTINGS 🌍
-    { id: 16, title: "Eiffel Tower View Studio", city: "Paris", country: "france", owner: "marie", ownerName: "Marie Dubois", price: 140, images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688", "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"] },
-    { id: 17, title: "Luxury Manhattan Penthouse", city: "New York", country: "usa", owner: "john", ownerName: "John Carter", price: 320, images: ["https://images.unsplash.com/photo-1507089947367-19c1da9775ae", "https://images.unsplash.com/photo-1507089947367-19c1da9775ae"] },
-    { id: 18, title: "Modern Shibuya Apartment", city: "Tokyo", country: "japan", owner: "yuki", ownerName: "Yuki Tanaka", price: 110, images: ["https://images.unsplash.com/photo-1554995207-c18c203602cb", "https://images.unsplash.com/photo-1554995207-c18c203602cb"] },
-    { id: 19, title: "Jungle Villa with Pool", city: "Ubud", country: "indonesia", owner: "made", ownerName: "Made Santoso", price: 200, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 20, title: "Alpine Luxury Chalet", city: "Zermatt", country: "switzerland", owner: "luca", ownerName: "Luca Meier", price: 280, images: ["https://images.unsplash.com/photo-1449157291145-7efd050a4d0e", "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e"] },
-    { id: 21, title: "Central London Flat", city: "London", country: "uk", owner: "emma", ownerName: "Emma Wilson", price: 190, images: ["https://images.unsplash.com/photo-1493809842364-78817add7ffb", "https://images.unsplash.com/photo-1493809842364-78817add7ffb"] },
-    { id: 22, title: "Colosseum View Apartment", city: "Rome", country: "italy", owner: "marco", ownerName: "Marco Rossi", price: 160, images: ["https://images.unsplash.com/photo-1494526585095-c41746248156", "https://images.unsplash.com/photo-1494526585095-c41746248156"] },
-    { id: 23, title: "Barcelona Beach Apartment", city: "Barcelona", country: "spain", owner: "sofia", ownerName: "Sofía Martinez", price: 150, images: ["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85", "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"] },
-    { id: 24, title: "Sydney Ocean View House", city: "Sydney", country: "australia", owner: "liam", ownerName: "Liam Brown", price: 230, images: ["https://images.unsplash.com/photo-1479839672679-a46483c0e7c8", "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8"] },
-    { id: 25, title: "Forest Cabin Vancouver", city: "Vancouver", country: "canada", owner: "noah", ownerName: "Noah Smith", price: 170, images: ["https://images.unsplash.com/photo-1445019980597-93fa8acb246c", "https://images.unsplash.com/photo-1445019980597-93fa8acb246c"] },
-    { id: 26, title: "Rio Beachfront Apartment", city: "Rio de Janeiro", country: "brazil", owner: "ana", ownerName: "Ana Silva", price: 140, images: ["https://images.unsplash.com/photo-1505692794403-34d4982c85d0", "https://images.unsplash.com/photo-1505692794403-34d4982c85d0"] },
-    { id: 27, title: "Phuket Tropical Villa", city: "Phuket", country: "thailand", owner: "chai", ownerName: "Chai Wong", price: 130, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 28, title: "Dubai Marina Luxury Apartment", city: "Dubai", country: "uae", owner: "ahmed", ownerName: "Ahmed Al-Farsi", price: 260, images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750", "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"] },
-    { id: 29, title: "Santorini Sea View House", city: "Santorini", country: "greece", owner: "nikos", ownerName: "Nikos Papadopoulos", price: 210, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 30, title: "Marrakech Traditional Riad", city: "Marrakech", country: "morocco", owner: "youssef", ownerName: "Youssef Benali", price: 120, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] }
+    // GLOBAL LISTINGS 🌍
+    { id: 16, title: "Eiffel Tower View Studio", guests: 2, city: "Paris", country: "france", owner: "marie", ownerName: "Marie Dubois", price: 140, images: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688", "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"] },
+    { id: 17, title: "Luxury Manhattan Penthouse", guests: 6, city: "New York", country: "usa", owner: "john", ownerName: "John Carter", price: 320, images: ["https://images.unsplash.com/photo-1507089947367-19c1da9775ae", "https://images.unsplash.com/photo-1507089947367-19c1da9775ae"] },
+    { id: 18, title: "Modern Shibuya Apartment", guests: 3, city: "Tokyo", country: "japan", owner: "yuki", ownerName: "Yuki Tanaka", price: 110, images: ["https://images.unsplash.com/photo-1554995207-c18c203602cb", "https://images.unsplash.com/photo-1554995207-c18c203602cb"] },
+    { id: 19, title: "Jungle Villa with Pool", guests: 6, city: "Ubud", country: "indonesia", owner: "made", ownerName: "Made Santoso", price: 200, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
+    { id: 20, title: "Alpine Luxury Chalet", guests: 6, city: "Zermatt", country: "switzerland", owner: "luca", ownerName: "Luca Meier", price: 280, images: ["https://images.unsplash.com/photo-1449157291145-7efd050a4d0e", "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e"] },
+    { id: 21, title: "Central London Flat", guests: 4, city: "London", country: "uk", owner: "emma", ownerName: "Emma Wilson", price: 190, images: ["https://images.unsplash.com/photo-1493809842364-78817add7ffb", "https://images.unsplash.com/photo-1493809842364-78817add7ffb"] },
+    { id: 22, title: "Colosseum View Apartment", guests: 4, city: "Rome", country: "italy", owner: "marco", ownerName: "Marco Rossi", price: 160, images: ["https://images.unsplash.com/photo-1494526585095-c41746248156", "https://images.unsplash.com/photo-1494526585095-c41746248156"] },
+    { id: 23, title: "Barcelona Beach Apartment", guests: 4, city: "Barcelona", country: "spain", owner: "sofia", ownerName: "Sofía Martinez", price: 150, images: ["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85", "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"] },
+    { id: 24, title: "Sydney Ocean View House", guests: 6, city: "Sydney", country: "australia", owner: "liam", ownerName: "Liam Brown", price: 230, images: ["https://images.unsplash.com/photo-1479839672679-a46483c0e7c8", "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8"] },
+    { id: 25, title: "Forest Cabin Vancouver", guests: 5, city: "Vancouver", country: "canada", owner: "noah", ownerName: "Noah Smith", price: 170, images: ["https://images.unsplash.com/photo-1445019980597-93fa8acb246c", "https://images.unsplash.com/photo-1445019980597-93fa8acb246c"] },
+    { id: 26, title: "Rio Beachfront Apartment", guests: 4, city: "Rio de Janeiro", country: "brazil", owner: "ana", ownerName: "Ana Silva", price: 140, images: ["https://images.unsplash.com/photo-1505692794403-34d4982c85d0", "https://images.unsplash.com/photo-1505692794403-34d4982c85d0"] },
+    { id: 27, title: "Phuket Tropical Villa", guests: 5, city: "Phuket", country: "thailand", owner: "chai", ownerName: "Chai Wong", price: 130, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
+    { id: 28, title: "Dubai Marina Luxury Apartment", guests: 5, city: "Dubai", country: "uae", owner: "ahmed", ownerName: "Ahmed Al-Farsi", price: 260, images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750", "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"] },
+    { id: 29, title: "Santorini Sea View House", guests: 4, city: "Santorini", country: "greece", owner: "nikos", ownerName: "Nikos Papadopoulos", price: 210, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
+    { id: 30, title: "Marrakech Traditional Riad", guests: 4, city: "Marrakech", country: "morocco", owner: "youssef", ownerName: "Youssef Benali", price: 120, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] }
 ];
 
 // ===== LOAD ALL PROPERTIES (DEFAULT + USER-ADDED) =====
@@ -188,11 +197,12 @@ function displayListings(list) {
             <div class="card-info">
                 <h4>${property.title}</h4>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <p><strong>Location:</strong> ${property.city}</p>
+                    <p><strong>Location:</strong> ${property.city}, ${property.country.charAt(0).toUpperCase() + property.country.slice(1)}</p>
                     <span style="font-size: 12px; color: var(--button-color);">${stars}</span>
                 </div>
                 <p style="font-size: 12px; opacity: 0.7;">⭐ ${avgRating} (${reviews.length})</p>
                 <p><strong>Price:</strong> €${property.price} / night</p>
+                <p><strong>Capacity:</strong> ${property.guests || 0} guest(s)</p>
                 <p style="font-size:12px; color:var(--text-color);"><b>By:</b> ${property.ownerName}</p>
                 <div class="card-buttons">
                     <button class="view-details-btn" style="background-color: #666;">View Details</button>
@@ -333,16 +343,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ===== FILTER FUNCTIONALITY =====
 function applyFilters() {
-    const city = document.getElementById("searchCity").value.toLowerCase();
+    const destination = document.getElementById("searchCity").value.toLowerCase().trim();
     const maxPrice = parseFloat(document.getElementById("maxPrice").value);
     const country = document.getElementById("countryFilter").value.toLowerCase();
+    const guests = parseInt(document.getElementById("guestsInput").value);
 
     const filtered = properties.filter(prop => {
-        const matchesCity = city ? prop.city.toLowerCase().includes(city) : true;
+        const matchesDestination = destination
+            ? prop.city.toLowerCase().includes(destination) ||
+              prop.country.toLowerCase().includes(destination)
+            : true;
+
         const matchesPrice = maxPrice ? prop.price <= maxPrice : true;
-        const matchesCountry = country ? prop.country.toLowerCase() === country : true;
-        return matchesCity && matchesPrice && matchesCountry;
+
+        const matchesCountry = country
+            ? prop.country.toLowerCase() === country
+            : true;
+
+        const matchesGuests = guests
+            ? prop.guests >= guests
+            : true;
+
+        return matchesDestination && matchesPrice && matchesCountry && matchesGuests;
     });
+
+    if (guests) {
+        filtered.sort((a, b) => a.guests - b.guests);
+    }
 
     displayListings(filtered);
 }
@@ -353,6 +380,7 @@ document.getElementById("applyFilters").addEventListener("click", applyFilters);
 document.getElementById("searchCity").addEventListener("keyup", applyFilters);
 document.getElementById("maxPrice").addEventListener("change", applyFilters);
 document.getElementById("countryFilter").addEventListener("change", applyFilters);
+document.getElementById("guestsInput").addEventListener("input", applyFilters);
 
 // ===== CHECK AVAILABILITY FOR DATES =====
 function checkAvailability(propertyId, checkInDate, checkOutDate) {
@@ -374,7 +402,7 @@ function checkAvailability(propertyId, checkInDate, checkOutDate) {
 function setupBookingFormListeners() {
     const checkInInput = document.getElementById("checkInInput");
     const checkOutInput = document.getElementById("checkOutInput");
-    const guestsInput = document.getElementById("guestsInput");
+    
 
     // Set minimum date to tomorrow
     const tomorrow = new Date();
@@ -392,7 +420,7 @@ function setupBookingFormListeners() {
     });
 
     checkOutInput.addEventListener("change", calculatePropertiesAndAvailability);
-    guestsInput.addEventListener("change", calculatePropertiesAndAvailability);
+    
 
     // Close button
     document.querySelector(".booking-form-close").addEventListener("click", closeBookingForm);
@@ -476,10 +504,14 @@ function openBookingForm(property) {
     currentProperty = property;
     document.getElementById("bookingFormTitle").textContent = `Book "${property.title}"`;
 
-    // Reset form
-    document.getElementById("checkInInput").value = "";
-    document.getElementById("checkOutInput").value = "";
-    document.getElementById("guestsInput").value = "1";
+    // Prefill dates from homepage/listings URL if available
+    document.getElementById("checkInInput").value = selectedCheckInDate || "";
+    document.getElementById("checkOutInput").value = selectedCheckOutDate || "";
+
+    // Show selected guests from listings filter
+    const selectedGuests = parseInt(document.getElementById("guestsInput").value) || 1;
+    document.getElementById("selectedGuestsDisplay").value = `${selectedGuests} guest(s)`;
+
     document.getElementById("availabilityStatus").style.display = "none";
     clearPrices();
     document.getElementById("confirmBookBtn").disabled = true;
@@ -490,8 +522,20 @@ function openBookingForm(property) {
     const minDate = tomorrow.toISOString().split('T')[0];
     document.getElementById("checkInInput").min = minDate;
 
+    // If check-in already exists, set check-out minimum correctly
+    if (selectedCheckInDate) {
+        const checkIn = new Date(selectedCheckInDate);
+        checkIn.setDate(checkIn.getDate() + 1);
+        document.getElementById("checkOutInput").min = checkIn.toISOString().split("T")[0];
+    }
+
     document.getElementById("bookingFormModal").classList.add("show");
     closeListingModal();
+
+    // Recalculate immediately if both dates already exist
+    if (selectedCheckInDate && selectedCheckOutDate) {
+        calculatePropertiesAndAvailability();
+    }
 }
 
 // ===== CLOSE BOOKING FORM MODAL =====
@@ -510,10 +554,16 @@ function confirmBooking() {
 
     const checkInDate = document.getElementById("checkInInput").value;
     const checkOutDate = document.getElementById("checkOutInput").value;
-    const guests = document.getElementById("guestsInput").value;
+    const guests = parseInt(document.getElementById("guestsInput").value) || 1;
 
     if (!checkInDate || !checkOutDate) {
         alert("Please select check-in and check-out dates");
+        return;
+    }
+
+    // ✅ capacity validation
+    if (guests > currentProperty.guests) {
+        alert(`❌ You can't book this property for more than ${currentProperty.guests} guests.`);
         return;
     }
 
@@ -539,12 +589,11 @@ function confirmBooking() {
         bookingDate: new Date().toLocaleDateString(),
         checkInDate: new Date(checkInDate).toLocaleDateString(),
         checkOutDate: new Date(checkOutDate).toLocaleDateString(),
-        guests: parseInt(guests),
+        guests: guests,
         nights: nights,
         status: "Pending"
     };
 
-    // Store in session storage and redirect to payment
     sessionStorage.setItem("pendingBooking", JSON.stringify(pendingBooking));
     window.location.href = "payment.html";
 }
