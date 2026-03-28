@@ -29,6 +29,16 @@ function getAverageRating(propertyId) {
     return (sum / reviews.length).toFixed(1);
 }
 
+function hasUserStayed(propertyId) {
+    const userData = localStorage.getItem("currentUser");
+    if (!userData) return false;
+
+    const user = JSON.parse(userData);
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+    return bookings.some(b => b.userId === user.username && b.propertyId === propertyId);
+}
+
 function addReview(propertyId, rating, reviewText) {
     const currentUser = localStorage.getItem("currentUser");
     if (!currentUser) {
@@ -92,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedCheckInDate = params.checkIn || "";
     selectedCheckOutDate = params.checkOut || "";
 
-    // 👉 IF ID EXISTS → show only that property
+    // IF ID EXISTS → show only that property
     if (params.id) {
         const selected = properties.find(p => p.id == params.id);
 
@@ -300,8 +310,16 @@ function openListingModal(property) {
 
     // Setup review button
     document.getElementById("addReviewBtn").onclick = () => {
-        openReviewModal(property.id);
-    };
+    if (!localStorage.getItem("currentUser")) {
+        alert("Please log in to leave a review.");
+        return;
+    }
+    if (!hasUserStayed(property.id)) {
+        alert("❌ You can only leave a review after staying at this property.");
+        return;
+    }
+    openReviewModal(property.id);
+};
 
     modal.classList.add("show");
 }
@@ -561,7 +579,7 @@ function confirmBooking() {
         return;
     }
 
-    // ✅ capacity validation
+    // capacity validation
     if (guests > currentProperty.guests) {
         alert(`❌ You can't book this property for more than ${currentProperty.guests} guests.`);
         return;
