@@ -36,7 +36,13 @@ function hasUserStayed(propertyId) {
     const user = JSON.parse(userData);
     const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
 
-    return bookings.some(b => b.userId === user.username && b.propertyId === propertyId);
+    return bookings.some(b => {
+        if (b.userId !== user.username || b.propertyId !== propertyId) return false;
+        const checkOut = new Date(b.checkOutDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return checkOut < today; // only "Stayed" bookings
+    });
 }
 
 function addReview(propertyId, rating, reviewText) {
