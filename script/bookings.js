@@ -114,11 +114,10 @@ function displayBookings(userBookings) {
                     <div class="detail-label">Host</div>
                     <div class="detail-value">${booking.owner}</div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
-                        <span class="badge ${badgeColor}">${status}</span>
-                        ${status === "Stayed" ? '<button class="review-btn" style="padding: 4px 10px; font-size: 12px; background: var(--button-color); color: white; border: none; border-radius: 6px; cursor: pointer;">Write Review</button>' : ''}
-                    </div>
-
+                  <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+                 <span class="badge ${badgeColor}">${status}</span>
+               ${status === "Stayed" ? '<button class="review-btn" style="padding: 4px 10px; font-size: 12px; background: var(--button-color); color: white; border: none; border-radius: 6px; cursor: pointer;">Write Review</button>' : ''}
+                </div>
                     <div class="card-buttons mt-auto">
                         <button class="view-details-btn" style="background-color: blue;">View Details</button>
                         <button class="cancel-booking-btn" style="background-color: red;">Cancel</button>
