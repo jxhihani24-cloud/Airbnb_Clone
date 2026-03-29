@@ -319,3 +319,11 @@
     color: var(--text-color);
     opacity: 0.7; /* optional nice faded look */
 }
+
+#changePasswordBtn{
+    background-color: var(--button-color);
+}
+
+#changeUsernameBtn{
+    background-color: var(--button-color);
+}
