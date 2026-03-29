@@ -327,3 +327,11 @@
 #changeUsernameBtn{
     background-color: var(--button-color);
 }
+
+#changePasswordBtn:hover{
+    background-color: var(--hover-color);
+}
+
+#changeUsernameBtn:hover{
+    background-color: var(--hover-color);
+}

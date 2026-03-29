@@ -8,6 +8,7 @@
     --border-color: #dddddd;
     --calendar-icon-filter: none;
      --success-color: #054905;
+     --hover-color:#1518b9;
 }
 
 /* Dark Mode colors */
@@ -20,6 +21,7 @@
     --border-color: #333333;
     --calendar-icon-filter: invert(1);
      --success-color: #3aaf3e;
+     --hover-color:#bb2025;
 }
 
 /* Makes sure calendar icon is white when dark mode and vice-versa*/
