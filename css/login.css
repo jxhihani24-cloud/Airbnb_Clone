@@ -278,3 +278,45 @@ body {
 .dark-mode input::placeholder {
     color: rgba(255,255,255,0.75);
 }
+
+#dob-message,
+#phone-message {
+    margin-top: 1px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    margin: 2px 0;
+    color:#e0262d;
+}
+
+#dob-message,
+#phone-message {
+    margin-top: 1px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    margin: 2px 0;
+}
+
+.iti {
+    width: 100%;
+}
+
+.iti input {
+    width: 100%;
+    padding: 12px 14px 12px 52px !important;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.iti__country-list {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.iti__selected-flag {
+    border-radius: 10px 0 0 10px;
+}

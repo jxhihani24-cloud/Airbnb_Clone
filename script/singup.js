@@ -1,18 +1,3 @@
-// ===== FUNCTION TO SHOW OR HIDE PASSWORD USING THE EYE ICON ===== //
-function showPassword() {
-    const pass = document.getElementById("password");
-    if (!pass) return;
-    pass.type = pass.type === "password" ? "text" : "password";
-}
-
-// ===== FUNCTION TO SHOW OR HIDE CONFIRM PASSWORD ===== //
-function showConfirmPassword() {
-    const pass = document.getElementById("confirmpass");
-    if (!pass) return;
-    pass.type = pass.type === "password" ? "text" : "password";
-}
-
-// ===== FUNCTION TO IMPROVE FIRST AND LAST NAME IN SIGN UP ===== //
 function formatName(input) {
     input.value = input.value.replace(/[^a-zA-Z\s]/g, "");
     input.value = input.value
@@ -28,11 +13,67 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".login-form");
     if (!form) return;
 
+    const isEditMode = localStorage.getItem("editingAccount") === "true";
+    const currentUserData = localStorage.getItem("currentUser");
+    const currentUser = currentUserData ? JSON.parse(currentUserData) : null;
+
+    const tit = document.getElementById("tit");
+    const pageTitle = document.getElementById("pageTitle");
+    const pageSubtitle = document.getElementById("pageSubtitle");
+    const submitBtn = document.getElementById("submitBtn");
+    const bottomText = document.getElementById("bottomText");
+
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+const usernameSectionTitle = document.getElementById("usernameSectionTitle");
+const usernameLabel = document.getElementById("usernameLabel");
+
+const passwordSectionTitle = document.getElementById("passwordSectionTitle");
+const passwordLabel = document.getElementById("passwordLabel");
+const confirmPasswordLabel = document.getElementById("confirmPasswordLabel");
+
+const ruleUsernameLength = document.getElementById("rule-username-length");
+const ruleUsernameAvailable = document.getElementById("rule-username-available");
+
+   if (isEditMode && currentUser) {
+    if (tit) tit.textContent = "Hostera - Edit Account";
+    if (pageTitle) pageTitle.textContent = "Edit Your Account";
+    if (pageSubtitle) pageSubtitle.textContent = "Update your personal information";
+    if (submitBtn) submitBtn.textContent = "Confirm Changes";
+    if (bottomText) bottomText.style.display = "none";
+
+    if (usernameSectionTitle) usernameSectionTitle.textContent = "Change Username";
+    if (usernameLabel) usernameLabel.textContent = "Change Username";
+
+    if (passwordSectionTitle) passwordSectionTitle.textContent = "Change Password";
+    if (passwordLabel) passwordLabel.textContent = "Change Password";
+    if (confirmPasswordLabel) confirmPasswordLabel.textContent = "Confirm New Password";
+
+    if (cancelEditBtn) cancelEditBtn.style.display = "block";
+} else {
+    if (cancelEditBtn) cancelEditBtn.style.display = "none";
+}
+
+if (cancelEditBtn) {
+    cancelEditBtn.addEventListener("click", () => {
+        localStorage.removeItem("editingAccount");
+        window.location.href = "account.html";
+    });
+}
+
     const usernameInput = document.getElementById("username");
     const usernameMessage = document.getElementById("username-message");
 
     const emailInput = document.getElementById("email");
     const emailMessage = document.getElementById("email-message");
+
+    const dobInput = document.getElementById("dob");
+    const dobMessage = document.getElementById("dob-message");
+
+    const countryInput = document.getElementById("country");
+
+    const phoneInput = document.getElementById("phone");
+    const phoneMessage = document.getElementById("phone-message");
 
     const passwordInput = document.getElementById("password");
     const confirmPasswordInput = document.getElementById("confirmpass");
@@ -43,6 +84,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const ruleSpecial = document.getElementById("rule-special");
 
     let usernameTimer;
+
+    const iti = window.intlTelInput(phoneInput, {
+        initialCountry: "auto",
+        geoIpLookup: function(callback) {
+            fetch("https://ipapi.co/json")
+                .then(res => res.json())
+                .then(data => callback(data.country_code || "us"))
+                .catch(() => callback("us"));
+        },
+        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.11/build/js/utils.js"
+    });
 
     function clearValidationState(input) {
         if (!input) return;
@@ -55,45 +107,57 @@ document.addEventListener("DOMContentLoaded", () => {
         el.classList.add(valid ? "rule-valid" : "rule-invalid");
     }
 
-    // ===== USERNAME CHECK ===== //
     function checkUsername() {
-        if (!usernameInput || !usernameMessage) return false;
+    if (!usernameInput || !usernameMessage) return false;
 
-        const username = usernameInput.value.trim();
+    const username = usernameInput.value.trim();
 
-        if (username === "") {
-            usernameMessage.textContent = "";
-            clearValidationState(usernameInput);
-            return false;
-        }
+    if (username === "") {
+        usernameMessage.textContent = "";
 
-        if (username.length < 6) {
-            usernameMessage.textContent = "Username must be at least 6 characters";
-            usernameMessage.style.color = "red";
-            usernameInput.classList.add("is-invalid");
-            usernameInput.classList.remove("is-valid");
-            return false;
-        }
+        clearValidationState(usernameInput);
 
-        let users = JSON.parse(localStorage.getItem("users")) || [];
-        const exists = users.some(
-            user => user.username.toLowerCase() === username.toLowerCase()
-        );
+        if (ruleUsernameLength) ruleUsernameLength.classList.remove("rule-valid", "rule-invalid");
+        if (ruleUsernameAvailable) ruleUsernameAvailable.classList.remove("rule-valid", "rule-invalid");
 
-        if (exists) {
-            usernameMessage.textContent = "Username already exists";
-            usernameMessage.style.color = "red";
-            usernameInput.classList.add("is-invalid");
-            usernameInput.classList.remove("is-valid");
-            return false;
-        }
-
-        usernameMessage.textContent = "Username is available";
-        usernameMessage.style.color = "var(--success-color)";
-        usernameInput.classList.add("is-valid");
-        usernameInput.classList.remove("is-invalid");
-        return true;
+        return isEditMode ? true : false;
     }
+
+    const hasLength = username.length >= 6;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const exists = users.some(user => {
+        if (isEditMode && currentUser && user.username === currentUser.username) return false;
+        return user.username.toLowerCase() === username.toLowerCase();
+    });
+
+    const available = !exists;
+
+    toggleRule(ruleUsernameLength, hasLength);
+    toggleRule(ruleUsernameAvailable, available);
+
+    const valid = hasLength && available;
+
+    if (!hasLength) {
+        usernameMessage.textContent = "";
+        usernameInput.classList.add("is-invalid");
+        usernameInput.classList.remove("is-valid");
+        return false;
+    }
+
+    if (!available) {
+        usernameMessage.textContent = "";
+        usernameInput.classList.add("is-invalid");
+        usernameInput.classList.remove("is-valid");
+        return false;
+    }
+
+    usernameMessage.textContent = "";
+    usernameInput.classList.add("is-valid");
+    usernameInput.classList.remove("is-invalid");
+    return true;
+}
 
     if (usernameInput) {
         usernameInput.addEventListener("input", function () {
@@ -107,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ===== EMAIL CHECK ===== //
     function checkEmail() {
         if (!emailInput || !emailMessage) return false;
 
@@ -121,20 +184,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!email.includes("@") || !email.includes(".")) {
             emailMessage.textContent = "Please enter a valid email";
-            emailMessage.style.color = "red";
+            emailMessage.style.color = "#e0262d";
             emailInput.classList.add("is-invalid");
             emailInput.classList.remove("is-valid");
             return false;
         }
 
         let users = JSON.parse(localStorage.getItem("users")) || [];
-        const exists = users.some(
-            user => user.email.toLowerCase() === email.toLowerCase()
-        );
+
+        const exists = users.some(user => {
+            if (isEditMode && currentUser && user.username === currentUser.username) return false;
+            return user.email.toLowerCase() === email.toLowerCase();
+        });
 
         if (exists) {
             emailMessage.textContent = "Email already in use";
-            emailMessage.style.color = "red";
+            emailMessage.style.color = "#e0262d";
             emailInput.classList.add("is-invalid");
             emailInput.classList.remove("is-valid");
             return false;
@@ -148,24 +213,94 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (emailInput) {
-        emailInput.addEventListener("blur", checkEmail);
-        emailInput.addEventListener("input", () => {
-            emailMessage.textContent = "";
-            clearValidationState(emailInput);
-        });
+        emailInput.addEventListener("input", checkEmail);
     }
 
-    // ===== PASSWORD LIVE VALIDATION ===== //
+    function is18OrOlder(dateString) {
+        if (!dateString) return false;
+
+        const today = new Date();
+        const dob = new Date(dateString);
+
+        let age = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        return age >= 18;
+    }
+
+    function validateDob() {
+        if (!dobInput || !dobMessage) return false;
+
+        const dob = dobInput.value;
+
+        if (!dob) {
+            dobMessage.textContent = "";
+            clearValidationState(dobInput);
+            return false;
+        }
+
+        const valid = is18OrOlder(dob);
+
+        dobInput.classList.toggle("is-valid", valid);
+        dobInput.classList.toggle("is-invalid", !valid);
+
+        dobMessage.textContent = valid
+            ? "Age requirement met."
+            : "You must be at least 18 years old.";
+
+        dobMessage.className = "form-text";
+        dobMessage.style.color = valid ? "var(--success-color)" : "#e0262d";
+
+        return valid;
+    }
+
+    if (dobInput) {
+        dobInput.addEventListener("change", validateDob);
+    }
+
+    function validatePhone() {
+        if (!phoneInput || !phoneMessage) return false;
+
+        if (!phoneInput.value.trim()) {
+            phoneMessage.textContent = "";
+            clearValidationState(phoneInput);
+            return false;
+        }
+
+        const valid = iti.isValidNumber();
+
+        phoneInput.classList.toggle("is-valid", valid);
+        phoneInput.classList.toggle("is-invalid", !valid);
+
+        phoneMessage.textContent = valid
+            ? "Phone number is valid."
+            : "Invalid phone number.";
+
+        phoneMessage.className = "form-text";
+        phoneMessage.style.color = valid ? "var(--success-color)" : "#e0262d";
+
+        return valid;
+    }
+
+    if (phoneInput) {
+        phoneInput.addEventListener("blur", validatePhone);
+    }
+
     function validatePasswordLive() {
         if (!passwordInput) return false;
 
         const password = passwordInput.value.trim();
 
         if (password === "") {
-            clearValidationState(passwordInput);
+            passwordInput.classList.remove("is-valid", "is-invalid");
             [ruleLength, ruleNumber, ruleSpecial].forEach(rule => {
                 if (rule) rule.classList.remove("rule-valid", "rule-invalid");
             });
+
             return false;
         }
 
@@ -185,7 +320,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return allValid;
     }
 
-    // ===== CONFIRM PASSWORD LIVE VALIDATION ===== //
     function validateConfirmPasswordLive() {
         if (!passwordInput || !confirmPasswordInput || !confirmPasswordMessage) return false;
 
@@ -228,7 +362,6 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmPasswordInput.addEventListener("input", validateConfirmPasswordLive);
     }
 
-    // ===== EYE TOGGLE BUTTONS ===== //
     document.querySelectorAll(".toggle-pass").forEach(btn => {
         btn.addEventListener("click", () => {
             const target = document.getElementById(btn.dataset.target);
@@ -239,36 +372,105 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // ===== HANDLE SIGNUP FORM SUBMISSION ===== //
+    if (isEditMode && currentUser) {
+        document.getElementById("Fname").value = currentUser.firstName || "";
+        document.getElementById("Lname").value = currentUser.lastName || "";
+        usernameInput.value = currentUser.username || "";
+        emailInput.value = currentUser.email || "";
+        document.getElementById("gender").value = currentUser.gender || "";
+        dobInput.value = currentUser.dateOfBirth || "";
+        countryInput.value = currentUser.country || "";
+
+        if (currentUser.phoneNumber) {
+            iti.setNumber(currentUser.phoneNumber);
+        }
+
+        passwordInput.placeholder = "Leave blank to keep current password";
+        confirmPasswordInput.placeholder = "Confirm new password if changing";
+    }
+
     form.addEventListener("submit", function (e) {
         e.preventDefault();
 
-        const firstName = document.getElementById("Fname").value.trim();
-        const lastName = document.getElementById("Lname").value.trim();
-        const username = usernameInput ? usernameInput.value.trim() : "";
-        const email = emailInput ? emailInput.value.trim() : "";
-        const password = passwordInput ? passwordInput.value.trim() : "";
-        const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value.trim() : "";
+        let firstName = document.getElementById("Fname").value.trim();
+let lastName = document.getElementById("Lname").value.trim();
+let gender = document.getElementById("gender").value;
+let dob = dobInput.value;
+let country = countryInput.value.trim();
+let phone = iti.getNumber();
 
-        if (!firstName || !lastName || !username || !email || !password || !confirmPassword) {
-            alert("❌ Please fill in all fields!");
-            return;
-        }
+let username = usernameInput ? usernameInput.value.trim() : "";
+let email = emailInput ? emailInput.value.trim() : "";
+let password = passwordInput ? passwordInput.value.trim() : "";
+let confirmPassword = confirmPasswordInput ? confirmPasswordInput.value.trim() : "";
 
-        const usernameValid = checkUsername();
-        const emailValid = checkEmail();
+if (!isEditMode) {
+    if (!firstName || !lastName || !gender || !dob || !country || !phone || !username || !email) {
+        alert("❌ Please fill in all required fields!");
+        return;
+    }
+} else {
+    firstName = firstName || currentUser.firstName;
+    lastName = lastName || currentUser.lastName;
+    gender = gender || currentUser.gender;
+    dob = dob || currentUser.dateOfBirth;
+    country = country || currentUser.country;
+    phone = phone || currentUser.phoneNumber;
+    username = username || currentUser.username;
+    email = email || currentUser.email;
+}
+
+        const usernameValid = isEditMode && usernameInput.value.trim() === "" ? true : checkUsername();
+const emailValid = isEditMode && emailInput.value.trim() === "" ? true : checkEmail();
+const dobValid = isEditMode && dobInput.value.trim() === "" ? true : validateDob();
+const phoneValid = isEditMode && phoneInput.value.trim() === "" ? true : validatePhone();
+
+if (!usernameValid) {
+    alert("❌ Please choose a valid username.");
+    return;
+}
+
+if (!emailValid) {
+    alert("❌ Please enter a valid email.");
+    return;
+}
+
+if (!dobValid) {
+    alert("❌ You must be at least 18 years old.");
+    return;
+}
+
+if (!phoneValid) {
+    alert("❌ Please enter a valid phone number.");
+    return;
+}
+
+        let finalPassword = password;
+
+if (!isEditMode) {
+    if (!password || !confirmPassword) {
+        alert("❌ Please fill in all password fields!");
+        return;
+    }
+
+    const passwordValid = validatePasswordLive();
+    const confirmValid = validateConfirmPasswordLive();
+
+    if (!passwordValid) {
+        alert("❌ Password does not meet the requirements.");
+        return;
+    }
+
+    if (!confirmValid) {
+        alert("❌ Passwords do not match!");
+        return;
+    }
+} else {
+    if (password === "" && confirmPassword === "") {
+        finalPassword = currentUser.password;
+    } else {
         const passwordValid = validatePasswordLive();
         const confirmValid = validateConfirmPasswordLive();
-
-        if (!usernameValid) {
-            alert("❌ Please choose a valid username.");
-            return;
-        }
-
-        if (!emailValid) {
-            alert("❌ Please enter a valid email.");
-            return;
-        }
 
         if (!passwordValid) {
             alert("❌ Password does not meet the requirements.");
@@ -279,39 +481,79 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("❌ Passwords do not match!");
             return;
         }
+    }
+}
 
         let users = JSON.parse(localStorage.getItem("users")) || [];
 
-        const usernameExists = users.some(
-            user => user.username.toLowerCase() === username.toLowerCase()
-        );
-        if (usernameExists) {
-            alert("❌ Username already taken!");
-            return;
-        }
-
-        const emailExists = users.some(
-            user => user.email.toLowerCase() === email.toLowerCase()
-        );
-        if (emailExists) {
-            alert("❌ Email already registered!");
-            return;
-        }
-
-        const newUser = {
+        const finalUser = {
             firstName: firstName,
             lastName: lastName,
+            gender: gender,
+            dateOfBirth: dob,
+            country: country,
+            phoneNumber: phone,
             username: username,
             email: email,
-            password: password,
-            createdAt: new Date().toISOString()
+            password: finalPassword,
+            createdAt: isEditMode && currentUser ? currentUser.createdAt : new Date().toISOString()
         };
 
-        users.push(newUser);
-        localStorage.setItem("users", JSON.stringify(users));
-        localStorage.setItem("currentUser", JSON.stringify(newUser));
+        if (isEditMode && currentUser) {
+            const userIndex = users.findIndex(u => u.username === currentUser.username);
 
-        alert("✅ Account created successfully! Welcome " + firstName + "!");
-        window.location.href = "../index.html";
+            if (userIndex === -1) {
+                alert("❌ User not found.");
+                return;
+            }
+
+            const usernameTaken = users.some(
+                (u, i) => i !== userIndex && u.username.toLowerCase() === username.toLowerCase()
+            );
+            if (usernameTaken) {
+                alert("❌ Username already taken!");
+                return;
+            }
+
+            const emailTaken = users.some(
+                (u, i) => i !== userIndex && u.email.toLowerCase() === email.toLowerCase()
+            );
+            if (emailTaken) {
+                alert("❌ Email already registered!");
+                return;
+            }
+
+            users[userIndex] = finalUser;
+
+            localStorage.setItem("users", JSON.stringify(users));
+            localStorage.setItem("currentUser", JSON.stringify(finalUser));
+            localStorage.removeItem("editingAccount");
+
+            alert("✅ Account updated successfully!");
+            window.location.href = "account.html";
+        } else {
+            const usernameExists = users.some(
+                user => user.username.toLowerCase() === username.toLowerCase()
+            );
+            if (usernameExists) {
+                alert("❌ Username already taken!");
+                return;
+            }
+
+            const emailExists = users.some(
+                user => user.email.toLowerCase() === email.toLowerCase()
+            );
+            if (emailExists) {
+                alert("❌ Email already registered!");
+                return;
+            }
+
+            users.push(finalUser);
+            localStorage.setItem("users", JSON.stringify(users));
+            localStorage.setItem("currentUser", JSON.stringify(finalUser));
+
+            alert("✅ Account created successfully! Welcome " + firstName + "!");
+            window.location.href = "index.html";
+        }
     });
 });
