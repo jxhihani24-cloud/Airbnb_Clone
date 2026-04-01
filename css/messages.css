@@ -488,3 +488,18 @@
         height: calc(100vh - 120px);
     }
 }
+
+#choose{
+    color:var(--text-color)
+}
+
+/* Default select (closed state) */
+#bookingSelect {
+    color: var(--text-color);
+}
+
+/* Dropdown options */
+#bookingSelect option {
+    color: black;
+    background: white; /* important so black text is visible */
+}

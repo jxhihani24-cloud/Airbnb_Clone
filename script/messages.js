@@ -156,7 +156,7 @@ function openNewMessageModal() {
     const userBookings = bookings.filter(b => b.userId === user.username);
 
     const select = document.getElementById("bookingSelect");
-    select.innerHTML = '<option value="">Choose a booking...</option>';
+    select.innerHTML = '<option value="" disabled selected hidden>Choose a booking...</option>';
 
     userBookings.forEach(booking => {
         const option = document.createElement("option");
