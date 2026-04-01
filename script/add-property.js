@@ -7,11 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const pageTitle = document.getElementById("pageTitle");
     const formTitle = document.getElementById("formTitle");
     const submitBtn = document.getElementById("submitBtn");
+    const tit=document.getElementById("tit");
+    const P=document.getElementById("par");
 
     if (pageTitle) pageTitle.textContent = "Edit Property";
     if (formTitle) formTitle.textContent = "Edit Property Details";
     if (submitBtn) submitBtn.textContent = "Update Property";
     if(tit) tit.textContent="Hostera - Edit Property";
+    if(P) P.textContent="Make changes to your property."
 }
 
     // If editing, preload the form
