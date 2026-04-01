@@ -400,10 +400,10 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0;
 }
 
-/* Remove arrows (Firefox) */
+/* Remove arrows (Firefox) 
 input[type="number"] {
     -moz-appearance: textfield;
-}
+}*/
 
 .search-btn-home {
     border: none;
