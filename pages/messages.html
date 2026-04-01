@@ -61,8 +61,10 @@
         </div>
 
         <div id="noConversationsMsg" class="no-conversations">
-          <p>No messages yet</p>
-          <p class="text-muted">Start a conversation with a host</p>
+          <div class="no-conversations-icon">💬</div>
+          <h4>No messages yet</h4>
+          <p>Book a property and hosts will send you personalized welcome messages!</p>
+          <a href="listings.html" class="btn-primary">Browse Properties</a>
         </div>
       </div>
     </div>
@@ -83,7 +85,7 @@
         </div>
 
         <div class="chat-input-area">
-          <input type="text" id="messageInput" class="message-input" placeholder="Type your message...">
+          <textarea id="messageInput" class="message-input" placeholder="Type your message..." rows="1"></textarea>
           <button id="sendBtn" class="btn-send">Send</button>
         </div>
       </div>

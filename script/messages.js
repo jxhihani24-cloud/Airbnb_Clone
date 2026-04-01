@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     currentUser = JSON.parse(userData);
+    
     loadConversations();
     setupEventListeners();
 });
@@ -85,7 +86,7 @@ function loadChatMessages() {
         const msgEl = document.createElement("div");
         msgEl.className = `message ${msg.sender === currentUser.username ? "sent" : "received"}`;
         msgEl.innerHTML = `
-            <div>
+            <div class="message-content">
                 <div class="message-bubble">${escapeHtml(msg.text)}</div>
                 <div class="message-time">${msg.timestamp}</div>
             </div>
@@ -129,6 +130,7 @@ function sendMessage() {
 
     // Clear input and reload
     input.value = "";
+    autoResizeTextarea();
     loadChatMessages();
 }
 
@@ -252,6 +254,9 @@ function setupEventListeners() {
         }
     });
 
+    // Auto-resize textarea
+    document.getElementById("messageInput").addEventListener("input", autoResizeTextarea);
+
     // Modal close buttons
     document.querySelectorAll(".modal-close-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
@@ -294,4 +299,10 @@ function escapeHtml(text) {
         "'": "&#039;"
     };
     return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+function autoResizeTextarea() {
+    const textarea = document.getElementById("messageInput");
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
 }

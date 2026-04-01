@@ -197,10 +197,70 @@ function handlePaymentSubmit(e) {
         bookings.push(booking);
         localStorage.setItem("bookings", JSON.stringify(bookings));
 
+        // Send welcome message from host
+        sendHostWelcomeMessage(booking, user);
+
         // Clear pending booking from session
         sessionStorage.removeItem("pendingBooking");
 
         // Redirect to confirmation page
         window.location.href = "payment-confirmation.html";
     }, processingTime);
+}
+
+// ===== SEND HOST WELCOME MESSAGE =====
+function sendHostWelcomeMessage(booking, user) {
+    const conversations = JSON.parse(localStorage.getItem("conversations")) || [];
+    
+    // Check if conversation already exists
+    const existingConv = conversations.find(c => 
+        c.userId === user.username && c.propertyId === booking.propertyId
+    );
+    
+    if (existingConv) {
+        // Add welcome message to existing conversation
+        addWelcomeMessageToConversation(existingConv, booking);
+    } else {
+        // Create new conversation with welcome message
+        const newConversation = {
+            id: Date.now(),
+            userId: user.username,
+            propertyId: booking.propertyId,
+            hostName: booking.owner,
+            propertyTitle: booking.propertyTitle,
+            messages: []
+        };
+        
+        addWelcomeMessageToConversation(newConversation, booking);
+        conversations.unshift(newConversation);
+    }
+    
+    localStorage.setItem("conversations", JSON.stringify(conversations));
+}
+
+function addWelcomeMessageToConversation(conversation, booking) {
+    // Get personalized welcome messages based on the booking
+    const welcomeMessages = [
+        `Hi there! 🎉 Welcome to ${conversation.propertyTitle}! I'm ${conversation.hostName}, your host. Your booking for ${booking.checkInDate} to ${booking.checkOutDate} is confirmed. I can't wait to welcome you! 🏠✨`,
+        `Hello! Thank you for choosing ${conversation.propertyTitle}. I'm ${conversation.hostName} and I'm excited to host you from ${booking.checkInDate} to ${booking.checkOutDate}. If you have any questions before your arrival, feel free to ask! 😊`,
+        `Welcome to ${conversation.propertyTitle}! I'm ${conversation.hostName}, and I'm thrilled you're staying with us for ${booking.guests} guest${booking.guests > 1 ? 's' : ''}. The property is ready for you - let me know if you need any special arrangements! 🌟`,
+        `Hi! Thanks for booking ${conversation.propertyTitle}. I'm ${conversation.hostName}, your host. Your stay from ${booking.checkInDate} to ${booking.checkOutDate} is all set. Can't wait to meet you and make your stay unforgettable! 🏡`,
+        `Hello from ${conversation.propertyTitle}! I'm ${conversation.hostName} and I'm so excited you're coming to stay with us. Your booking is confirmed for ${booking.checkInDate}. Feel free to reach out with any questions! 🎉`
+    ];
+    
+    const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+    
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const date = now.toLocaleDateString();
+    
+    const welcomeMessage = {
+        sender: conversation.hostName,
+        text: randomMessage,
+        timestamp: timestamp,
+        date: date,
+        isHostMessage: true
+    };
+    
+    conversation.messages.push(welcomeMessage);
 }
