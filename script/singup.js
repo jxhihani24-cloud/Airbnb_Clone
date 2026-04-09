@@ -85,7 +85,10 @@ if (cancelEditBtn) {
 
     let usernameTimer;
 
-    const iti = window.intlTelInput(phoneInput, {
+   let iti = null;
+
+if (phoneInput && window.intlTelInput) {
+    iti = window.intlTelInput(phoneInput, {
         initialCountry: "auto",
         geoIpLookup: function(callback) {
             fetch("https://ipapi.co/json")
@@ -95,6 +98,7 @@ if (cancelEditBtn) {
         },
         utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.11/build/js/utils.js"
     });
+}
 
     function clearValidationState(input) {
         if (!input) return;
@@ -271,7 +275,7 @@ if (cancelEditBtn) {
             return false;
         }
 
-        const valid = iti.isValidNumber();
+        const valid = iti ? iti.isValidNumber() : true;
 
         phoneInput.classList.toggle("is-valid", valid);
         phoneInput.classList.toggle("is-invalid", !valid);
@@ -397,7 +401,7 @@ let lastName = document.getElementById("Lname").value.trim();
 let gender = document.getElementById("gender").value;
 let dob = dobInput.value;
 let country = countryInput.value.trim();
-let phone = iti.getNumber();
+let phone = iti ? iti.getNumber() : "";
 
 let username = usernameInput ? usernameInput.value.trim() : "";
 let email = emailInput ? emailInput.value.trim() : "";
