@@ -60,7 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const confirmLogout = confirm("Are you sure you want to log out?");
             if (!confirmLogout) return;
 
-            localStorage.removeItem('currentUser');
+            if (storage) {
+                storage.setCurrentUser(null);
+            } else {
+                localStorage.removeItem('currentUser');
+            }
 
             window.location.href = window.location.pathname.includes('/pages/')
                 ? 'login.html'
@@ -201,13 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
         newsletterButton.addEventListener('click', (e) => {
             e.preventDefault();
             const email = newsletterInput.value.trim();
+            const storage = window.AppStorage;
 
             if (email && email.includes('@')) {
                 // Get existing emails from localStorage
-                const emails = JSON.parse(localStorage.getItem('subscribedEmails') || '[]');
+                const emails = storage
+                    ? storage.getLS('subscribedEmails', [])
+                    : JSON.parse(localStorage.getItem('subscribedEmails') || '[]');
                 if (!emails.includes(email)) {
                     emails.push(email);
-                    localStorage.setItem('subscribedEmails', JSON.stringify(emails));
+                    if (storage) {
+                        storage.setLS('subscribedEmails', emails);
+                    } else {
+                        localStorage.setItem('subscribedEmails', JSON.stringify(emails));
+                    }
                     alert(`Thanks! ${email} has been registered for updates.`);
                     newsletterInput.value = '';
                 } else {

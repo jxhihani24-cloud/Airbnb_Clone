@@ -1,21 +1,26 @@
 function getBookingStatus(booking) {
     if (!booking.checkOutDate) return "Confirmed";
-    const checkOutDate = new Date(booking.checkOutDate);
+    const storage = window.AppStorage;
+    const checkOutDate = new Date(storage ? storage.toISODate(booking.checkOutDate) : booking.checkOutDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return checkOutDate < today ? "Stayed" : "Confirmed";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const userData = localStorage.getItem("currentUser");
-    if (!userData) {
+    const storage = window.AppStorage;
+    const user = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (!user) {
         alert("Please log in to view bookings.");
         window.location.href = "login.html";
         return;
     }
 
-    const user = JSON.parse(userData);
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const bookings = storage
+        ? storage.getLS("bookings", [])
+        : JSON.parse(localStorage.getItem("bookings") || "[]");
     const userBookings = bookings.filter(b => b.userId === user.username);
 
     const bookingsList = document.getElementById("bookingsList");
@@ -86,10 +91,10 @@ function displayBookings(userBookings) {
                     <div class="detail-value" style="color:red; font-weight:700;">€${booking.price}/night</div>
 
                     <div class="detail-label">Check-in</div>
-                    <div class="detail-value">${booking.checkInDate || booking.bookingDate}</div>
+                    <div class="detail-value">${window.AppStorage ? window.AppStorage.toDisplayDate(booking.checkInDate || booking.bookingDate) : (booking.checkInDate || booking.bookingDate)}</div>
 
                     <div class="detail-label">Check-out</div>
-                    <div class="detail-value">${booking.checkOutDate || 'N/A'}</div>
+                    <div class="detail-value">${booking.checkOutDate ? (window.AppStorage ? window.AppStorage.toDisplayDate(booking.checkOutDate) : booking.checkOutDate) : 'N/A'}</div>
 
                     <div class="detail-label">Guests</div>
                     <div class="detail-value">${booking.guests || 1} guest(s)</div>
@@ -122,10 +127,16 @@ function displayBookings(userBookings) {
 }
 
 function cancelBooking(bookingId) {
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const storage = window.AppStorage;
+    const bookings = storage
+        ? storage.getLS("bookings", [])
+        : JSON.parse(localStorage.getItem("bookings") || "[]");
     const updated = bookings.filter(b => b.bookingId !== bookingId);
-    localStorage.setItem("bookings", JSON.stringify(updated));
-    const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (storage) storage.setLS("bookings", updated);
+    else localStorage.setItem("bookings", JSON.stringify(updated));
+    const user = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
     displayBookings(updated.filter(b => b.userId === user.username));
     alert("Booking cancelled successfully");
 }
@@ -191,8 +202,13 @@ function openStarReviewModal(booking) {
         if (selectedRating === 0) { alert("Please select a star rating."); return; }
         if (!reviewText) { alert("Please write a review."); return; }
 
-        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-        const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+        const storage = window.AppStorage;
+        const currentUser = storage
+            ? storage.getCurrentUser()
+            : JSON.parse(localStorage.getItem("currentUser") || "null");
+        const reviews = storage
+            ? storage.getLS("reviews", [])
+            : JSON.parse(localStorage.getItem("reviews") || "[]");
 
         reviews.push({
             id: Date.now(),
@@ -201,11 +217,12 @@ function openStarReviewModal(booking) {
             text: reviewText,
             reviewer: currentUser.firstName + " " + currentUser.lastName,
             reviewerUsername: currentUser.username,
-            date: new Date().toLocaleDateString(),
+            date: new Date().toISOString(),
             createdAt: new Date().toISOString()
         });
 
-        localStorage.setItem("reviews", JSON.stringify(reviews));
+        if (storage) storage.setLS("reviews", reviews);
+        else localStorage.setItem("reviews", JSON.stringify(reviews));
         modal.remove();
         alert("✅ Review submitted! Thank you.");
     });

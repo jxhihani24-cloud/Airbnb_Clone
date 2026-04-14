@@ -18,7 +18,10 @@ let selectedCheckOutDate = "";
 
 // ===== REVIEWS MANAGEMENT =====
 function getReviewsByProperty(propertyId) {
-    const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+    const storage = window.AppStorage;
+    const reviews = storage
+        ? storage.getLS("reviews", [])
+        : JSON.parse(localStorage.getItem("reviews") || "[]");
     return reviews.filter(r => r.propertyId === propertyId);
 }
 
@@ -30,15 +33,19 @@ function getAverageRating(propertyId) {
 }
 
 function hasUserStayed(propertyId) {
-    const userData = localStorage.getItem("currentUser");
-    if (!userData) return false;
+    const storage = window.AppStorage;
+    const user = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (!user) return false;
 
-    const user = JSON.parse(userData);
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const bookings = storage
+        ? storage.getLS("bookings", [])
+        : JSON.parse(localStorage.getItem("bookings") || "[]");
 
     return bookings.some(b => {
         if (b.userId !== user.username || b.propertyId !== propertyId) return false;
-        const checkOut = new Date(b.checkOutDate);
+        const checkOut = new Date(storage ? storage.toISODate(b.checkOutDate) : b.checkOutDate);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         return checkOut < today; // only "Stayed" bookings
@@ -46,14 +53,18 @@ function hasUserStayed(propertyId) {
 }
 
 function addReview(propertyId, rating, reviewText) {
-    const currentUser = localStorage.getItem("currentUser");
-    if (!currentUser) {
+    const storage = window.AppStorage;
+    const user = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (!user) {
         alert("Please log in to leave a review");
         return false;
     }
 
-    const user = JSON.parse(currentUser);
-    const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+    const reviews = storage
+        ? storage.getLS("reviews", [])
+        : JSON.parse(localStorage.getItem("reviews") || "[]");
 
     const newReview = {
         id: Date.now(),
@@ -62,12 +73,13 @@ function addReview(propertyId, rating, reviewText) {
         text: reviewText,
         reviewer: user.firstName + " " + user.lastName,
         reviewerUsername: user.username,
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString(),
         createdAt: new Date().toISOString()
     };
 
     reviews.push(newReview);
-    localStorage.setItem("reviews", JSON.stringify(reviews));
+    if (storage) storage.setLS("reviews", reviews);
+    else localStorage.setItem("reviews", JSON.stringify(reviews));
     return true;
 }
 
@@ -89,7 +101,7 @@ function displayReviews(propertyId) {
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
                 <div>
                     <p style="margin: 0; font-weight: 600;">${review.reviewer}</p>
-                    <span style="font-size: 12px; opacity: 0.7;">${review.date}</span>
+                    <span style="font-size: 12px; opacity: 0.7;">${window.AppStorage ? window.AppStorage.toDisplayDate(review.date) : review.date}</span>
                 </div>
                 <span style="color: var(--button-color); font-size: 14px;">${stars}</span>
             </div>
@@ -173,7 +185,10 @@ const defaultProperties = [
 // ===== LOAD ALL PROPERTIES (DEFAULT + USER-ADDED) =====
 function loadAllProperties() {
     // Get user-added properties from localStorage
-    const userProperties = JSON.parse(localStorage.getItem("properties")) || [];
+    const storage = window.AppStorage;
+    const userProperties = storage
+        ? storage.getLS("properties", [])
+        : JSON.parse(localStorage.getItem("properties") || "[]");
 
     // Merge default properties with user-added properties
     const allProperties = [...defaultProperties, ...userProperties];
@@ -313,7 +328,10 @@ function openListingModal(property) {
 
     // Setup review button
     document.getElementById("addReviewBtn").onclick = () => {
-    if (!localStorage.getItem("currentUser")) {
+    const sessionUser = window.AppStorage
+        ? window.AppStorage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (!sessionUser) {
         alert("Please log in to leave a review.");
         return;
     }
@@ -405,14 +423,17 @@ document.getElementById("guestsInput").addEventListener("input", applyFilters);
 
 // ===== CHECK AVAILABILITY FOR DATES =====
 function checkAvailability(propertyId, checkInDate, checkOutDate) {
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const storage = window.AppStorage;
+    const bookings = storage
+        ? storage.getLS("bookings", [])
+        : JSON.parse(localStorage.getItem("bookings") || "[]");
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
 
     return !bookings.some(booking => {
         if (booking.propertyId !== propertyId) return false;
-        const bookingCheckIn = new Date(booking.checkInDate);
-        const bookingCheckOut = new Date(booking.checkOutDate);
+        const bookingCheckIn = new Date(storage ? storage.toISODate(booking.checkInDate) : booking.checkInDate);
+        const bookingCheckOut = new Date(storage ? storage.toISODate(booking.checkOutDate) : booking.checkOutDate);
 
         // Check for overlap
         return checkIn < bookingCheckOut && checkOut > bookingCheckIn;
@@ -566,8 +587,11 @@ function closeBookingForm() {
 
 // ===== CONFIRM BOOKING =====
 function confirmBooking() {
-    const userData = localStorage.getItem("currentUser");
-    if (!userData) {
+    const storage = window.AppStorage;
+    const user = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (!user) {
         alert("Please log in to make a booking");
         window.location.href = "login.html";
         return;
@@ -588,8 +612,6 @@ function confirmBooking() {
         return;
     }
 
-    const user = JSON.parse(userData);
-
     // Calculate nights between check-in and check-out
     const checkInDateObj = new Date(checkInDate);
     const checkOutDateObj = new Date(checkOutDate);
@@ -607,15 +629,16 @@ function confirmBooking() {
         owner: currentProperty.ownerName,
         images: currentProperty.images,
         image: currentProperty.images[0],
-        bookingDate: new Date().toLocaleDateString(),
-        checkInDate: new Date(checkInDate).toLocaleDateString(),
-        checkOutDate: new Date(checkOutDate).toLocaleDateString(),
+        bookingDate: new Date().toISOString(),
+        checkInDate: new Date(checkInDate).toISOString(),
+        checkOutDate: new Date(checkOutDate).toISOString(),
         guests: guests,
         nights: nights,
         status: "Pending"
     };
 
-    sessionStorage.setItem("pendingBooking", JSON.stringify(pendingBooking));
+    if (storage) storage.setSS("pendingBooking", pendingBooking);
+    else sessionStorage.setItem("pendingBooking", JSON.stringify(pendingBooking));
     window.location.href = "payment.html";
 }
 

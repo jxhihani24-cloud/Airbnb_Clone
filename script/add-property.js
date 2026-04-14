@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const storage = window.AppStorage;
     const form = document.getElementById("addPropertyForm");
     const cancelBtn = document.getElementById("cancelAddProperty");
     const editId = localStorage.getItem("editingPropertyId");
@@ -19,7 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // If editing, preload the form
     if (editId) {
-        const properties = JSON.parse(localStorage.getItem("properties")) || [];
+        const properties = storage
+            ? storage.getLS("properties", [])
+            : JSON.parse(localStorage.getItem("properties") || "[]");
         const property = properties.find(p => p.id == editId);
 
         if (property) {
@@ -59,7 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function postPropertyFromPage() {
-    const currentUser = localStorage.getItem("currentUser");
+    const storage = window.AppStorage;
+    const currentUser = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
 
     if (!currentUser) {
         alert("❌ You must be logged in to post properties!");
@@ -67,7 +73,7 @@ function postPropertyFromPage() {
         return;
     }
 
-    const user = JSON.parse(currentUser);
+    const user = currentUser;
     const editId = localStorage.getItem("editingPropertyId");
 
     const title = document.getElementById("title").value.trim();
@@ -95,7 +101,9 @@ const images = imagesInput
     ? imagesInput.split(",").map(img => img.trim()).filter(Boolean)
     : ["../images/Logo.png"];
 
-    let allProperties = JSON.parse(localStorage.getItem("properties")) || [];
+    let allProperties = storage
+        ? storage.getLS("properties", [])
+        : JSON.parse(localStorage.getItem("properties") || "[]");
 
     if (editId) {
         const existingProperty = allProperties.find(p => p.id == editId);
@@ -125,7 +133,8 @@ const images = imagesInput
             p.id == editId ? updatedListing : p
         );
 
-        localStorage.setItem("properties", JSON.stringify(allProperties));
+        if (storage) storage.setLS("properties", allProperties);
+        else localStorage.setItem("properties", JSON.stringify(allProperties));
         localStorage.removeItem("editingPropertyId");
 
         alert("✅ Property updated successfully!");
@@ -152,7 +161,8 @@ const images = imagesInput
     };
 
     allProperties.push(newListing);
-    localStorage.setItem("properties", JSON.stringify(allProperties));
+    if (storage) storage.setLS("properties", allProperties);
+    else localStorage.setItem("properties", JSON.stringify(allProperties));
 
     alert("✅ Property posted successfully!");
     window.location.href = "property.html";

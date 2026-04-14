@@ -1,5 +1,6 @@
 // Get properties data from parent window or localStorage
 let allProperties = [];
+const storage = window.AppStorage;
 
 // Function to get all available properties (default + user-added)
 function getAllProperties() {
@@ -7,7 +8,9 @@ function getAllProperties() {
     const defaultProps = window.defaultPropertiesData || getDefaultProperties();
 
     // Get user-added properties from localStorage
-    const userProps = JSON.parse(localStorage.getItem("properties")) || [];
+    const userProps = storage
+        ? storage.getLS("properties", [])
+        : JSON.parse(localStorage.getItem("properties") || "[]");
 
     // Merge both lists
     return [...defaultProps, ...userProps];
@@ -15,7 +18,9 @@ function getAllProperties() {
 
 // ===== REVIEWS MANAGEMENT =====
 function getReviewsByHost(hostUsername) {
-    const reviews = JSON.parse(localStorage.getItem("hostReviews")) || [];
+    const reviews = storage
+        ? storage.getLS("hostReviews", [])
+        : JSON.parse(localStorage.getItem("hostReviews") || "[]");
     return reviews.filter(r => r.hostUsername === hostUsername);
 }
 
@@ -27,14 +32,17 @@ function getHostAverageRating(hostUsername) {
 }
 
 function addHostReview(hostUsername, hostName, rating, reviewText) {
-    const currentUser = localStorage.getItem("currentUser");
-    if (!currentUser) {
+    const user = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (!user) {
         alert("Please log in to leave a review");
         return false;
     }
 
-    const user = JSON.parse(currentUser);
-    const hostReviews = JSON.parse(localStorage.getItem("hostReviews")) || [];
+    const hostReviews = storage
+        ? storage.getLS("hostReviews", [])
+        : JSON.parse(localStorage.getItem("hostReviews") || "[]");
 
     const newReview = {
         id: Date.now(),
@@ -44,12 +52,13 @@ function addHostReview(hostUsername, hostName, rating, reviewText) {
         text: reviewText,
         reviewer: user.firstName + " " + user.lastName,
         reviewerUsername: user.username,
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString(),
         createdAt: new Date().toISOString()
     };
 
     hostReviews.push(newReview);
-    localStorage.setItem("hostReviews", JSON.stringify(hostReviews));
+    if (storage) storage.setLS("hostReviews", hostReviews);
+    else localStorage.setItem("hostReviews", JSON.stringify(hostReviews));
     return true;
 }
 
@@ -71,7 +80,7 @@ function displayHostReviews(hostUsername) {
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
                 <div>
                     <p style="margin: 0; font-weight: 600;">${review.reviewer}</p>
-                    <span style="font-size: 12px; opacity: 0.7;">${review.date}</span>
+                    <span style="font-size: 12px; opacity: 0.7;">${storage ? storage.toDisplayDate(review.date) : review.date}</span>
                 </div>
                 <span style="color: var(--button-color); font-size: 14px;">${stars}</span>
             </div>

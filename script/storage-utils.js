@@ -74,8 +74,6 @@
     }
 
     function removeUserRelatedData(username) {
-        const keys = ["bookings", "reviews", "hostReviews", "conversations", "payments", "properties"];
-
         const bookings = getLS("bookings", []).filter(function (b) {
             return b.userId !== username;
         });
@@ -97,7 +95,7 @@
         setLS("conversations", conversations);
 
         const payments = getLS("payments", []).filter(function (p) {
-            return p.bookingData && p.bookingData.userId !== username;
+            return !p.bookingData || p.bookingData.userId !== username;
         });
         setLS("payments", payments);
 
@@ -105,10 +103,6 @@
             return p.owner !== username;
         });
         setLS("properties", properties);
-
-        keys.forEach(function () {
-            return undefined;
-        });
     }
 
     async function hashPassword(password) {

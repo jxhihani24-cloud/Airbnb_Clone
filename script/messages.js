@@ -4,14 +4,17 @@ let currentUser = null;
 
 // ===== INITIALIZE PAGE =====
 document.addEventListener("DOMContentLoaded", () => {
-    const userData = localStorage.getItem("currentUser");
-    if (!userData) {
+    const storage = window.AppStorage;
+    const user = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (!user) {
         alert("Please log in to view messages.");
         window.location.href = "login.html";
         return;
     }
 
-    currentUser = JSON.parse(userData);
+    currentUser = user;
     
     loadConversations();
     setupEventListeners();
@@ -19,7 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ===== LOAD CONVERSATIONS =====
 function loadConversations() {
-    const conversations = JSON.parse(localStorage.getItem("conversations")) || [];
+    const storage = window.AppStorage;
+    const conversations = storage
+        ? storage.getLS("conversations", [])
+        : JSON.parse(localStorage.getItem("conversations") || "[]");
     const userConversations = conversations.filter(c => c.userId === currentUser.username);
     
     const conversationsList = document.getElementById("conversationsList");
@@ -48,13 +54,13 @@ function loadConversations() {
             </div>
         `;
 
-        item.addEventListener("click", () => openConversation(conversation));
+        item.addEventListener("click", (e) => openConversation(conversation, e.currentTarget));
         conversationsList.appendChild(item);
     });
 }
 
 // ===== OPEN CONVERSATION =====
-function openConversation(conversation) {
+function openConversation(conversation, clickedItem) {
     currentConversation = conversation;
     const chatContainer = document.getElementById("chatContainer");
     chatContainer.style.display = "block";
@@ -70,7 +76,7 @@ function openConversation(conversation) {
     document.querySelectorAll(".conversation-item").forEach(item => {
         item.classList.remove("active");
     });
-    event.currentTarget.classList.add("active");
+    if (clickedItem) clickedItem.classList.add("active");
 }
 
 // ===== LOAD CHAT MESSAGES =====
@@ -115,17 +121,21 @@ function sendMessage() {
         sender: currentUser.username,
         text: message,
         timestamp: timestamp,
-        date: new Date().toLocaleDateString()
+        date: new Date().toISOString()
     };
 
     currentConversation.messages.push(newMessage);
 
     // Update in localStorage
-    const conversations = JSON.parse(localStorage.getItem("conversations")) || [];
+    const storage = window.AppStorage;
+    const conversations = storage
+        ? storage.getLS("conversations", [])
+        : JSON.parse(localStorage.getItem("conversations") || "[]");
     const index = conversations.findIndex(c => c.id === currentConversation.id);
     if (index !== -1) {
         conversations[index] = currentConversation;
-        localStorage.setItem("conversations", JSON.stringify(conversations));
+        if (storage) storage.setLS("conversations", conversations);
+        else localStorage.setItem("conversations", JSON.stringify(conversations));
     }
 
     // Clear input and reload
@@ -150,9 +160,13 @@ function openNewMessageModal() {
     modal.classList.add("show");
 
     // Load bookings
-    const userData = localStorage.getItem("currentUser");
-    const user = JSON.parse(userData);
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const storage = window.AppStorage;
+    const user = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    const bookings = storage
+        ? storage.getLS("bookings", [])
+        : JSON.parse(localStorage.getItem("bookings") || "[]");
     const userBookings = bookings.filter(b => b.userId === user.username);
 
     const select = document.getElementById("bookingSelect");
@@ -185,7 +199,10 @@ function startConversation() {
     }
 
     // Check if conversation already exists
-    const conversations = JSON.parse(localStorage.getItem("conversations")) || [];
+    const storage = window.AppStorage;
+    const conversations = storage
+        ? storage.getLS("conversations", [])
+        : JSON.parse(localStorage.getItem("conversations") || "[]");
     const existingConv = conversations.find(
         c => c.userId === currentUser.username && c.propertyId === booking.propertyId
     );
@@ -199,7 +216,7 @@ function startConversation() {
             sender: currentUser.username,
             text: initialMsg,
             timestamp: timestamp,
-            date: new Date().toLocaleDateString()
+            date: new Date().toISOString()
         });
 
         conversations.splice(conversations.indexOf(existingConv), 1);
@@ -219,14 +236,15 @@ function startConversation() {
                 sender: currentUser.username,
                 text: initialMsg,
                 timestamp: timestamp,
-                date: new Date().toLocaleDateString()
+                date: new Date().toISOString()
             }]
         };
 
         conversations.unshift(newConversation);
     }
 
-    localStorage.setItem("conversations", JSON.stringify(conversations));
+    if (storage) storage.setLS("conversations", conversations);
+    else localStorage.setItem("conversations", JSON.stringify(conversations));
 
     // Close modal
     document.getElementById("newMessageModal").classList.remove("show");
