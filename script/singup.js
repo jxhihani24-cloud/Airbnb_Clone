@@ -13,9 +13,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".login-form");
     if (!form) return;
 
+    const storage = window.AppStorage;
+    const getUsers = () => (storage ? storage.getLS("users", []) : JSON.parse(localStorage.getItem("users") || "[]"));
+    const setUsers = (users) => {
+        if (storage) storage.setLS("users", users);
+        else localStorage.setItem("users", JSON.stringify(users));
+    };
+
     const isEditMode = localStorage.getItem("editingAccount") === "true";
-    const currentUserData = localStorage.getItem("currentUser");
-    const currentUser = currentUserData ? JSON.parse(currentUserData) : null;
+    const currentUserData = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    const currentUser = currentUserData
+        ? getUsers().find(u => u.username === currentUserData.username) || currentUserData
+        : null;
 
     const tit = document.getElementById("tit");
     const pageTitle = document.getElementById("pageTitle");
@@ -129,7 +140,7 @@ if (phoneInput && window.intlTelInput) {
 
     const hasLength = username.length >= 6;
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let users = getUsers();
 
     const exists = users.some(user => {
         if (isEditMode && currentUser && user.username === currentUser.username) return false;
@@ -194,7 +205,7 @@ if (phoneInput && window.intlTelInput) {
             return false;
         }
 
-        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let users = getUsers();
 
         const exists = users.some(user => {
             if (isEditMode && currentUser && user.username === currentUser.username) return false;
@@ -393,7 +404,7 @@ if (phoneInput && window.intlTelInput) {
         confirmPasswordInput.placeholder = "Confirm new password if changing";
     }
 
-    form.addEventListener("submit", function (e) {
+    form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
         let firstName = document.getElementById("Fname").value.trim();
@@ -450,6 +461,7 @@ if (!phoneValid) {
 }
 
         let finalPassword = password;
+        let finalPasswordHash = null;
 
 if (!isEditMode) {
     if (!password || !confirmPassword) {
@@ -471,7 +483,8 @@ if (!isEditMode) {
     }
 } else {
     if (password === "" && confirmPassword === "") {
-        finalPassword = currentUser.password;
+        finalPassword = currentUser.password || "";
+        finalPasswordHash = currentUser.passwordHash || null;
     } else {
         const passwordValid = validatePasswordLive();
         const confirmValid = validateConfirmPasswordLive();
@@ -485,10 +498,22 @@ if (!isEditMode) {
             alert("❌ Passwords do not match!");
             return;
         }
+
+        finalPasswordHash = storage
+            ? await storage.hashPassword(finalPassword)
+            : finalPassword;
     }
 }
 
-        let users = JSON.parse(localStorage.getItem("users")) || [];
+        if (!isEditMode) {
+            finalPasswordHash = storage
+                ? await storage.hashPassword(finalPassword)
+                : finalPassword;
+        } else if (storage && !finalPasswordHash && finalPassword) {
+            finalPasswordHash = await storage.hashPassword(finalPassword);
+        }
+
+        let users = getUsers();
 
         const finalUser = {
             firstName: firstName,
@@ -499,9 +524,13 @@ if (!isEditMode) {
             phoneNumber: phone,
             username: username,
             email: email,
-            password: finalPassword,
+            passwordHash: finalPasswordHash,
             createdAt: isEditMode && currentUser ? currentUser.createdAt : new Date().toISOString()
         };
+
+        if (!storage) {
+            finalUser.password = finalPassword;
+        }
 
         if (isEditMode && currentUser) {
             const userIndex = users.findIndex(u => u.username === currentUser.username);
@@ -529,8 +558,12 @@ if (!isEditMode) {
 
             users[userIndex] = finalUser;
 
-            localStorage.setItem("users", JSON.stringify(users));
-            localStorage.setItem("currentUser", JSON.stringify(finalUser));
+            setUsers(users);
+            if (storage) {
+                storage.setCurrentUser(finalUser);
+            } else {
+                localStorage.setItem("currentUser", JSON.stringify(finalUser));
+            }
             localStorage.removeItem("editingAccount");
 
             alert("✅ Account updated successfully!");
@@ -553,8 +586,12 @@ if (!isEditMode) {
             }
 
             users.push(finalUser);
-            localStorage.setItem("users", JSON.stringify(users));
-            localStorage.setItem("currentUser", JSON.stringify(finalUser));
+            setUsers(users);
+            if (storage) {
+                storage.setCurrentUser(finalUser);
+            } else {
+                localStorage.setItem("currentUser", JSON.stringify(finalUser));
+            }
 
             alert("✅ Account created successfully! Welcome " + firstName + "!");
             window.location.href = "index.html";

@@ -1,12 +1,12 @@
 
 // ===== UPDATE NAVBAR WITH LOGIN STATUS + DROPDOWN MENU ===== //
 document.addEventListener('DOMContentLoaded', () => {
-    const currentUser = localStorage.getItem('currentUser');
+    const storage = window.AppStorage;
+    const currentUser = storage ? storage.getCurrentUser() : JSON.parse(localStorage.getItem('currentUser') || 'null');
     const navLinks = document.querySelector('.nav-links');
 
     if (!currentUser || !navLinks) return;
-
-    const user = JSON.parse(currentUser);
+    const user = currentUser;
     const loginItem = navLinks.querySelector('li:last-child');
     const loginLink = loginItem ? loginItem.querySelector('a') : null;
 
@@ -228,8 +228,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Only run if login form exists (on login.html page)
     if (!loginForm || !window.location.pathname.includes('login.html')) return;
 
-    loginForm.addEventListener('submit', function (e) {
+    loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
+        const storage = window.AppStorage;
 
         // 1. GET INPUT VALUES
         const username = document.getElementById('username').value.trim();
@@ -242,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 3. GET ALL USERS FROM LOCALSTORAGE
-        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let users = storage ? storage.getLS('users', []) : JSON.parse(localStorage.getItem('users') || '[]');
 
         // 4. FIND USER BY USERNAME
         const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
@@ -254,13 +255,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 6. CHECK IF PASSWORD MATCHES
-        if (user.password !== password) {
+        const passwordOk = storage
+            ? await storage.verifyPassword(user, password)
+            : user.password === password;
+
+        if (!passwordOk) {
             alert('❌ Incorrect password!');
             return;
         }
 
-        // 7. SAVE LOGGED-IN USER TO LOCALSTORAGE
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        if (storage) {
+            const migratedUser = await storage.ensureUserHasPasswordHash(user);
+            if (migratedUser !== user) {
+                users = users.map(u => (u.username === user.username ? migratedUser : u));
+                storage.setLS('users', users);
+            }
+            storage.setCurrentUser(migratedUser);
+        } else {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+        }
 
         // 8. SUCCESS & REDIRECT
         if (!localStorage.getItem('justSignedUp')) {
