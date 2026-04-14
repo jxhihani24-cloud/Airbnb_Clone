@@ -1,15 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const userData = localStorage.getItem("currentUser");
+    const storage = window.AppStorage;
     const container = document.getElementById("accountDetails");
     const deleteBtn = document.getElementById("deleteAccountBtn");
 
-    if (!userData) {
+    const sessionUser = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+
+    if (!sessionUser) {
         alert("Please log in first.");
         window.location.href = "login.html";
         return;
     }
 
-    const user = JSON.parse(userData);
+    const users = storage ? storage.getLS("users", []) : JSON.parse(localStorage.getItem("users") || "[]");
+    const user = users.find(u => u.username === sessionUser.username) || sessionUser;
+
+    if (!container) return;
 
     container.innerHTML = `
         <div class="col-12 col-sm-6">
@@ -78,7 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     const editAccountBtn = document.getElementById("editAccountBtn");
-
     if (editAccountBtn) {
         editAccountBtn.addEventListener("click", () => {
             localStorage.setItem("editingAccount", "true");
@@ -91,17 +97,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const confirmDelete = confirm("Are you sure you want to delete your account?");
             if (!confirmDelete) return;
 
-            let users = JSON.parse(localStorage.getItem("users")) || [];
-            let properties = JSON.parse(localStorage.getItem("properties")) || [];
+            const updatedUsers = (storage ? storage.getLS("users", []) : users).filter(u => u.username !== user.username);
 
-            users = users.filter(u => u.username !== user.username);
-            properties = properties.filter(p => p.owner !== user.username);
+            if (storage) {
+                storage.setLS("users", updatedUsers);
+                storage.removeUserRelatedData(user.username);
+                storage.setCurrentUser(null);
+            } else {
+                localStorage.setItem("users", JSON.stringify(updatedUsers));
+                localStorage.removeItem("currentUser");
+            }
 
-            localStorage.setItem("users", JSON.stringify(users));
-            localStorage.setItem("properties", JSON.stringify(properties));
-            localStorage.removeItem("currentUser");
             localStorage.removeItem("editingAccount");
-
             alert("Your account has been deleted.");
             window.location.href = "login.html";
         });

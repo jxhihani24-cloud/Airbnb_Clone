@@ -1,14 +1,32 @@
 // ===== MIGRATE OLD DATA TO NEW STORAGE ===== //
+const storage = window.AppStorage;
+
+function getCurrentSessionUser() {
+    return storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem('currentUser') || 'null');
+}
+
+function getStoredProperties() {
+    return storage
+        ? storage.getLS('properties', [])
+        : JSON.parse(localStorage.getItem('properties') || '[]');
+}
+
+function setStoredProperties(properties) {
+    if (storage) storage.setLS('properties', properties);
+    else localStorage.setItem('properties', JSON.stringify(properties));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const oldProperties = localStorage.getItem('myProperties');
     
     if (oldProperties) {
-        let allProperties = JSON.parse(localStorage.getItem('properties')) || [];
+        let allProperties = getStoredProperties();
         const oldData = JSON.parse(oldProperties);
-        const currentUser = localStorage.getItem('currentUser');
+        const user = getCurrentSessionUser();
         
-        if (currentUser) {
-            const user = JSON.parse(currentUser);
+        if (user) {
             
             oldData.forEach(prop => {
                 if (!prop.owner) {
@@ -19,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             allProperties = [...oldData, ...allProperties];
-            localStorage.setItem('properties', JSON.stringify(allProperties));
+            setStoredProperties(allProperties);
             localStorage.removeItem('myProperties');
             
             console.log('✅ Data migrated successfully!');
@@ -29,23 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== CHECK IF USER IS LOGGED IN ===== //
 function checkUserLogin() {
-    const currentUser = localStorage.getItem('currentUser');
+    const currentUser = getCurrentSessionUser();
     if (!currentUser) {
         alert('❌ You must be logged in to post properties!');
         window.location.href = 'login.html';
         return null;
     }
-    return JSON.parse(currentUser);
+    return currentUser;
 }
 
 // ===== GET ONLY CURRENT USER'S PROPERTIES ===== //
 function getMyProperties() {
-    const currentUser = localStorage.getItem('currentUser');
+    const currentUser = getCurrentSessionUser();
     if (!currentUser) return [];
     
-    const user = JSON.parse(currentUser);
-    const allProperties = JSON.parse(localStorage.getItem('properties')) || [];
-    return allProperties.filter(prop => prop.owner === user.username);
+    return getStoredProperties().filter(prop => prop.owner === currentUser.username);
 }
 
 // ===== RENDER MY PROPERTIES ===== //
@@ -53,7 +69,7 @@ function renderMyProperties() {
     const container = document.getElementById("myProperties");
     if (!container) return;
 
-    const currentUser = localStorage.getItem("currentUser");
+    const currentUser = getCurrentSessionUser();
     if (!currentUser) {
         container.innerHTML = `
             <div class="col-12">
@@ -131,14 +147,14 @@ function renderMyProperties() {
 
 // ===== POST PROPERTY ===== //
 function postProperty() {
-    const currentUser = localStorage.getItem('currentUser');
+    const currentUser = getCurrentSessionUser();
     if (!currentUser) {
         alert('❌ You must be logged in!');
         window.location.href = 'login.html';
         return;
     }
 
-    const user = JSON.parse(currentUser);
+    const user = currentUser;
 
     const title = document.getElementById("title").value.trim();
     const city = document.getElementById("city").value.trim();
@@ -183,9 +199,9 @@ function postProperty() {
         createdAt: new Date().toISOString()
     };
 
-    let allProperties = JSON.parse(localStorage.getItem('properties')) || [];
+    let allProperties = getStoredProperties();
     allProperties.push(newListing);
-    localStorage.setItem('properties', JSON.stringify(allProperties));
+    setStoredProperties(allProperties);
 
     alert('✅ Property posted!');
     clearPropertyForm();
@@ -221,9 +237,9 @@ function toggleModal() {
 function removeProperty(id) {
     if (!confirm('Delete this property?')) return;
     
-    let allProperties = JSON.parse(localStorage.getItem('properties')) || [];
+    let allProperties = getStoredProperties();
     allProperties = allProperties.filter(item => item.id !== id);
-    localStorage.setItem('properties', JSON.stringify(allProperties));
+    setStoredProperties(allProperties);
     
     alert('✅ Property deleted!');
     renderMyProperties();
@@ -231,7 +247,7 @@ function removeProperty(id) {
 
 // ===== EDIT PROPERTY ===== //
 function editProperty(id) {
-    let allProperties = JSON.parse(localStorage.getItem('properties')) || [];
+    let allProperties = getStoredProperties();
     const property = allProperties.find(prop => prop.id === id);
 
     if (!property) return;
@@ -284,7 +300,7 @@ function updateProperty(id) {
         ? amenitiesInput.split(",").map(item => item.trim()).filter(Boolean)
         : [];
 
-    let allProperties = JSON.parse(localStorage.getItem('properties')) || [];
+    let allProperties = getStoredProperties();
     const idx = allProperties.findIndex(prop => prop.id === id);
 
     if (idx !== -1) {
@@ -300,7 +316,7 @@ function updateProperty(id) {
         allProperties[idx].amenities = amenities;
         allProperties[idx].images = images;
 
-        localStorage.setItem('properties', JSON.stringify(allProperties));
+        setStoredProperties(allProperties);
 
         alert('✅ Updated!');
 
@@ -318,7 +334,7 @@ modal.hide();
 
 // ===== IMAGE SLIDER ===== //
 function goToImg(id, index) {
-    let allProperties = JSON.parse(localStorage.getItem('properties')) || [];
+    let allProperties = getStoredProperties();
     const property = allProperties.find(p => p.id === id);
     if (!property || !property.images) return;
 

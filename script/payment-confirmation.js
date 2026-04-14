@@ -1,6 +1,9 @@
 // ===== LOAD CONFIRMATION DATA =====
 document.addEventListener("DOMContentLoaded", () => {
-    const paymentData = JSON.parse(sessionStorage.getItem("paymentConfirmation"));
+    const storage = window.AppStorage;
+    const paymentData = storage
+        ? storage.getSS("paymentConfirmation", null)
+        : JSON.parse(sessionStorage.getItem("paymentConfirmation") || "null");
     
     if (!paymentData) {
         alert("No confirmation data found. Redirecting...");
@@ -36,8 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("confirmationNumber").textContent = paymentData.confirmationNumber;
     document.getElementById("confirmPropertyName").textContent = booking.propertyTitle;
     document.getElementById("confirmLocation").textContent = `${booking.city}, ${booking.country}`;
-    document.getElementById("confirmCheckIn").textContent = booking.checkInDate;
-    document.getElementById("confirmCheckOut").textContent = booking.checkOutDate;
+    document.getElementById("confirmCheckIn").textContent = storage ? storage.toDisplayDate(booking.checkInDate) : booking.checkInDate;
+    document.getElementById("confirmCheckOut").textContent = storage ? storage.toDisplayDate(booking.checkOutDate) : booking.checkOutDate;
     document.getElementById("confirmGuests").textContent = booking.guests + " guest(s)";
     document.getElementById("confirmHost").textContent = booking.owner;
     document.getElementById("confirmTotal").textContent = total;

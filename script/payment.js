@@ -1,6 +1,9 @@
 // ===== LOAD BOOKING DATA =====
 document.addEventListener("DOMContentLoaded", () => {
-    const bookingData = JSON.parse(sessionStorage.getItem("pendingBooking"));
+    const storage = window.AppStorage;
+    const bookingData = storage
+        ? storage.getSS("pendingBooking", null)
+        : JSON.parse(sessionStorage.getItem("pendingBooking") || "null");
     
     if (!bookingData) {
         alert("No booking data found. Redirecting...");
@@ -123,6 +126,7 @@ function validatePaymentForm() {
 
 // ===== HANDLE PAYMENT SUBMISSION =====
 function handlePaymentSubmit(e) {
+    const storage = window.AppStorage;
     e.preventDefault();
 
     if (!validatePaymentForm()) {
@@ -145,7 +149,15 @@ function handlePaymentSubmit(e) {
         const guestName = document.getElementById("guestName").value;
         const guestEmail = document.getElementById("guestEmail").value;
         const guestPhone = document.getElementById("guestPhone").value;
-        const bookingData = JSON.parse(sessionStorage.getItem("pendingBooking"));
+        const bookingData = storage
+            ? storage.getSS("pendingBooking", null)
+            : JSON.parse(sessionStorage.getItem("pendingBooking") || "null");
+
+        if (!bookingData) {
+            alert("Booking data expired. Please try booking again.");
+            window.location.href = "listings.html";
+            return;
+        }
 
         // Create payment record
         const payment = {
@@ -154,7 +166,7 @@ function handlePaymentSubmit(e) {
             guestEmail: guestEmail,
             guestPhone: guestPhone,
             bookingData: bookingData,
-            paymentDate: new Date().toLocaleDateString(),
+            paymentDate: new Date().toISOString(),
             confirmationNumber: "CONF" + Math.random().toString(36).substring(2, 9).toUpperCase(),
             paymentMethod: method,
             status: method === "card" ? "Completed" : "Pending",
@@ -162,17 +174,30 @@ function handlePaymentSubmit(e) {
         };
 
         // Store in localStorage
-        const payments = JSON.parse(localStorage.getItem("payments")) || [];
+        const payments = storage
+            ? storage.getLS("payments", [])
+            : JSON.parse(localStorage.getItem("payments") || "[]");
         payments.push(payment);
-        localStorage.setItem("payments", JSON.stringify(payments));
+        if (storage) storage.setLS("payments", payments);
+        else localStorage.setItem("payments", JSON.stringify(payments));
 
         // Store payment info for confirmation page
-        sessionStorage.setItem("paymentConfirmation", JSON.stringify(payment));
+        if (storage) storage.setSS("paymentConfirmation", payment);
+        else sessionStorage.setItem("paymentConfirmation", JSON.stringify(payment));
 
         // Create the actual booking
-        const userData = localStorage.getItem("currentUser");
-        const user = JSON.parse(userData);
-        const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+        const user = storage
+            ? storage.getCurrentUser()
+            : JSON.parse(localStorage.getItem("currentUser") || "null");
+        const bookings = storage
+            ? storage.getLS("bookings", [])
+            : JSON.parse(localStorage.getItem("bookings") || "[]");
+
+        if (!user) {
+            alert("Session expired. Please log in again.");
+            window.location.href = "login.html";
+            return;
+        }
 
         const booking = {
             id: bookingData.bookingId,
@@ -184,7 +209,7 @@ function handlePaymentSubmit(e) {
             price: bookingData.price,
             owner: bookingData.owner,
             image: bookingData.image,
-            bookingDate: new Date().toLocaleDateString(),
+            bookingDate: new Date().toISOString(),
             checkInDate: bookingData.checkInDate,
             checkOutDate: bookingData.checkOutDate,
             guests: bookingData.guests,
@@ -195,7 +220,8 @@ function handlePaymentSubmit(e) {
         };
 
         bookings.push(booking);
-        localStorage.setItem("bookings", JSON.stringify(bookings));
+        if (storage) storage.setLS("bookings", bookings);
+        else localStorage.setItem("bookings", JSON.stringify(bookings));
 
         // Send welcome message from host
         sendHostWelcomeMessage(booking, user);
@@ -210,7 +236,10 @@ function handlePaymentSubmit(e) {
 
 // ===== SEND HOST WELCOME MESSAGE =====
 function sendHostWelcomeMessage(booking, user) {
-    const conversations = JSON.parse(localStorage.getItem("conversations")) || [];
+    const storage = window.AppStorage;
+    const conversations = storage
+        ? storage.getLS("conversations", [])
+        : JSON.parse(localStorage.getItem("conversations") || "[]");
     
     // Check if conversation already exists
     const existingConv = conversations.find(c => 
@@ -235,7 +264,8 @@ function sendHostWelcomeMessage(booking, user) {
         conversations.unshift(newConversation);
     }
     
-    localStorage.setItem("conversations", JSON.stringify(conversations));
+    if (storage) storage.setLS("conversations", conversations);
+    else localStorage.setItem("conversations", JSON.stringify(conversations));
 }
 
 function addWelcomeMessageToConversation(conversation, booking) {
@@ -252,7 +282,7 @@ function addWelcomeMessageToConversation(conversation, booking) {
     
     const now = new Date();
     const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const date = now.toLocaleDateString();
+    const date = now.toISOString();
     
     const welcomeMessage = {
         sender: conversation.hostName,
