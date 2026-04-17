@@ -27,6 +27,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Handle login page separately to avoid collisions with signup/edit logic.
     if (usernameLoginField && passwordLoginField && !firstNameField) {
+        if (window.__hosteraMainLoginHandler) {
+            if (togglePassBtn) {
+                togglePassBtn.addEventListener("click", function () {
+                    const targetId = this.getAttribute("data-target");
+                    const targetInput = document.getElementById(targetId);
+                    if (!targetInput) return;
+
+                    const type = targetInput.getAttribute("type") === "password" ? "text" : "password";
+                    targetInput.setAttribute("type", type);
+                    this.textContent = type === "password" ? "👁" : "👁️";
+                });
+            }
+            return;
+        }
+
         const MAX_LOGIN_ATTEMPTS = 5;
         const LOCKOUT_TIME = 60000;
         const LOGIN_ATTEMPT_KEY = "loginAttempts";
@@ -73,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let validPassword = false;
             if (user) {
                 if (storage && typeof storage.verifyPassword === "function") {
-                    validPassword = await storage.verifyPassword(password, user.passwordHash || user.password);
+                    validPassword = await storage.verifyPassword(user, password);
                 } else {
                     validPassword = password === user.password;
                 }
@@ -212,6 +227,96 @@ if (phoneInput && window.intlTelInput) {
     function clearValidationState(input) {
         if (!input) return;
         input.classList.remove("is-valid", "is-invalid");
+    }
+
+    function migrateUsernameReferences(oldUsername, newUsername) {
+        if (!oldUsername || !newUsername || oldUsername === newUsername) return;
+
+        const readKey = (key) => (storage ? storage.getLS(key, []) : JSON.parse(localStorage.getItem(key) || "[]"));
+        const writeKey = (key, value) => {
+            if (storage) storage.setLS(key, value);
+            else localStorage.setItem(key, JSON.stringify(value));
+        };
+
+        const bookings = readKey("bookings").map((item) => {
+            if (!item || item.userId !== oldUsername) return item;
+            return { ...item, userId: newUsername };
+        });
+        writeKey("bookings", bookings);
+
+        const conversations = readKey("conversations").map((item) => {
+            if (!item) return item;
+            let changed = false;
+            const next = { ...item };
+
+            if (item.userId === oldUsername) {
+                next.userId = newUsername;
+                changed = true;
+            }
+
+            if (Array.isArray(item.messages)) {
+                const updatedMessages = item.messages.map((msg) => {
+                    if (!msg || msg.sender !== oldUsername) return msg;
+                    changed = true;
+                    return { ...msg, sender: newUsername };
+                });
+
+                if (changed) next.messages = updatedMessages;
+            }
+
+            return changed ? next : item;
+        });
+        writeKey("conversations", conversations);
+
+        const payments = readKey("payments").map((item) => {
+            if (!item || !item.bookingData || item.bookingData.userId !== oldUsername) return item;
+            return { ...item, bookingData: { ...item.bookingData, userId: newUsername } };
+        });
+        writeKey("payments", payments);
+
+        const reviews = readKey("reviews").map((item) => {
+            if (!item) return item;
+            const next = { ...item };
+            let changed = false;
+
+            if (item.userId === oldUsername) {
+                next.userId = newUsername;
+                changed = true;
+            }
+
+            if (item.reviewerUsername === oldUsername) {
+                next.reviewerUsername = newUsername;
+                changed = true;
+            }
+
+            return changed ? next : item;
+        });
+        writeKey("reviews", reviews);
+
+        const hostReviews = readKey("hostReviews").map((item) => {
+            if (!item) return item;
+            const next = { ...item };
+            let changed = false;
+
+            if (item.reviewerUsername === oldUsername) {
+                next.reviewerUsername = newUsername;
+                changed = true;
+            }
+
+            if (item.hostUsername === oldUsername) {
+                next.hostUsername = newUsername;
+                changed = true;
+            }
+
+            return changed ? next : item;
+        });
+        writeKey("hostReviews", hostReviews);
+
+        const properties = readKey("properties").map((item) => {
+            if (!item || item.owner !== oldUsername) return item;
+            return { ...item, owner: newUsername };
+        });
+        writeKey("properties", properties);
     }
 
     function toggleRule(el, valid) {
@@ -523,6 +628,9 @@ let username = usernameInput ? usernameInput.value.trim() : "";
 let email = emailInput ? emailInput.value.trim() : "";
 let password = passwordInput ? passwordInput.value.trim() : "";
 let confirmPassword = confirmPasswordInput ? confirmPasswordInput.value.trim() : "";
+const persistedCurrentUser = isEditMode && currentUser
+    ? getUsers().find(u => u.username === currentUser.username) || null
+    : null;
 
 if (!isEditMode) {
     if (!firstName || !lastName || !gender || !dob || !country || !phone || !username || !email) {
@@ -588,8 +696,15 @@ if (!isEditMode) {
     }
 } else {
     if (password === "" && confirmPassword === "") {
-        finalPassword = currentUser.password || "";
-        finalPasswordHash = currentUser.passwordHash || null;
+        finalPassword = persistedCurrentUser && typeof persistedCurrentUser.password === "string"
+            ? persistedCurrentUser.password
+            : "";
+        finalPasswordHash = persistedCurrentUser ? persistedCurrentUser.passwordHash || null : null;
+
+        if (!finalPassword && !finalPasswordHash) {
+            alert("❌ Please enter a new password to secure your account.");
+            return;
+        }
     } else {
         const passwordValid = validatePasswordLive();
         const confirmValid = validateConfirmPasswordLive();
@@ -638,6 +753,7 @@ if (!isEditMode) {
         }
 
         if (isEditMode && currentUser) {
+            const oldUsername = currentUser.username;
             const userIndex = users.findIndex(u => u.username === currentUser.username);
 
             if (userIndex === -1) {
@@ -664,6 +780,7 @@ if (!isEditMode) {
             users[userIndex] = finalUser;
 
             setUsers(users);
+            migrateUsernameReferences(oldUsername, finalUser.username);
             if (storage) {
                 storage.setCurrentUser(finalUser);
             } else {

@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function filterListings() {
         let filtered = [...window.listings];
 
-        // FILTER BY CITY
         if (searchInput && searchInput.value.trim() !== "") {
             const value = searchInput.value.toLowerCase();
             filtered = filtered.filter(item =>
@@ -13,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
-         // FILTER BY PRICE
         if (priceInput && priceInput.value !== "") {
             const maxPrice = parseFloat(priceInput.value);
             filtered = filtered.filter(item =>
@@ -21,11 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
-
         window.renderListings(filtered);
     }
 
-// ===== READ FROM URL (homepage search) =====
     const params = new URLSearchParams(window.location.search);
 
     const cityFromURL = params.get("city");
@@ -39,12 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
         priceInput.value = priceFromURL;
     }
 
-    // Apply filters if anything came from URL
     if (cityFromURL || priceFromURL) {
         filterListings();
     }
 
-    // ===== EVENTS =====
     if (searchInput) searchInput.addEventListener("input", filterListings);
     if (priceInput) priceInput.addEventListener("input", filterListings);
 });

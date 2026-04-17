@@ -82,8 +82,8 @@
 .user-dropdown {
     position: absolute;
     top: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
+    right: 0;
+    transform: translateY(-10px);
 
     min-width: 180px;
     background: var(--card-bg);
@@ -101,7 +101,7 @@
 
 .user-dropdown.show {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
     pointer-events: auto;
 }
 
@@ -110,8 +110,8 @@
     background: transparent;
     color: var(--text-color);
     border: none;
-    text-align: left;
-    padding: 12px 16px;
+    text-align: center;
+    padding: 12px 22px;
     cursor: pointer;
     font-size: 15px;
     font-weight: bold;
@@ -147,11 +147,26 @@
         justify-content: center;
         gap: 22px;
         font-size: 19px;
+        position: relative;
     }
 
     .right-side {
         width: 100%;
         justify-content: center;
+    }
+
+    .user-dropdown {
+        position: fixed;
+        top: 212px;
+        right: 16px;
+        left: auto;
+        transform: translateY(-10px);
+        min-width: 190px;
+        max-width: calc(100vw - 24px);
+    }
+
+    .user-dropdown.show {
+        transform: translateY(0);
     }
 }
 
@@ -184,8 +199,8 @@
     }
 
     .user-dropdown {
-        left: 50%;
-        min-width: 160px;
+        top: 196px;
+        min-width: 175px;
     }
 }
 
@@ -225,6 +240,8 @@
     }
 
     .user-dropdown {
+        top: 186px;
+        right: 12px;
         min-width: 150px;
     }
 

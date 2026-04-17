@@ -7,6 +7,35 @@ function getBookingStatus(booking) {
     return checkOutDate < today ? "Stayed" : "Confirmed";
 }
 
+function getValidPropertyIdSet(storage) {
+    const properties = storage
+        ? storage.getLS("properties", [])
+        : JSON.parse(localStorage.getItem("properties") || "[]");
+
+    return new Set(
+        properties
+            .filter(p => p && p.id !== undefined && p.id !== null)
+            .map(p => String(p.id))
+    );
+}
+
+function isBookingLinkedToExistingProperty(booking, validPropertyIds) {
+    if (!booking || booking.propertyId === undefined || booking.propertyId === null) return false;
+    return validPropertyIds.has(String(booking.propertyId));
+}
+
+function cleanupStaleBookings(storage, bookings) {
+    const validPropertyIds = getValidPropertyIdSet(storage);
+    const cleanedBookings = bookings.filter(booking => isBookingLinkedToExistingProperty(booking, validPropertyIds));
+
+    if (cleanedBookings.length !== bookings.length) {
+        if (storage) storage.setLS("bookings", cleanedBookings);
+        else localStorage.setItem("bookings", JSON.stringify(cleanedBookings));
+    }
+
+    return cleanedBookings;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const storage = window.AppStorage;
     const user = storage
@@ -21,7 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const bookings = storage
         ? storage.getLS("bookings", [])
         : JSON.parse(localStorage.getItem("bookings") || "[]");
-    const userBookings = bookings.filter(b => b.userId === user.username);
+    const cleanedBookings = cleanupStaleBookings(storage, bookings);
+    const userBookings = cleanedBookings.filter(b => b.userId === user.username);
 
     const bookingsList = document.getElementById("bookingsList");
     const filterContainer = document.createElement("div");

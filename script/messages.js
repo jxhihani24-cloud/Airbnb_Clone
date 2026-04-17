@@ -310,17 +310,6 @@ function getInitials(name) {
         .substring(0, 2);
 }
 
-function escapeHtml(text) {
-    const map = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-    };
-    return text.replace(/[&<>"']/g, m => map[m]);
-}
-
 function autoResizeTextarea() {
     const textarea = document.getElementById("messageInput");
     textarea.style.height = 'auto';

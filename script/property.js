@@ -39,8 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     allProperties = [...oldData, ...allProperties];
                     setStoredProperties(allProperties);
                     localStorage.removeItem('myProperties');
-                    
-                    console.log('✅ Data migrated successfully!');
                 }
             } catch (error) {
                 console.error('Error during data migration:', error);

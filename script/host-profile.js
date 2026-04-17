@@ -262,22 +262,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     displayHostProfile(hostId);
 
-    // Setup host review modal
-    let currentHostIdForReview = hostId;
-    let currentHostNameForReview = "";
+    const currentHostIdForReview = hostId;
+    const currentHostNameForReview = document.getElementById("hostName").textContent;
 
-    // Get host name from the page
-    setTimeout(() => {
-        currentHostNameForReview = document.getElementById("hostName").textContent;
-
-        // Review button
-        const hostReviewBtn = document.getElementById("hostReviewBtn");
-        if (hostReviewBtn) {
-            hostReviewBtn.addEventListener("click", () => {
-                openHostReviewModal(hostId, currentHostNameForReview);
-            });
-        }
-    }, 100);
+    const hostReviewBtn = document.getElementById("hostReviewBtn");
+    if (hostReviewBtn) {
+        hostReviewBtn.addEventListener("click", () => {
+            openHostReviewModal();
+        });
+    }
 
     // Close review modal buttons
     const reviewModalClose = document.querySelector(".host-review-modal-close");
@@ -350,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ===== HOST REVIEW MODAL FUNCTIONS =====
-function openHostReviewModal(hostId, hostName) {
+function openHostReviewModal() {
     document.getElementById("hostSelectedRating").textContent = "Select a rating";
     document.getElementById("hostReviewText").value = "";
     document.querySelectorAll("#hostStarRating .host-star").forEach(star => {

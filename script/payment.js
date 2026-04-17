@@ -175,15 +175,12 @@ function handlePaymentSubmit(e) {
     const storage = window.AppStorage;
     e.preventDefault();
 
-    if (!validatePaymentForm()) {
-        return;
-    }
+    if (!validatePaymentForm()) return;
 
     const method = document.querySelector("input[name='paymentMethod']:checked").value;
 
     // Show loading state
     const btn = e.target.querySelector("button[type='submit']");
-    const originalText = btn.textContent;
     btn.disabled = true;
     btn.textContent = method === "card" ? "Processing..." : "Confirming...";
 

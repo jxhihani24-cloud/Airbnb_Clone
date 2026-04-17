@@ -6,13 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelector('.nav-links');
 
     if (!currentUser || !navLinks) return;
-    const user = currentUser;
     const loginItem = navLinks.querySelector('li:last-child');
     const loginLink = loginItem ? loginItem.querySelector('a') : null;
 
     if (!loginItem || !loginLink) return;
 
-    loginLink.innerHTML = `<strong>${user.firstName} ${user.lastName}</strong>`;
+    loginLink.innerHTML = `<strong>${currentUser.firstName} ${currentUser.lastName}</strong>`;
     loginLink.href = '#';
 
     let dropdown = loginItem.querySelector('.user-dropdown');
@@ -77,8 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ===== ACCOUNT DROPDOWN MENU ===== //
-
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('themeToggle');
     const root = document.documentElement;
@@ -98,13 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// POPUP LOGIC
-// ===== POPUP LOGIC ===== //
 document.addEventListener('DOMContentLoaded', () => {
     const popup = document.getElementById('pricePopup');
     const closeBtn = document.getElementById('closePopup');
 
-    // STOP if popup does not exist on this page
     if (!popup || !closeBtn) return;
 
     const seen = localStorage.getItem('seenPopup');
@@ -231,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     alert('You are already subscribed!');
                 }
-                console.log('Subscribed Emails:', emails); // Just for demo
             } else {
                 alert('Please enter a valid email address.');
             }
@@ -245,6 +238,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Only run if login form exists (on login.html page)
     if (!loginForm || !window.location.pathname.includes('login.html')) return;
+
+    // Mark login handling as owned by main.js to avoid duplicate submit handlers.
+    window.__hosteraMainLoginHandler = true;
 
     loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -302,31 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Wait until page is fully loaded
-/*document.addEventListener("DOMContentLoaded", function () {
-
-    const modal = document.getElementById("contactModal");
-    const openBtn = document.querySelector(".nav-btn");
-    const closeBtn = document.querySelector(".close");
-
-    // Open modal
-    openBtn.addEventListener("click", function () {
-        modal.classList.add("show");
-    });
-
-    // Close modal (X button)
-    closeBtn.addEventListener("click", function () {
-        modal.classList.remove("show");
-    });
-
-    // Close when clicking outside modal content
-    window.addEventListener("click", function (e) {
-        if (e.target === modal) {
-            modal.classList.remove("show");
-        }
-    });
-
-});*/
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("contactModal");
     const openBtn = document.querySelector(".nav-btn");
