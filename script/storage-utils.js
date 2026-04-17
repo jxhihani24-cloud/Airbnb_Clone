@@ -105,6 +105,79 @@
         setLS("properties", properties);
     }
 
+    function removeProperty(propertyId) {
+        // Delete property
+        let properties = getLS("properties", []);
+        properties = properties.filter(function (p) {
+            return p.id != propertyId;
+        });
+        setLS("properties", properties);
+
+        // Delete related bookings
+        let bookings = getLS("bookings", []);
+        bookings = bookings.filter(function (b) {
+            return b.propertyId != propertyId;
+        });
+        setLS("bookings", bookings);
+
+        // Delete related reviews
+        let reviews = getLS("reviews", []);
+        reviews = reviews.filter(function (r) {
+            return r.propertyId != propertyId;
+        });
+        setLS("reviews", reviews);
+
+        // Delete related conversations
+        let conversations = getLS("conversations", []);
+        conversations = conversations.filter(function (c) {
+            return c.propertyId != propertyId;
+        });
+        setLS("conversations", conversations);
+    }
+
+    function escapeHtml(text) {
+        if (!text) return "";
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function sanitizeInput(text) {
+        if (!text) return "";
+        // Remove HTML tags and escape special characters
+        return text.replace(/[<>&"']/g, function (match) {
+            var escapeMap = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            };
+            return escapeMap[match];
+        });
+    }
+
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function checkDateOverlap(propertyId, checkIn, checkOut, existingBookings) {
+        const newStart = new Date(checkIn);
+        const newEnd = new Date(checkOut);
+        
+        return existingBookings.some(function (booking) {
+            if (booking.propertyId !== propertyId) return false;
+            if (booking.status === "cancelled" || booking.cancelled === true) return false;
+            
+            const existingStart = new Date(booking.checkInDate);
+            const existingEnd = new Date(booking.checkOutDate);
+            
+            // Overlap if: new start before existing end AND new end after existing start
+            return newStart < existingEnd && newEnd > existingStart;
+        });
+    }
+
     async function hashPassword(password) {
         const encoder = new TextEncoder();
         const data = encoder.encode(password);
@@ -122,7 +195,9 @@
         }
 
         if (typeof user.password === "string") {
-            return user.password === inputPassword;
+            // For old plain-text passwords, also hash for comparison
+            const inputHash = await hashPassword(inputPassword);
+            return user.password === inputPassword || user.password === inputHash;
         }
 
         return false;
@@ -159,8 +234,13 @@
         getCurrentUser: getCurrentUser,
         setCurrentUser: setCurrentUser,
         removeUserRelatedData: removeUserRelatedData,
+        removeProperty: removeProperty,
         hashPassword: hashPassword,
         verifyPassword: verifyPassword,
-        ensureUserHasPasswordHash: ensureUserHasPasswordHash
+        ensureUserHasPasswordHash: ensureUserHasPasswordHash,
+        escapeHtml: escapeHtml,
+        sanitizeInput: sanitizeInput,
+        validateEmail: validateEmail,
+        checkDateOverlap: checkDateOverlap
     };
 })();

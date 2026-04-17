@@ -43,12 +43,20 @@ function hasUserStayed(propertyId) {
         ? storage.getLS("bookings", [])
         : JSON.parse(localStorage.getItem("bookings") || "[]");
 
+    const propertyKey = String(propertyId);
+
     return bookings.some(b => {
-        if (b.userId !== user.username || b.propertyId !== propertyId) return false;
-        const checkOut = new Date(storage ? storage.toISODate(b.checkOutDate) : b.checkOutDate);
+        if (!b) return false;
+        if (String(b.userId) !== String(user.username) || String(b.propertyId) !== propertyKey) return false;
+        if (!b.checkOutDate) return false;
+
+        const checkOutRaw = storage && storage.toISODate ? storage.toISODate(b.checkOutDate) : b.checkOutDate;
+        const checkOut = new Date(checkOutRaw);
+        if (Number.isNaN(checkOut.getTime())) return false;
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        return checkOut < today; // only "Stayed" bookings
+        return checkOut < today;
     });
 }
 
@@ -59,6 +67,11 @@ function addReview(propertyId, rating, reviewText) {
         : JSON.parse(localStorage.getItem("currentUser") || "null");
     if (!user) {
         alert("Please log in to leave a review");
+        return false;
+    }
+
+    if (!hasUserStayed(propertyId)) {
+        alert("You can only review a property after your stay is completed.");
         return false;
     }
 
@@ -95,17 +108,19 @@ function displayReviews(propertyId) {
 
     reviews.forEach(review => {
         const stars = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+        const storage = window.AppStorage;
+        const escapedText = storage && storage.escapeHtml ? storage.escapeHtml(review.text) : review.text;
         const reviewEl = document.createElement("div");
         reviewEl.style.cssText = "background: rgba(255,255,255,0.05); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color);";
         reviewEl.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
                 <div>
                     <p style="margin: 0; font-weight: 600;">${review.reviewer}</p>
-                    <span style="font-size: 12px; opacity: 0.7;">${window.AppStorage ? window.AppStorage.toDisplayDate(review.date) : review.date}</span>
+                    <span style="font-size: 12px; opacity: 0.7;">${storage && storage.toDisplayDate ? storage.toDisplayDate(review.date) : review.date}</span>
                 </div>
                 <span style="color: var(--button-color); font-size: 14px;">${stars}</span>
             </div>
-            <p style="margin: 8px 0 0 0; font-size: 14px; line-height: 1.5;">${review.text}</p>
+            <p style="margin: 8px 0 0 0; font-size: 14px; line-height: 1.5;">${escapedText}</p>
         `;
         reviewsList.appendChild(reviewEl);
     });
@@ -127,6 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (selected) {
             displayListings([selected]);   // show only 1
             openListingModal(selected);    // open details automatically
+        } else {
+            applyFilters();
         }
     } else {
         // normal behavior (filters)
@@ -147,65 +164,72 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// ===== SAMPLE PROPERTIES =====
-const defaultProperties = [
-    { id: 1, title: "Cozy Apartment in Paris", guests: 2, city: "Paris", country: "france", owner: "alice", ownerName: "Alice Dubois", price: 120, images: ["../images/cozyparis1.png", "../images/cozyparis2.png", "../images/cozyparis3.png", "../images/cozyparis4.png"] },
-    { id: 2, title: "Modern Loft in New York", guests: 3, city: "New York", country: "usa", owner: "bob", ownerName: "Bob Carter", price: 150, images: ["../images/newyork1.png", "../images/newyork2.png", "../images/newyork3.png"] },
-    { id: 3, title: "Traditional House in Tokyo", guests: 3, city: "Tokyo", country: "japan", owner: "carol", ownerName: "Carol Tanaka", price: 100, images: ["../images/tokyo1.png", "../images/tokyo2.png", "../images/tokyo3.png", "../images/tokyo4.png", "../images/tokyo5.png"] },
-    { id: 4, title: "Beach House in Bali", guests: 6, city: "Bali", country: "indonesia", owner: "dave", ownerName: "Dave Santoso", price: 180, images: ["../images/bali.png", "../images/bali1.png","../images/bali2.png","../images/bali3.png","../images/bali4.png"] },
-    { id: 5, title: "Mountain Cabin in Switzerland", guests: 5, city: "Zermatt", country: "switzerland", owner: "eve", ownerName: "Eve Meier", price: 120, images: ["../images/swiz1.png", "../images/swiz2.png","../images/swiz3.png","../images/swiz4.png"] },
-    { id: 6, title: "Luxury Apartment in Paris", guests: 4, city: "Paris", country: "france", owner: "frank", ownerName: "Frank Dupont", price: 200, images: ["../images/paris1.png", "../images/paris2.png","../images/paris3.png","../images/paris4.png","../images/paris5.png"] },
-    { id: 7, title: "Ryokan in Kyoto", guests: 1, city: "Kyoto", country: "japan", owner: "haru", ownerName: "Haru Sato", price: 130, images: ["../images/ryokan.png", "../images/ryokan1.png","../images/ryokan3.png"] },
-    { id: 8, title: "Villa in Ubud", guests: 6, city: "Ubud", country: "indonesia", owner: "ivan", ownerName: "Ivan Wijaya", price: 210, images: ["../images/ubud.png", "../images/ubud1.png","../images/ubud2.png","../images/ubud3.png","../images/ubud4.png"] },
-    { id: 9, title: "Apartment in Geneva", guests: 3, city: "Geneva", country: "switzerland", owner: "julia", ownerName: "Julia Keller", price: 250, images: ["../images/geneva1.png", "../images/geneva2.png"] },
-
-    // POPULAR STAYS 
-    { id: 10, title: "Beach House", guests: 6, city: "Bali", country: "indonesia", owner: "kadek", ownerName: "Kadek Putra", price: 120, images: ["../images/balib1.png", "../images/balib2.png", "../images/balib3.png"] },
-    { id: 11, title: "City Apartment", guests: 3, city: "New York", country: "usa", owner: "michael", ownerName: "Michael Johnson", price: 150, images: ["../images/cnewyork1.png", "../images/newyork3.png","../images/newyork3.png"] },
-   
-    { id: 12, title: "Skyscraper Studio Apartment", guests: 2, city: "Dubai", country: "uae", owner: "david", ownerName: "David Smith", price: 145, images: ["../images/dubai.png","../images/dubai1.png","../images/dubai2.png"] },
-
-    // GLOBAL LISTINGS 
-    { id: 13, title: "Eiffel Tower View Studio", guests: 2, city: "Paris", country: "france", owner: "marie", ownerName: "Marie Dubois", price: 140, images: ["../images/eiffel1.png","../images/eiffel2.png","../images/eiffel3.png"] },
-
-    { id: 14, title: "Modern Seoul Apartment", guests: 3, city: "Seoul", country: "korea", owner: "yuki", ownerName: "Yuki Tanaka", price: 110, images: ["../images/seoul.png", "../images/seoul1.png","../images/seoul2.png"] },
-    { id: 15, title: "Jungle Villa with Pool", guests: 6, city: "Ubud", country: "indonesia", owner: "made", ownerName: "Made Santoso", price: 200, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 16, title: "Central London Flat", guests: 4, city: "London", country: "uk", owner: "emma", ownerName: "Emma Wilson", price: 190, images: ["https://images.unsplash.com/photo-1493809842364-78817add7ffb", "https://images.unsplash.com/photo-1493809842364-78817add7ffb"] },
-    { id: 17, title: "Colosseum View Apartment", guests: 4, city: "Rome", country: "italy", owner: "marco", ownerName: "Marco Rossi", price: 160, images: ["https://images.unsplash.com/photo-1494526585095-c41746248156", "https://images.unsplash.com/photo-1494526585095-c41746248156"] },
-    { id: 18, title: "Barcelona Beach Apartment", guests: 4, city: "Barcelona", country: "spain", owner: "sofia", ownerName: "Sofía Martinez", price: 150, images: ["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85", "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"] },
-    { id: 19, title: "Sydney Ocean View House", guests: 6, city: "Sydney", country: "australia", owner: "liam", ownerName: "Liam Brown", price: 230, images: ["https://images.unsplash.com/photo-1479839672679-a46483c0e7c8", "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8"] },
-    { id: 20, title: "Forest Cabin Vancouver", guests: 5, city: "Vancouver", country: "canada", owner: "noah", ownerName: "Noah Smith", price: 170, images: ["https://images.unsplash.com/photo-1445019980597-93fa8acb246c", "https://images.unsplash.com/photo-1445019980597-93fa8acb246c"] },
-    { id: 21, title: "Rio Beachfront Apartment", guests: 4, city: "Rio de Janeiro", country: "brazil", owner: "ana", ownerName: "Ana Silva", price: 140, images: ["https://images.unsplash.com/photo-1505692794403-34d4982c85d0", "https://images.unsplash.com/photo-1505692794403-34d4982c85d0"] },
-    { id: 22, title: "Phuket Tropical Villa", guests: 5, city: "Phuket", country: "thailand", owner: "chai", ownerName: "Chai Wong", price: 130, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 23, title: "Dubai Marina Luxury Apartment", guests: 5, city: "Dubai", country: "uae", owner: "ahmed", ownerName: "Ahmed Al-Farsi", price: 260, images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750", "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"] },
-    { id: 24, title: "Santorini Sea View House", guests: 4, city: "Santorini", country: "greece", owner: "nikos", ownerName: "Nikos Papadopoulos", price: 210, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 25, title: "Marrakech Traditional Riad", guests: 4, city: "Marrakech", country: "morocco", owner: "youssef", ownerName: "Youssef Benali", price: 120, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511", "https://images.unsplash.com/photo-1505691938895-1758d7feb511"] }
-];
-
-// ===== LOAD ALL PROPERTIES (DEFAULT + USER-ADDED) =====
+// ===== LOAD PROPERTIES FROM STORAGE ONLY =====
 function loadAllProperties() {
-    // Get user-added properties from localStorage
     const storage = window.AppStorage;
     const userProperties = storage
         ? storage.getLS("properties", [])
         : JSON.parse(localStorage.getItem("properties") || "[]");
 
-    // Merge default properties with user-added properties
-    const allProperties = [...defaultProperties, ...userProperties];
-
-    return allProperties;
+    return userProperties.map(function (property) {
+        return {
+            ...property,
+            title: property.title || "Untitled Property",
+            city: property.city || "Unknown City",
+            country: (property.country || "unknown").toLowerCase(),
+            ownerName: property.ownerName || property.owner || "Unknown Host",
+            price: Number(property.price) || 0,
+            guests: Number(property.guests) || 0,
+            images: Array.isArray(property.images) ? property.images : []
+        };
+    });
 }
 
 let properties = loadAllProperties();
+
+function renderEmptyState(container, hasAnyProperties) {
+    if (!container) return;
+
+    if (!hasAnyProperties) {
+        container.innerHTML = `
+            <div class="listings-empty-state" role="status" aria-live="polite">
+                <h3>No properties yet</h3>
+                <p>Add your first property to see it here and continue with bookings/reviews flow.</p>
+                <a class="empty-state-btn" href="add-property.html">+ Add Property</a>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="listings-empty-state" role="status" aria-live="polite">
+            <h3>No matching properties</h3>
+            <p>Try adjusting your filters to find available listings.</p>
+            <button id="clearFiltersBtn" class="empty-state-btn" type="button">Clear Filters</button>
+        </div>
+    `;
+
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener("click", () => {
+            document.getElementById("searchCity").value = "";
+            document.getElementById("maxPrice").value = "";
+            document.getElementById("countryFilter").value = "";
+            document.getElementById("guestsInput").value = "";
+            applyFilters();
+        });
+    }
+}
 
 
 // ===== DISPLAY LISTINGS =====
 function displayListings(list) {
     const container = document.querySelector(".listings-grid");
+    if (!container) return;
     container.innerHTML = "";
 
     if (!list || list.length === 0) {
-        container.innerHTML = "<p style='text-align:center; font-size:18px;'>No properties found.</p>";
+        renderEmptyState(container, properties.length > 0);
         return;
     }
 
@@ -225,7 +249,7 @@ function displayListings(list) {
             <div class="card-info">
                 <h4>${property.title}</h4>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <p><strong>Location:</strong> ${property.city}, ${property.country.charAt(0).toUpperCase() + property.country.slice(1)}</p>
+                    <p><strong>Location:</strong> ${property.city}, ${(property.country || "unknown").charAt(0).toUpperCase() + (property.country || "unknown").slice(1)}</p>
                     <span style="font-size: 12px; color: var(--button-color);">${stars}</span>
                 </div>
                 <p style="font-size: 12px; opacity: 0.7;">⭐ ${avgRating} (${reviews.length})</p>
@@ -262,7 +286,8 @@ let currentPropertyImages = [];
 
 function openListingModal(property) {
     const modal = document.getElementById("listingModal");
-    const country = property.country.charAt(0).toUpperCase() + property.country.slice(1);
+    const rawCountry = property.country || "unknown";
+    const country = rawCountry.charAt(0).toUpperCase() + rawCountry.slice(1);
 
     document.getElementById("modalTitle").textContent = property.title;
     document.getElementById("modalDesc").textContent = `Beautiful ${property.country} property in ${property.city}. Perfect for your next stay!`;
@@ -272,7 +297,7 @@ function openListingModal(property) {
 
     // Make owner name clickable
     const ownerElement = document.getElementById("modalOwner");
-    ownerElement.innerHTML = `<a href="host-profile.html?host=${property.owner}" style="color: var(--button-color); text-decoration: none; cursor: pointer; font-weight: 600; transition: opacity 0.2s;">${property.ownerName}</a>`;
+    ownerElement.innerHTML = `<a href="host-profile.html?host=${property.owner || ""}" style="color: var(--button-color); text-decoration: none; cursor: pointer; font-weight: 600; transition: opacity 0.2s;">${property.ownerName || "Unknown Host"}</a>`;
 
     // Make the link hover effect
     const ownerLink = ownerElement.querySelector('a');
@@ -388,15 +413,17 @@ function applyFilters() {
     const guests = parseInt(document.getElementById("guestsInput").value);
 
     const filtered = properties.filter(prop => {
+                const propCity = (prop.city || "").toLowerCase();
+                const propCountry = (prop.country || "").toLowerCase();
+
         const matchesDestination = destination
-            ? prop.city.toLowerCase().includes(destination) ||
-              prop.country.toLowerCase().includes(destination)
+                        ? propCity.includes(destination) || propCountry.includes(destination)
             : true;
 
         const matchesPrice = maxPrice ? prop.price <= maxPrice : true;
 
         const matchesCountry = country
-            ? prop.country.toLowerCase() === country
+            ? propCountry === country
             : true;
 
         const matchesGuests = guests
@@ -432,6 +459,9 @@ function checkAvailability(propertyId, checkInDate, checkOutDate) {
 
     return !bookings.some(booking => {
         if (booking.propertyId !== propertyId) return false;
+        // Don't count cancelled bookings as occupying the property
+        if (booking.status === 'cancelled' || booking.cancelled === true) return false;
+        
         const bookingCheckIn = new Date(storage ? storage.toISODate(booking.checkInDate) : booking.checkInDate);
         const bookingCheckOut = new Date(storage ? storage.toISODate(booking.checkOutDate) : booking.checkOutDate);
 

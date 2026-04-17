@@ -123,6 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== INITIALIZE MAP =====
 document.addEventListener("DOMContentLoaded", () => {
+    if (typeof L === "undefined") return;
+    const mapEl = document.getElementById("map");
+    if (!mapEl) return;
+
     const map = L.map('map').setView([20, 0], 2);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -181,8 +185,11 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const country = urlParams.get("country") || "";
-    if (country) document.getElementById("countryFilter").value = country;
-    filterListings({ country });
+    const countryFilter = document.getElementById("countryFilter");
+    if (country && countryFilter) countryFilter.value = country;
+    if (typeof filterListings === "function") {
+        filterListings({ country });
+    }
 });
 
 // ===== FAQ Accordion with slide effect =====

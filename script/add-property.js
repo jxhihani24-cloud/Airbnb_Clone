@@ -76,15 +76,23 @@ function postPropertyFromPage() {
     const user = currentUser;
     const editId = localStorage.getItem("editingPropertyId");
 
-    const title = document.getElementById("title").value.trim();
-    const city = document.getElementById("city").value.trim();
-    const country = document.getElementById("country").value.trim();
+    const title = storage && storage.sanitizeInput 
+        ? storage.sanitizeInput(document.getElementById("title").value.trim())
+        : document.getElementById("title").value.trim();
+    const city = storage && storage.sanitizeInput
+        ? storage.sanitizeInput(document.getElementById("city").value.trim())
+        : document.getElementById("city").value.trim();
+    const country = storage && storage.sanitizeInput
+        ? storage.sanitizeInput(document.getElementById("country").value.trim())
+        : document.getElementById("country").value.trim();
     const propertyType = document.getElementById("propertyType").value;
     const price = document.getElementById("price").value.trim();
     const guests = document.getElementById("guests").value.trim();
     const bedrooms = document.getElementById("bedrooms").value.trim();
     const bathrooms = document.getElementById("bathrooms").value.trim();
-    const description = document.getElementById("description").value.trim();
+    const description = storage && storage.sanitizeInput
+        ? storage.sanitizeInput(document.getElementById("description").value.trim())
+        : document.getElementById("description").value.trim();
     const amenitiesInput = document.getElementById("amenities").value.trim();
     const imagesInput = document.getElementById("images").value.trim();
 
@@ -94,7 +102,10 @@ function postPropertyFromPage() {
     }
 
     const amenities = amenitiesInput
-    ? amenitiesInput.split(",").map(item => item.trim()).filter(Boolean)
+    ? amenitiesInput.split(",").map(item => {
+        const trimmed = item.trim();
+        return storage && storage.sanitizeInput ? storage.sanitizeInput(trimmed) : trimmed;
+    }).filter(Boolean)
     : [];
 
 const images = imagesInput

@@ -80,7 +80,7 @@ function displayBookings(userBookings) {
         bookingCard.className = "col-md-6 col-lg-4";
         bookingCard.innerHTML = `
             <div class="card booking-card shadow-sm h-100">
-                <img src="${booking.image}" alt="${booking.propertyTitle}" class="booking-card-img">
+                <img src="${booking.image || booking.images?.[0] || 'https://picsum.photos/400/300?random=99'}" alt="${booking.propertyTitle}" class="booking-card-img">
                 <div class="card-body d-flex flex-column">
                     <h6 class="card-title mb-2">${booking.propertyTitle}</h6>
 
@@ -131,6 +131,23 @@ function cancelBooking(bookingId) {
     const bookings = storage
         ? storage.getLS("bookings", [])
         : JSON.parse(localStorage.getItem("bookings") || "[]");
+    const booking = bookings.find(b => b.bookingId === bookingId);
+    
+    if (!booking) {
+        alert("❌ Booking not found");
+        return;
+    }
+    
+    // Check if cancellation deadline passed
+    const checkInDate = new Date(booking.checkInDate);
+    const today = new Date();
+    const daysUntilCheckIn = (checkInDate - today) / (1000 * 60 * 60 * 24);
+    
+    if (daysUntilCheckIn < 7) {
+        alert("❌ Cannot cancel within 7 days of check-in (non-refundable booking policy)");
+        return;
+    }
+    
     const updated = bookings.filter(b => b.bookingId !== bookingId);
     if (storage) storage.setLS("bookings", updated);
     else localStorage.setItem("bookings", JSON.stringify(updated));
@@ -138,7 +155,7 @@ function cancelBooking(bookingId) {
         ? storage.getCurrentUser()
         : JSON.parse(localStorage.getItem("currentUser") || "null");
     displayBookings(updated.filter(b => b.userId === user.username));
-    alert("Booking cancelled successfully");
+    alert("✅ Booking cancelled successfully");
 }
 
 // ===== STAR REVIEW MODAL =====
@@ -214,7 +231,7 @@ function openStarReviewModal(booking) {
             id: Date.now(),
             propertyId: booking.propertyId,
             rating: selectedRating,
-            text: reviewText,
+            text: storage && storage.sanitizeInput ? storage.sanitizeInput(reviewText) : reviewText,
             reviewer: currentUser.firstName + " " + currentUser.lastName,
             reviewerUsername: currentUser.username,
             date: new Date().toISOString(),
@@ -245,7 +262,9 @@ function openBookingModal(booking) {
     document.getElementById("bookingModalGuests").textContent = `${booking.guests || 1} guest(s)`;
     document.getElementById("bookingModalOwner").textContent = booking.owner;
 
-    currentBookingImages = booking.images || [booking.image] || ["https://picsum.photos/400/300?random=99"];
+    currentBookingImages = (booking.images && booking.images.length > 0) 
+        ? booking.images 
+        : (booking.image ? [booking.image] : ["https://picsum.photos/400/300?random=99"]);
     currentBookingImageIndex = 0;
     document.getElementById("bookingModalImage").src = currentBookingImages[0];
     updateBookingImageCounter();

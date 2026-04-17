@@ -96,6 +96,42 @@ function handlePaymentMethodChange(e) {
     }
 }
 
+// ===== LUHN ALGORITHM FOR CARD VALIDATION =====
+function luhnCheck(cardNumber) {
+    let sum = 0;
+    let isEven = false;
+    for (let i = cardNumber.length - 1; i >= 0; i--) {
+        let n = parseInt(cardNumber.charAt(i), 10);
+        if (isEven) {
+            n *= 2;
+            if (n > 9) n -= 9;
+        }
+        sum += n;
+        isEven = !isEven;
+    }
+    return sum % 10 === 0;
+}
+
+// ===== VALIDATE CARD EXPIRY =====
+function validateCardExpiry(expiryDate) {
+    const [month, year] = expiryDate.split('/');
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear() % 100;
+    const currentMonth = currentDate.getMonth() + 1;
+    
+    const expYear = parseInt(year, 10);
+    const expMonth = parseInt(month, 10);
+    
+    // Check if year is valid (not in past)
+    if (expYear < currentYear) return false;
+    // Check if month is valid (not in past for current year)
+    if (expYear === currentYear && expMonth < currentMonth) return false;
+    // Check month is between 01-12
+    if (expMonth < 1 || expMonth > 12) return false;
+    
+    return true;
+}
+
 // ===== VALIDATE PAYMENT FORM =====
 function validatePaymentForm() {
     const method = document.querySelector("input[name='paymentMethod']:checked").value;
@@ -106,17 +142,27 @@ function validatePaymentForm() {
         const cvv = document.getElementById("cvv").value;
 
         if (cardNumber.length !== 16) {
-            alert("Please enter a valid 16-digit card number");
+            alert("❌ Please enter a valid 16-digit card number");
+            return false;
+        }
+
+        if (!luhnCheck(cardNumber)) {
+            alert("❌ Card number failed validation. Please check and try again.");
             return false;
         }
 
         if (!expiryDate.match(/^\d{2}\/\d{2}$/)) {
-            alert("Please enter expiry date in MM/YY format");
+            alert("❌ Please enter expiry date in MM/YY format");
+            return false;
+        }
+
+        if (!validateCardExpiry(expiryDate)) {
+            alert("❌ Card expiry date is invalid or expired");
             return false;
         }
 
         if (cvv.length !== 3) {
-            alert("Please enter a valid 3-digit CVV");
+            alert("❌ Please enter a valid 3-digit CVV");
             return false;
         }
     }
@@ -157,6 +203,19 @@ function handlePaymentSubmit(e) {
             alert("Booking data expired. Please try booking again.");
             window.location.href = "listings.html";
             return;
+        }
+
+        // Check if property is still available for selected dates
+        const allBookings = storage
+            ? storage.getLS("bookings", [])
+            : JSON.parse(localStorage.getItem("bookings") || "[]");
+        
+        if (storage && storage.checkDateOverlap) {
+            if (storage.checkDateOverlap(bookingData.propertyId, bookingData.checkInDate, bookingData.checkOutDate, allBookings)) {
+                alert("❌ This property is no longer available for the selected dates. Someone else booked it!");
+                window.location.href = "listings.html";
+                return;
+            }
         }
 
         // Create payment record

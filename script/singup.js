@@ -20,6 +20,104 @@ document.addEventListener("DOMContentLoaded", () => {
         else localStorage.setItem("users", JSON.stringify(users));
     };
 
+    const usernameLoginField = document.getElementById("username");
+    const passwordLoginField = document.getElementById("password");
+    const firstNameField = document.getElementById("Fname");
+    const togglePassBtn = document.querySelector(".toggle-pass");
+
+    // Handle login page separately to avoid collisions with signup/edit logic.
+    if (usernameLoginField && passwordLoginField && !firstNameField) {
+        const MAX_LOGIN_ATTEMPTS = 5;
+        const LOCKOUT_TIME = 60000;
+        const LOGIN_ATTEMPT_KEY = "loginAttempts";
+
+        const getLoginAttempts = () => {
+            const data = sessionStorage.getItem(LOGIN_ATTEMPT_KEY);
+            return data ? JSON.parse(data) : {};
+        };
+
+        const saveLoginAttempts = (attempts) => {
+            sessionStorage.setItem(LOGIN_ATTEMPT_KEY, JSON.stringify(attempts));
+        };
+
+        const getAttemptBucket = (attempts, username) => {
+            if (!attempts[username]) {
+                attempts[username] = { count: 0, lockedUntil: null };
+            }
+            return attempts[username];
+        };
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const username = usernameLoginField.value.trim();
+            const password = passwordLoginField.value.trim();
+
+            if (!username || !password) {
+                alert("❌ Please enter both username and password!");
+                return;
+            }
+
+            const attempts = getLoginAttempts();
+            const bucket = getAttemptBucket(attempts, username.toLowerCase());
+
+            if (bucket.lockedUntil && Date.now() < bucket.lockedUntil) {
+                const remainingTime = Math.ceil((bucket.lockedUntil - Date.now()) / 1000);
+                alert(`❌ Too many login attempts. Please try again in ${remainingTime} seconds.`);
+                return;
+            }
+
+            const users = getUsers();
+            const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+
+            let validPassword = false;
+            if (user) {
+                if (storage && typeof storage.verifyPassword === "function") {
+                    validPassword = await storage.verifyPassword(password, user.passwordHash || user.password);
+                } else {
+                    validPassword = password === user.password;
+                }
+            }
+
+            if (!user || !validPassword) {
+                bucket.count += 1;
+
+                if (bucket.count >= MAX_LOGIN_ATTEMPTS) {
+                    bucket.lockedUntil = Date.now() + LOCKOUT_TIME;
+                    saveLoginAttempts(attempts);
+                    alert("❌ Too many failed login attempts. Account temporarily locked for 60 seconds.");
+                } else {
+                    saveLoginAttempts(attempts);
+                    alert(`❌ Invalid username or password. (Attempt ${bucket.count}/${MAX_LOGIN_ATTEMPTS})`);
+                }
+                return;
+            }
+
+            delete attempts[username.toLowerCase()];
+            saveLoginAttempts(attempts);
+
+            if (storage) storage.setCurrentUser(user);
+            else localStorage.setItem("currentUser", JSON.stringify(user));
+
+            alert(`✅ Welcome back, ${user.firstName || user.username}!`);
+            window.location.href = "../index.html";
+        });
+
+        if (togglePassBtn) {
+            togglePassBtn.addEventListener("click", function () {
+                const targetId = this.getAttribute("data-target");
+                const targetInput = document.getElementById(targetId);
+                if (!targetInput) return;
+
+                const type = targetInput.getAttribute("type") === "password" ? "text" : "password";
+                targetInput.setAttribute("type", type);
+                this.textContent = type === "password" ? "👁" : "👁️";
+            });
+        }
+
+        return;
+    }
+
     const isEditMode = localStorage.getItem("editingAccount") === "true";
     const currentUserData = storage
         ? storage.getCurrentUser()
@@ -197,7 +295,8 @@ if (phoneInput && window.intlTelInput) {
             return false;
         }
 
-        if (!email.includes("@") || !email.includes(".")) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
             emailMessage.textContent = "Please enter a valid email";
             emailMessage.style.color = "#e0262d";
             emailInput.classList.add("is-invalid");
@@ -237,6 +336,11 @@ if (phoneInput && window.intlTelInput) {
         const today = new Date();
         const dob = new Date(dateString);
 
+        // Check if DOB is in future
+        if (dob > today) {
+            return false; // Future date invalid
+        }
+
         let age = today.getFullYear() - dob.getFullYear();
         const monthDiff = today.getMonth() - dob.getMonth();
 
@@ -244,7 +348,8 @@ if (phoneInput && window.intlTelInput) {
             age--;
         }
 
-        return age >= 18;
+        // Check reasonable age range (18-120)
+        return age >= 18 && age <= 120;
     }
 
     function validateDob() {
@@ -597,4 +702,5 @@ if (!isEditMode) {
             window.location.href = "index.html";
         }
     });
+
 });

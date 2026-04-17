@@ -47,7 +47,7 @@
 }
 
 .btn-new-msg:hover {
-    background: #ff8533;
+    background: var(--hover-color);
     transform: scale(1.05);
 }
 
@@ -158,7 +158,7 @@
 }
 
 .btn-primary:hover {
-    background: #ff8533;
+    background: var(--hover-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
@@ -346,7 +346,7 @@
 }
 
 .btn-send:hover {
-    background: #ff8533;
+    background: var(--hover-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
 }
@@ -451,7 +451,7 @@
 }
 
 .modal-content .btn-action:hover {
-    background: #ff8533;
+    background: var(--hover-color);
     transform: translateY(-2px);
 }
 
@@ -502,4 +502,52 @@
 #bookingSelect option {
     color: black;
     background: white; /* important so black text is visible */
+}
+
+/* ===== CONSISTENCY OVERRIDES ===== */
+.conversations-container,
+.chat-window,
+.modal-content {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--soft-shadow);
+}
+
+.btn-new-msg,
+.btn-primary,
+.btn-send,
+.modal-content .btn-action {
+    border-radius: var(--radius-md);
+    font-family: inherit;
+}
+
+.btn-new-msg:hover,
+.btn-primary:hover,
+.btn-send:hover,
+.modal-content .btn-action:hover {
+    background: var(--hover-color);
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+
+.message-input {
+    border-radius: var(--radius-lg);
+}
+
+.message-input:focus {
+    box-shadow: 0 0 0 3px rgba(31, 79, 214, 0.14);
+}
+
+.conversations-header,
+.chat-header,
+.chat-input-area {
+    padding: var(--space-3);
+}
+
+.conversation-item,
+.chat-messages {
+    padding: var(--space-3);
+}
+
+.message-bubble {
+    padding: var(--space-2) var(--space-3);
 }

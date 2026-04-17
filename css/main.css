@@ -2,26 +2,37 @@
 :root {
     --bg-color: #ffffff;
     --text-color: #111111;
-    --button-color: #1b1ee2;
+    --button-color: #1f4fd6;
     --button-text: white;
-    --card-bg: #d6f1fa;
+    --card-bg: #eef5ff;
     --border-color: #dddddd;
     --calendar-icon-filter: none;
-     --success-color: #054905;
-     --hover-color:#1518b9;
+    --success-color: #054905;
+    --hover-color: #173fb0;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --soft-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --space-1: 8px;
+    --space-2: 12px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 40px;
 }
 
 /* Dark Mode colors */
 .dark-mode {
     --bg-color: #121212;
     --text-color: #ffffff;
-    --button-color: #e0262d;
+    --button-color: #d83a45;
     --button-text: white;
-    --card-bg: #2c2b2b;
+    --card-bg: #25272c;
     --border-color: #333333;
     --calendar-icon-filter: invert(1);
-     --success-color: #3aaf3e;
-     --hover-color:#bb2025;
+    --success-color: #3aaf3e;
+    --hover-color: #bc2d39;
 }
 
 /* Makes sure calendar icon is white when dark mode and vice-versa*/
@@ -34,13 +45,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: inline-block;
     width: 60px;
     height: 34px;
-}
-
-/* Hide default checkbox */
-.theme-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
 }
 
 /* Hide default checkbox */
@@ -97,6 +101,8 @@ body {
     margin: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
+    font-family: "Poppins", "Nunito Sans", "Segoe UI", sans-serif;
+    line-height: 1.5;
 
     display: flex;
     flex-direction: column;
@@ -112,14 +118,23 @@ body {
     color: var(--button-text);
     border: none;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
 }
 
 .nav-btn:hover {
+    background-color: var(--hover-color);
     transform: translateY(-1px);
     opacity: 0.95;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* subtle black shadow */
+}
+
+button,
+.btn,
+input,
+select,
+textarea {
+    font-family: inherit;
 }
 
 /* MODAL BACKGROUND */
@@ -213,6 +228,11 @@ input {
 /* links */
 a {
     color: var(--text-color);
+}
+
+.page-section {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-4);
 }
 
 /* =========================

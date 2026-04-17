@@ -91,9 +91,11 @@ function loadChatMessages() {
     currentConversation.messages.forEach(msg => {
         const msgEl = document.createElement("div");
         msgEl.className = `message ${msg.sender === currentUser.username ? "sent" : "received"}`;
+        const storage = window.AppStorage;
+        const escapedText = storage && storage.escapeHtml ? storage.escapeHtml(msg.text) : msg.text;
         msgEl.innerHTML = `
             <div class="message-content">
-                <div class="message-bubble">${escapeHtml(msg.text)}</div>
+                <div class="message-bubble">${escapedText}</div>
                 <div class="message-time">${msg.timestamp}</div>
             </div>
         `;

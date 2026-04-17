@@ -288,14 +288,6 @@ body {
     color:#e0262d;
 }
 
-#dob-message,
-#phone-message {
-    margin-top: 1px;
-    margin-bottom: 4px;
-    font-size: 14px;
-    margin: 2px 0;
-}
-
 .iti {
     width: 100%;
 }
@@ -319,4 +311,51 @@ body {
 
 .iti__selected-flag {
     border-radius: 10px 0 0 10px;
+}
+
+/* ===== CONSISTENCY OVERRIDES ===== */
+.login-card {
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--soft-shadow);
+    padding: var(--space-5) var(--space-5);
+}
+
+.login-card h2 {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 700;
+}
+
+.login-form label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: var(--space-1);
+}
+
+.input,
+.iti input,
+.input-group .btn.toggle-pass,
+.login-btn {
+    border-radius: var(--radius-md);
+}
+
+.login-btn,
+.signup-text a {
+    font-family: inherit;
+}
+
+.login-btn:hover {
+    background-color: var(--hover-color);
+}
+
+.login-card p {
+    margin-bottom: var(--space-4);
+}
+
+.signup-text {
+    margin-top: var(--space-3);
+}
+
+.signup-text a {
+    color: var(--button-color);
 }

@@ -175,31 +175,15 @@ function goToListings() {
 <section class="reviews home-section">
     <div class="container">
         <div class="section-heading centered-heading">
-            <span class="section-kicker" style="color:red">Guest feedback</span>
-            <h2>Reviews from guests after booking through us</h2>
+            <span class="section-kicker" style="color:red">Trust & Feedback</span>
+            <h2>What partners and guests say about Hostera</h2>
+            <div style="margin-top:14px; display:flex; justify-content:center;">
+                <button id="openReviewModalBtn" class="nav-btn" type="button">Leave a Website Review</button>
+            </div>
         </div>
 
-        <div class="row g-4 justify-content-center">
-            <div class="col-12 col-md-6 col-xl-4">
-                <div class="review-card">
-                    <p>“Amazing experience! Booking was quick and everything was exactly as shown.”</p>
-                    <span>— Sarah M.</span>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-6 col-xl-4">
-                <div class="review-card">
-                    <p>“Super easy to use and great prices. Found my stay in minutes.”</p>
-                    <span>— Daniel K.</span>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-6 col-xl-4">
-                <div class="review-card">
-                    <p>“Clean listings and smooth booking. Definitely using this again.”</p>
-                    <span>— Elena R.</span>
-                </div>
-            </div>
+        <div id="homeReviewsContainer" class="row g-4 justify-content-center">
+            <!-- Dynamically populated with partner/sponsor testimonials and guest reviews -->
         </div>
     </div>
 </section>
@@ -263,34 +247,6 @@ function goToListings() {
 
 <!-- Popular Stays Script -->
 <script>
-// ===== DEFAULT PROPERTIES (from listings.js) =====
-const homeDefaultProperties = [
-    { id: 1, title: "Cozy Apartment in Paris", guests: 2, city: "Paris", country: "france", owner: "alice", ownerName: "Alice Dubois", price: 120, images: ["../images/cozyparis1.png", "../images/cozyparis2.png", "../images/cozyparis3.png", "../images/cozyparis4.png"] },
-    { id: 2, title: "Modern Loft in New York", guests: 3, city: "New York", country: "usa", owner: "bob", ownerName: "Bob Carter", price: 150, images: ["../images/newyork1.png", "../images/newyork2.png", "../images/newyork3.png"] },
-    { id: 3, title: "Traditional House in Tokyo", guests: 3, city: "Tokyo", country: "japan", owner: "carol", ownerName: "Carol Tanaka", price: 100, images: ["../images/tokyo1.png", "../images/tokyo2.png", "../images/tokyo3.png", "../images/tokyo4.png", "../images/tokyo5.png"] },
-    { id: 4, title: "Beach House in Bali", guests: 6, city: "Bali", country: "indonesia", owner: "dave", ownerName: "Dave Santoso", price: 180, images: ["../images/bali.png", "../images/bali1.png","../images/bali2.png","../images/bali3.png","../images/bali4.png"] },
-    { id: 5, title: "Mountain Cabin in Switzerland", guests: 5, city: "Zermatt", country: "switzerland", owner: "eve", ownerName: "Eve Meier", price: 120, images: ["../images/swiz1.png", "../images/swiz2.png","../images/swiz3.png","../images/swiz4.png"] },
-    { id: 6, title: "Luxury Apartment in Paris", guests: 4, city: "Paris", country: "france", owner: "frank", ownerName: "Frank Dupont", price: 200, images: ["../images/paris1.png", "../images/paris2.png","../images/paris3.png","../images/paris4.png","../images/paris5.png"] },
-    { id: 7, title: "Ryokan in Kyoto", guests: 1, city: "Kyoto", country: "japan", owner: "haru", ownerName: "Haru Sato", price: 130, images: ["../images/ryokan.png", "../images/ryokan1.png","../images/ryokan3.png"] },
-    { id: 8, title: "Villa in Ubud", guests: 6, city: "Ubud", country: "indonesia", owner: "ivan", ownerName: "Ivan Wijaya", price: 210, images: ["../images/ubud.png", "../images/ubud1.png","../images/ubud2.png","../images/ubud3.png","../images/ubud4.png"] },
-    { id: 9, title: "Apartment in Geneva", guests: 3, city: "Geneva", country: "switzerland", owner: "julia", ownerName: "Julia Keller", price: 250, images: ["../images/geneva1.png", "../images/geneva2.png"] },
-    { id: 10, title: "Beach House", guests: 6, city: "Bali", country: "indonesia", owner: "kadek", ownerName: "Kadek Putra", price: 120, images: ["../images/balib1.png", "../images/balib2.png", "../images/balib3.png"] },
-    { id: 11, title: "City Apartment", guests: 3, city: "New York", country: "usa", owner: "michael", ownerName: "Michael Johnson", price: 150, images: ["../images/cnewyork1.png", "../images/newyork3.png"] },
-    { id: 12, title: "Skyscraper Studio Apartment", guests: 2, city: "Dubai", country: "uae", owner: "david", ownerName: "David Smith", price: 145, images: ["../images/dubai.png","../images/dubai1.png","../images/dubai2.png"] },
-    { id: 13, title: "Eiffel Tower View Studio", guests: 2, city: "Paris", country: "france", owner: "marie", ownerName: "Marie Dubois", price: 140, images: ["../images/eiffel1.png","../images/eiffel2.png","../images/eiffel3.png"] },
-    { id: 14, title: "Modern Seoul Apartment", guests: 3, city: "Seoul", country: "korea", owner: "yuki", ownerName: "Yuki Tanaka", price: 110, images: ["../images/seoul.png", "../images/seoul1.png","../images/seoul2.png"] },
-    { id: 15, title: "Jungle Villa with Pool", guests: 6, city: "Ubud", country: "indonesia", owner: "made", ownerName: "Made Santoso", price: 200, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 16, title: "Central London Flat", guests: 4, city: "London", country: "uk", owner: "emma", ownerName: "Emma Wilson", price: 190, images: ["https://images.unsplash.com/photo-1493809842364-78817add7ffb"] },
-    { id: 17, title: "Colosseum View Apartment", guests: 4, city: "Rome", country: "italy", owner: "marco", ownerName: "Marco Rossi", price: 160, images: ["https://images.unsplash.com/photo-1494526585095-c41746248156"] },
-    { id: 18, title: "Barcelona Beach Apartment", guests: 4, city: "Barcelona", country: "spain", owner: "sofia", ownerName: "Sofía Martinez", price: 150, images: ["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85"] },
-    { id: 19, title: "Sydney Ocean View House", guests: 6, city: "Sydney", country: "australia", owner: "liam", ownerName: "Liam Brown", price: 230, images: ["https://images.unsplash.com/photo-1479839672679-a46483c0e7c8"] },
-    { id: 20, title: "Forest Cabin Vancouver", guests: 5, city: "Vancouver", country: "canada", owner: "noah", ownerName: "Noah Smith", price: 170, images: ["https://images.unsplash.com/photo-1445019980597-93fa8acb246c"] },
-    { id: 21, title: "Rio Beachfront Apartment", guests: 4, city: "Rio de Janeiro", country: "brazil", owner: "ana", ownerName: "Ana Silva", price: 140, images: ["https://images.unsplash.com/photo-1505692794403-34d4982c85d0"] },
-    { id: 22, title: "Phuket Tropical Villa", guests: 5, city: "Phuket", country: "thailand", owner: "chai", ownerName: "Chai Wong", price: 130, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 23, title: "Dubai Marina Luxury Apartment", guests: 5, city: "Dubai", country: "uae", owner: "ahmed", ownerName: "Ahmed Al-Farsi", price: 260, images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750"] },
-    { id: 24, title: "Santorini Sea View House", guests: 4, city: "Santorini", country: "greece", owner: "nikos", ownerName: "Nikos Papadopoulos", price: 210, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511"] },
-    { id: 25, title: "Marrakech Traditional Riad", guests: 4, city: "Marrakech", country: "morocco", owner: "youssef", ownerName: "Youssef Benali", price: 120, images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511"] }
-];
 
 function getAverageRatingForProperty(propertyId) {
     const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
@@ -300,12 +256,163 @@ function getAverageRatingForProperty(propertyId) {
     return parseFloat((sum / propertyReviews.length).toFixed(1));
 }
 
+function escapeHtmlText(text) {
+    const div = document.createElement("div");
+    div.textContent = text || "";
+    return div.innerHTML;
+}
+
+function getCurrentSessionUser() {
+    const storage = window.AppStorage;
+    return storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+}
+
+function hasCompletedAnyStay(user) {
+    if (!user || !user.username) return false;
+    const storage = window.AppStorage;
+    const bookings = storage
+        ? storage.getLS("bookings", [])
+        : JSON.parse(localStorage.getItem("bookings") || "[]");
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return bookings.some(b => {
+        if (!b || b.userId !== user.username) return false;
+        if (b.cancelled === true || String(b.status || "").toLowerCase().includes("cancel")) return false;
+        if (!b.checkOutDate) return false;
+        const checkOutDate = new Date(storage && storage.toISODate ? storage.toISODate(b.checkOutDate) : b.checkOutDate);
+        return checkOutDate < today;
+    });
+}
+
+function getPlatformReviews() {
+    return JSON.parse(localStorage.getItem("platformReviews") || "[]");
+}
+
+function savePlatformReviews(reviews) {
+    localStorage.setItem("platformReviews", JSON.stringify(reviews));
+}
+
+function openPlatformReviewModal() {
+    const modal = document.getElementById("platformReviewModal");
+    if (!modal) return;
+    modal.style.display = "flex";
+    modal.classList.add("show");
+}
+
+function closePlatformReviewModal() {
+    const modal = document.getElementById("platformReviewModal");
+    if (!modal) return;
+    modal.classList.remove("show");
+    modal.style.display = "none";
+}
+
+function submitPlatformReview(e) {
+    e.preventDefault();
+
+    const reviewerType = document.getElementById("platformReviewerType").value;
+    const reviewText = document.getElementById("platformReviewText").value.trim();
+    const reviewerNameInput = document.getElementById("platformReviewerName").value.trim();
+
+    if (!reviewText) {
+        alert("Please write a review before submitting.");
+        return;
+    }
+
+    let reviewerName = reviewerNameInput;
+    let sourceType = reviewerType;
+    const user = getCurrentSessionUser();
+
+    if (reviewerType === "Guest") {
+        if (!user) {
+            alert("Please log in first. Guests can submit reviews only after completing a stay.");
+            return;
+        }
+
+        if (!hasCompletedAnyStay(user)) {
+            alert("You can leave a website guest review only after completing at least one stay.");
+            return;
+        }
+
+        reviewerName = ((user.firstName || "") + " " + (user.lastName || "")).trim() || user.username;
+        sourceType = "Guest";
+    } else {
+        if (!reviewerName) {
+            alert("Please enter your company or reviewer name.");
+            return;
+        }
+    }
+
+    const reviews = getPlatformReviews();
+    reviews.push({
+        id: Date.now(),
+        text: reviewText,
+        author: reviewerName,
+        source: sourceType,
+        createdAt: new Date().toISOString()
+    });
+    savePlatformReviews(reviews);
+
+    closePlatformReviewModal();
+    document.getElementById("platformReviewForm").reset();
+    populateHomeReviews();
+    alert("✅ Thank you! Your review has been added.");
+}
+
+function populateHomeReviews() {
+    const container = document.getElementById("homeReviewsContainer");
+    if (!container) return;
+
+    const partnerTestimonials = [
+        {
+            text: "Hostera made onboarding simple and transparent. Their quality checks help us keep guest trust high.",
+            author: "Luna Hospitality Group",
+            source: "Partner"
+        },
+        {
+            text: "Reliable platform, clear communication, and steady booking interest. Great long-term collaboration so far.",
+            author: "Northline Ventures",
+            source: "Partner"
+        },
+        {
+            text: "The product direction is strong and execution has been consistent. We are confident in this team.",
+            author: "Atlas Travel Capital",
+            source: "Partner"
+        }
+    ];
+
+    const platformReviews = getPlatformReviews()
+        .filter(r => r && r.text && r.author && r.source)
+        .slice(-6)
+        .reverse();
+
+    const combinedReviews = [...partnerTestimonials, ...platformReviews];
+    container.innerHTML = "";
+
+    combinedReviews.forEach(review => {
+        const col = document.createElement("div");
+        col.className = "col-12 col-md-6 col-xl-4";
+        col.innerHTML = `
+            <div class="review-card">
+                <p>"${escapeHtmlText(review.text)}"</p>
+                <span>
+                    - ${escapeHtmlText(review.author)}
+                    <small style="display:block; margin-top:6px; opacity:0.7; font-weight:600;">${escapeHtmlText(review.source)}</small>
+                </span>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+}
+
 function populatePopularStays() {
     const userProperties = JSON.parse(localStorage.getItem("properties")) || [];
-    const allProperties = [...homeDefaultProperties, ...userProperties];
     const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
 
-    const propertiesWithRating = allProperties.map(prop => ({
+    const propertiesWithRating = userProperties.map(prop => ({
         ...prop,
         rating: getAverageRatingForProperty(prop.id),
         reviewCount: reviews.filter(r => r.propertyId === prop.id).length
@@ -317,10 +424,7 @@ function populatePopularStays() {
         return a.price - b.price;
     });
 
-    const hasAnyReviews = reviews.length > 0;
-   const topProperties = hasAnyReviews
-    ? sorted.slice(0, 6)
-    : homeDefaultProperties.slice(0, 6);
+    const topProperties = sorted.slice(0, 6);
     const container = document.getElementById("popularStaysContainer");
     container.innerHTML = "";
 
@@ -363,12 +467,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ===== MAP INITIALIZATION =====
 function initializeMap() {
+    if (typeof L === "undefined") return;
+    if (!document.getElementById("map")) return;
+
     const userProperties = JSON.parse(localStorage.getItem("properties")) || [];
-    const allProperties = [...defaultProperties, ...userProperties];
 
     // Group properties by location (city, country)
     const locationMap = {};
-    allProperties.forEach(prop => {
+    userProperties.forEach(prop => {
         const key = `${prop.city},${prop.country}`;
         if (!locationMap[key]) {
             locationMap[key] = {
@@ -429,10 +535,56 @@ function initializeMap() {
 
 // Initialize when page loads
 document.addEventListener("DOMContentLoaded", () => {
-    populatePopularStays();
-    initializeMap();
+        const openBtn = document.getElementById("openReviewModalBtn");
+        const closeBtn = document.getElementById("closePlatformReviewModal");
+        const modal = document.getElementById("platformReviewModal");
+        const form = document.getElementById("platformReviewForm");
+
+        if (openBtn) openBtn.addEventListener("click", openPlatformReviewModal);
+        if (closeBtn) closeBtn.addEventListener("click", closePlatformReviewModal);
+        if (modal) {
+                modal.addEventListener("click", (event) => {
+                        if (event.target === modal) closePlatformReviewModal();
+                });
+        }
+        if (form) form.addEventListener("submit", submitPlatformReview);
+
+        // Keep UI features robust even if an optional section fails.
+        populatePopularStays();
+        populateHomeReviews();
+
+        try {
+            initializeMap();
+        } catch (error) {
+            console.error("Map initialization failed:", error);
+        }
 });
 </script>
+
+<!-- WEBSITE REVIEW MODAL -->
+<div id="platformReviewModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:520px; width:90%;">
+        <span id="closePlatformReviewModal" class="close">&times;</span>
+        <h2>Leave a Website Review</h2>
+        <p style="opacity:0.8; margin-bottom:14px;">Guests must have completed at least one stay. Partners can submit testimonials directly.</p>
+
+        <form id="platformReviewForm" style="display:flex; flex-direction:column; gap:10px;">
+            <label for="platformReviewerType" style="font-weight:700;">Reviewer Type</label>
+            <select id="platformReviewerType" required style="padding:10px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-color);">
+                <option value="Guest">Guest</option>
+                <option value="Partner">Partner</option>
+            </select>
+
+            <label for="platformReviewerName" style="font-weight:700;">Name / Company (for Partner)</label>
+            <input id="platformReviewerName" type="text" placeholder="Example: Northline Ventures" style="padding:10px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-color);">
+
+            <label for="platformReviewText" style="font-weight:700;">Review</label>
+            <textarea id="platformReviewText" rows="4" required placeholder="Share your experience with Hostera..." style="padding:10px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-color);"></textarea>
+
+            <button type="submit" class="nav-btn" style="margin-top:6px;">Submit Review</button>
+        </form>
+    </div>
+</div>
 
 <!-- CONTACT BUTTON ON NAVIGATION BAR -->
 <div id="contactModal" class="modal">

@@ -222,7 +222,7 @@
 }
 
 .btn-pay:hover {
-    background: #ff8533;
+    background: var(--hover-color);
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(255, 107, 53, 0.3);
 }
@@ -535,7 +535,7 @@
 }
 
 .btn-primary:hover {
-    background: #ff8533;
+    background: var(--hover-color);
     transform: translateY(-2px);
 }
 
@@ -582,3 +582,56 @@
         flex-direction: column;
     }
 }
+
+/* ===== CONSISTENCY OVERRIDES ===== */
+.payment-container,
+.confirmation-container,
+.payment-summary,
+.confirmation-section,
+.next-steps {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--soft-shadow);
+}
+
+.payment-method-label,
+.form-group .form-control,
+.btn-pay,
+.btn-action,
+.btn-primary,
+.btn-secondary,
+.btn-tertiary {
+    border-radius: var(--radius-md);
+    font-family: inherit;
+}
+
+.btn-pay:hover,
+.btn-primary:hover {
+    background: var(--hover-color);
+    transform: translateY(-1px);
+    box-shadow: none;
+}
+
+.form-group .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(31, 79, 214, 0.14);
+}
+
+.payment-method-label:hover {
+    background: rgba(31, 79, 214, 0.05);
+}
+
+.payment-container {
+    gap: var(--space-5);
+    padding: var(--space-4);
+}
+
+.payment-summary,
+.confirmation-section,
+.next-steps {
+    padding: var(--space-4);
+}
+
+.summary-item,
+.detail-row {
+    padding: var(--space-2) 0;
+}
+

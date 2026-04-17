@@ -229,6 +229,55 @@
     font-size: 12px;
     cursor: pointer;
 }
+
+.listings-empty-state {
+    grid-column: 1 / -1;
+    max-width: 640px;
+    margin: 20px auto;
+    padding: 36px 28px;
+    text-align: center;
+    border-radius: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.listings-empty-state h3 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    color: var(--text-color);
+}
+
+.listings-empty-state p {
+    margin: 0 auto 22px;
+    max-width: 500px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-color);
+    opacity: 0.85;
+}
+
+.empty-state-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 180px;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 12px;
+    background: var(--button-color);
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.empty-state-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
 /* REMOVE BLUE STYLE FROM SLIDER BUTTONS */
 .image-slider button {
     background: rgba(0, 0, 0, 0.4) !important;
@@ -240,10 +289,6 @@
 .image-slider button {
     display: none !important;
 }
-.image-slider {
-    position: relative;
-}
-
 .image-slider {
     position: relative;
 }
@@ -284,7 +329,7 @@
     flex: 1;
     padding: 8px 12px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--radius-md);
     cursor: pointer;
     font-weight: bold;
     transition: 0.3s;
@@ -325,8 +370,8 @@
 }
 
 .book-btn:hover {
-    background-color: #ff5252;
-    transform: scale(1.05);
+    background-color: var(--hover-color);
+    transform: translateY(-1px);
 }
 
 .card-buttons {
@@ -357,8 +402,8 @@
 }
 
 .card-buttons .book-btn:hover {
-    background-color: #ff5252;
-    transform: scale(1.05);
+    background-color: var(--hover-color);
+    transform: translateY(-1px);
 }
 
 .card-info button {
@@ -475,6 +520,100 @@
         right: 14px;
         bottom: 85px;
     }
+}
+
+/* =========================
+   DESIGN CONSISTENCY OVERRIDES
+   ========================= */
+
+.card,
+.modal-content,
+.listings-empty-state {
+    border-radius: var(--radius-lg);
+}
+
+.card {
+    border: 1px solid var(--border-color);
+    box-shadow: var(--soft-shadow);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.edit-btn,
+.delete-btn,
+.book-btn,
+.card-buttons button,
+.empty-state-btn {
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-weight: 600;
+}
+
+.book-btn,
+.card-buttons .book-btn,
+.empty-state-btn {
+    background: var(--button-color);
+    color: var(--button-text);
+}
+
+.book-btn:hover,
+.card-buttons .book-btn:hover,
+.empty-state-btn:hover {
+    background: var(--hover-color);
+    transform: translateY(-1px);
+}
+
+.card-buttons .view-details-btn {
+    background: #4c5566;
+}
+
+.card-buttons .view-details-btn:hover {
+    background: #3f4757;
+    transform: translateY(-1px);
+}
+
+.listings-empty-state {
+    margin: var(--space-4) auto var(--space-5);
+    padding: var(--space-5) var(--space-4);
+    box-shadow: var(--soft-shadow);
+}
+
+.listings-filters .form-control,
+.listings-filters .form-select {
+    border-color: var(--border-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-radius: var(--radius-md);
+    min-height: 44px;
+}
+
+.listings-filters .form-control:focus,
+.listings-filters .form-select:focus {
+    border-color: var(--button-color);
+    box-shadow: 0 0 0 0.2rem rgba(31, 79, 214, 0.2);
+}
+
+.listings-filters #applyFilters {
+    min-height: 44px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background-color: var(--button-color);
+    color: var(--button-text);
+    font-weight: 700;
+}
+
+.listings-filters #applyFilters:hover {
+    background-color: var(--hover-color);
+}
+
+.listings-page-title {
+    text-align: center;
+    font-size: clamp(1.45rem, 2.2vw, 2rem);
+    font-weight: 700;
+    margin: var(--space-2) 0 0;
+    letter-spacing: 0.01em;
 }
 
 .modal-content select,

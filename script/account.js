@@ -93,9 +93,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (deleteBtn) {
-        deleteBtn.addEventListener("click", () => {
-            const confirmDelete = confirm("Are you sure you want to delete your account?");
+        deleteBtn.addEventListener("click", async () => {
+            const confirmDelete = confirm("⚠️ WARNING: This will permanently delete your account.\n\nClick OK to enter password verification.");
             if (!confirmDelete) return;
+
+            const password = prompt("Enter your password to confirm account deletion:");
+            if (!password) return;
+
+            // Verify password first
+            const storage = window.AppStorage;
+            const users = storage ? storage.getLS("users", []) : JSON.parse(localStorage.getItem("users") || "[]");
+            let passwordOk = false;
+            if (storage && typeof storage.verifyPassword === "function") {
+                passwordOk = await storage.verifyPassword(user, password);
+            } else {
+                passwordOk = user && typeof user.password === "string" && user.password === password;
+            }
+
+            if (!passwordOk) {
+                alert("❌ Incorrect password. Account deletion cancelled.");
+                return;
+            }
+
+            const finalConfirm = confirm("⚠️ LAST CHANCE! Your account and all data will be gone forever. Are you absolutely sure?");
+            if (!finalConfirm) return;
 
             const updatedUsers = (storage ? storage.getLS("users", []) : users).filter(u => u.username !== user.username);
 
@@ -109,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             localStorage.removeItem("editingAccount");
-            alert("Your account has been deleted.");
+            alert("✅ Your account has been permanently deleted.");
             window.location.href = "login.html";
         });
     }

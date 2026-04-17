@@ -22,26 +22,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const oldProperties = localStorage.getItem('myProperties');
     
     if (oldProperties) {
-        let allProperties = getStoredProperties();
-        const oldData = JSON.parse(oldProperties);
-        const user = getCurrentSessionUser();
-        
-        if (user) {
-            
-            oldData.forEach(prop => {
-                if (!prop.owner) {
-                    prop.owner = user.username;
-                    prop.ownerName = user.firstName + ' ' + user.lastName;
-                    prop.createdAt = new Date().toISOString();
+            try {
+                let allProperties = getStoredProperties();
+                const oldData = JSON.parse(oldProperties);
+                const user = getCurrentSessionUser();
+                
+                if (user && user.username) {
+                    oldData.forEach(prop => {
+                        if (!prop.owner) {
+                            prop.owner = user.username || "Unknown";
+                            prop.ownerName = ((user.firstName || "") + " " + (user.lastName || "")).trim() || "Anonymous";
+                            prop.createdAt = prop.createdAt || new Date().toISOString();
+                        }
+                    });
+                    
+                    allProperties = [...oldData, ...allProperties];
+                    setStoredProperties(allProperties);
+                    localStorage.removeItem('myProperties');
+                    
+                    console.log('✅ Data migrated successfully!');
                 }
-            });
-            
-            allProperties = [...oldData, ...allProperties];
-            setStoredProperties(allProperties);
-            localStorage.removeItem('myProperties');
-            
-            console.log('✅ Data migrated successfully!');
-        }
+            } catch (error) {
+                console.error('Error during data migration:', error);
+            }
     }
 });
 
@@ -235,14 +238,26 @@ function toggleModal() {
 
 // ===== REMOVE PROPERTY ===== //
 function removeProperty(id) {
-    if (!confirm('Delete this property?')) return;
+    if (!confirm('🗑️ Delete this property? This cannot be undone.')) return;
+    if (!confirm('⚠️ This will delete all bookings, reviews, and messages for this property. Are you absolutely sure?')) return;
     
-    let allProperties = getStoredProperties();
-    allProperties = allProperties.filter(item => item.id !== id);
-    setStoredProperties(allProperties);
-    
-    alert('✅ Property deleted!');
-    renderMyProperties();
+    try {
+        // Use cascading delete from storage-utils
+        if (window.AppStorage && typeof window.AppStorage.removeProperty === 'function') {
+            window.AppStorage.removeProperty(id);
+        } else {
+            // Fallback if storage-utils not loaded
+            let allProperties = getStoredProperties();
+            allProperties = allProperties.filter(item => item.id !== id);
+            setStoredProperties(allProperties);
+        }
+        
+        alert('✅ Property and all related data deleted!');
+        renderMyProperties();
+    } catch (error) {
+        console.error('Error deleting property:', error);
+        alert('❌ Error deleting property. Please try again.');
+    }
 }
 
 // ===== EDIT PROPERTY ===== //
