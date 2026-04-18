@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ===== MAP TILE API CONFIG =====
+// ===== MAP TILE API CONFIG WITH JQUERY AJAX =====
 function getMapApiKey() {
     const metaKey = document.querySelector('meta[name="maptiler-api-key"]')?.getAttribute('content') || '';
     const localKey = localStorage.getItem('mapApiKey') || '';
@@ -84,44 +84,44 @@ function getMapApiKey() {
     return key && key !== 'YOUR_MAPTILER_API_KEY' ? key : '';
 }
 
-async function addBaseMapLayer(mapInstance) {
+function addBaseMapLayer(mapInstance) {
     const apiKey = getMapApiKey();
 
     if (apiKey) {
         const tileJsonUrl = `https://api.maptiler.com/maps/topo-v4/tiles.json?key=${apiKey}`;
 
-        try {
-            // AJAX request to API endpoint to load map tile config dynamically.
-            const response = await fetch(tileJsonUrl, {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' }
-            });
+        // jQuery AJAX request to load map tile config dynamically
+        $.ajax({
+            url: tileJsonUrl,
+            method: 'GET',
+            dataType: 'json',
+            headers: { 'Accept': 'application/json' },
+            success: function (tileConfig) {
+                const tileUrl = tileConfig?.tiles?.[0] || `https://api.maptiler.com/maps/topo-v4/{z}/{x}/{y}.png?key=${apiKey}`;
+                const maxZoom = Number.isFinite(tileConfig?.maxzoom) ? tileConfig.maxzoom : 20;
+                const tileSize = Number.isFinite(tileConfig?.tileSize) ? tileConfig.tileSize : 512;
 
-            if (!response.ok) {
-                throw new Error(`Map API request failed: ${response.status}`);
+                L.tileLayer(tileUrl, {
+                    attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
+                    maxZoom,
+                    tileSize,
+                    zoomOffset: tileSize === 512 ? -1 : 0
+                }).addTo(mapInstance);
+            },
+            error: function (error) {
+                console.warn('Map API AJAX failed, loading fallback OpenStreetMap:', error);
+                loadFreeMapFallback(mapInstance);
             }
-
-            const tileConfig = await response.json();
-            const tileUrl = tileConfig?.tiles?.[0] || `https://api.maptiler.com/maps/topo-v4/{z}/{x}/{y}.png?key=${apiKey}`;
-            const maxZoom = Number.isFinite(tileConfig?.maxzoom) ? tileConfig.maxzoom : 20;
-            const tileSize = Number.isFinite(tileConfig?.tileSize) ? tileConfig.tileSize : 512;
-
-            L.tileLayer(tileUrl, {
-                attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
-                maxZoom,
-                tileSize,
-                zoomOffset: tileSize === 512 ? -1 : 0
-            }).addTo(mapInstance);
-
-            return;
-        } catch (error) {
-            console.warn('Map API AJAX fallback triggered:', error);
-        }
+        });
+    } else {
+        loadFreeMapFallback(mapInstance);
     }
+}
 
-    // Fallback keeps the map usable when an API key is not configured yet.
+// Free OpenStreetMap fallback
+function loadFreeMapFallback(mapInstance) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
     }).addTo(mapInstance);
 }
@@ -178,44 +178,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     await addBaseMapLayer(map);
 
     const locations = [
-    // Europe
-    { name: "France", coords: [46.2276, 2.2137], country: "france" },
-    { name: "Germany", coords: [51.1657, 10.4515], country: "germany" },
-    { name: "Italy", coords: [41.8719, 12.5674], country: "italy" },
-    { name: "Spain", coords: [40.4637, -3.7492], country: "spain" },
-    { name: "United Kingdom", coords: [55.3781, -3.4360], country: "uk" },
-    { name: "Switzerland", coords: [46.8182, 8.2275], country: "switzerland" },
-    { name: "Netherlands", coords: [52.1326, 5.2913], country: "netherlands" },
-    { name: "Greece", coords: [39.0742, 21.8243], country: "greece" },
-    { name: "Albania", coords: [41.1533, 20.1683], country: "albania" },
-    // North America
-    { name: "USA", coords: [37.0902, -95.7129], country: "usa" },
-    { name: "Canada", coords: [56.1304, -106.3468], country: "canada" },
-    { name: "Mexico", coords: [23.6345, -102.5528], country: "mexico" },
+        // Europe
+        { name: "France", coords: [46.2276, 2.2137], country: "france" },
+        { name: "Germany", coords: [51.1657, 10.4515], country: "germany" },
+        { name: "Italy", coords: [41.8719, 12.5674], country: "italy" },
+        { name: "Spain", coords: [40.4637, -3.7492], country: "spain" },
+        { name: "United Kingdom", coords: [55.3781, -3.4360], country: "uk" },
+        { name: "Switzerland", coords: [46.8182, 8.2275], country: "switzerland" },
+        { name: "Netherlands", coords: [52.1326, 5.2913], country: "netherlands" },
+        { name: "Greece", coords: [39.0742, 21.8243], country: "greece" },
+        { name: "Albania", coords: [41.1533, 20.1683], country: "albania" },
+        // North America
+        { name: "USA", coords: [37.0902, -95.7129], country: "usa" },
+        { name: "Canada", coords: [56.1304, -106.3468], country: "canada" },
+        { name: "Mexico", coords: [23.6345, -102.5528], country: "mexico" },
 
-    // South America
-    { name: "Brazil", coords: [-14.2350, -51.9253], country: "brazil" },
-    { name: "Argentina", coords: [-38.4161, -63.6167], country: "argentina" },
-    { name: "Chile", coords: [-35.6751, -71.5430], country: "chile" },
+        // South America
+        { name: "Brazil", coords: [-14.2350, -51.9253], country: "brazil" },
+        { name: "Argentina", coords: [-38.4161, -63.6167], country: "argentina" },
+        { name: "Chile", coords: [-35.6751, -71.5430], country: "chile" },
 
-    // Asia
-    { name: "Japan", coords: [36.2048, 138.2529], country: "japan" },
-    { name: "China", coords: [35.8617, 104.1954], country: "china" },
-    { name: "India", coords: [20.5937, 78.9629], country: "india" },
-    { name: "Thailand", coords: [15.8700, 100.9925], country: "thailand" },
-    { name: "Indonesia", coords: [-0.7893, 113.9213], country: "indonesia" },
-    { name: "UAE", coords: [23.4241, 53.8478], country: "uae" },
+        // Asia
+        { name: "Japan", coords: [36.2048, 138.2529], country: "japan" },
+        { name: "China", coords: [35.8617, 104.1954], country: "china" },
+        { name: "India", coords: [20.5937, 78.9629], country: "india" },
+        { name: "Thailand", coords: [15.8700, 100.9925], country: "thailand" },
+        { name: "Indonesia", coords: [-0.7893, 113.9213], country: "indonesia" },
+        { name: "UAE", coords: [23.4241, 53.8478], country: "uae" },
 
-    // Africa
-    { name: "Egypt", coords: [26.8206, 30.8025], country: "egypt" },
-    { name: "South Africa", coords: [-30.5595, 22.9375], country: "southafrica" },
-    { name: "Morocco", coords: [31.7917, -7.0926], country: "morocco" },
-    { name: "Kenya", coords: [-0.0236, 37.9062], country: "kenya" },
+        // Africa
+        { name: "Egypt", coords: [26.8206, 30.8025], country: "egypt" },
+        { name: "South Africa", coords: [-30.5595, 22.9375], country: "southafrica" },
+        { name: "Morocco", coords: [31.7917, -7.0926], country: "morocco" },
+        { name: "Kenya", coords: [-0.0236, 37.9062], country: "kenya" },
 
-    // Oceania
-    { name: "Australia", coords: [-25.2744, 133.7751], country: "australia" },
-    { name: "New Zealand", coords: [-40.9006, 174.8860], country: "newzealand" }
-];
+        // Oceania
+        { name: "Australia", coords: [-25.2744, 133.7751], country: "australia" },
+        { name: "New Zealand", coords: [-40.9006, 174.8860], country: "newzealand" }
+    ];
 
     locations.forEach(loc => {
         const marker = L.marker(loc.coords).addTo(map);
