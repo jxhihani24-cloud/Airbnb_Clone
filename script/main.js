@@ -76,6 +76,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// ===== MAP TILE API CONFIG =====
+function getMapApiKey() {
+    const metaKey = document.querySelector('meta[name="maptiler-api-key"]')?.getAttribute('content') || '';
+    const localKey = localStorage.getItem('mapApiKey') || '';
+    const key = (localKey || metaKey).trim();
+    return key && key !== 'YOUR_MAPTILER_API_KEY' ? key : '';
+}
+
+async function addBaseMapLayer(mapInstance) {
+    const apiKey = getMapApiKey();
+
+    if (apiKey) {
+        const tileJsonUrl = `https://api.maptiler.com/maps/topo-v4/tiles.json?key=${apiKey}`;
+
+        try {
+            // AJAX request to API endpoint to load map tile config dynamically.
+            const response = await fetch(tileJsonUrl, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Map API request failed: ${response.status}`);
+            }
+
+            const tileConfig = await response.json();
+            const tileUrl = tileConfig?.tiles?.[0] || `https://api.maptiler.com/maps/topo-v4/{z}/{x}/{y}.png?key=${apiKey}`;
+            const maxZoom = Number.isFinite(tileConfig?.maxzoom) ? tileConfig.maxzoom : 20;
+            const tileSize = Number.isFinite(tileConfig?.tileSize) ? tileConfig.tileSize : 512;
+
+            L.tileLayer(tileUrl, {
+                attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
+                maxZoom,
+                tileSize,
+                zoomOffset: tileSize === 512 ? -1 : 0
+            }).addTo(mapInstance);
+
+            return;
+        } catch (error) {
+            console.warn('Map API AJAX fallback triggered:', error);
+        }
+    }
+
+    // Fallback keeps the map usable when an API key is not configured yet.
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(mapInstance);
+}
+
+window.HosteraMap = window.HosteraMap || {};
+window.HosteraMap.addBaseMapLayer = addBaseMapLayer;
+
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('themeToggle');
     const root = document.documentElement;
@@ -116,16 +169,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== INITIALIZE MAP =====
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     if (typeof L === "undefined") return;
     const mapEl = document.getElementById("map");
     if (!mapEl) return;
 
     const map = L.map('map').setView([20, 0], 2);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    await addBaseMapLayer(map);
 
     const locations = [
     // Europe

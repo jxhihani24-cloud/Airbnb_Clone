@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="maptiler-api-key" content="6nKFZACThQvFkojSKb7Q">
     <title>Hostera - Home Page</title>
 
     <link rel="icon" type="image/png" href="images/Logo.png"> 
@@ -494,11 +495,14 @@ function initializeMap() {
 
     // Initialize Leaflet map
     const map = L.map('map').setView([20, 0], 2);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
-    }).addTo(map);
+    if (window.HosteraMap && typeof window.HosteraMap.addBaseMapLayer === "function") {
+        window.HosteraMap.addBaseMapLayer(map);
+    } else {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+    }
 
     // Custom red pin icon
     const redPinIcon = L.icon({
