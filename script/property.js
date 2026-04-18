@@ -201,8 +201,7 @@ function postProperty() {
 
     alert('✅ Property posted!');
     clearPropertyForm();
-    const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
-modal.hide();
+    closeAddPropertyModalSafely();
     renderMyProperties();
 }
 
@@ -218,6 +217,14 @@ function clearPropertyForm() {
     document.getElementById("description").value = "";
     document.getElementById("amenities").value = "";
     document.getElementById("images").value = "";
+}
+
+function closeAddPropertyModalSafely() {
+    const modalElement = document.getElementById('addPropertyModal');
+    if (!modalElement || typeof bootstrap === 'undefined' || !bootstrap.Modal) return;
+
+    const modal = bootstrap.Modal.getInstance(modalElement);
+    if (modal) modal.hide();
 }
 
 function toggleModal() {
@@ -299,8 +306,7 @@ function updateProperty(id) {
         postBtn.onclick = postProperty;
 
         clearPropertyForm();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
-modal.hide();
+        closeAddPropertyModalSafely();
         renderMyProperties();
     }
 }
