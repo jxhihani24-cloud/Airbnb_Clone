@@ -495,7 +495,14 @@ function initializeMap() {
     const locations = Object.values(locationMap);
 
     // Initialize Leaflet map
-    const map = L.map('map').setView([20, 0], 2);
+    const map = L.map('map', {
+    worldCopyJump: false,
+    maxBounds: [
+        [-85, -180],
+        [85, 180]
+    ],
+    maxBoundsViscosity: 1.0
+}).setView([20, 0], 2);
     if (window.HosteraMap && typeof window.HosteraMap.addBaseMapLayer === "function") {
         window.HosteraMap.addBaseMapLayer(map);
     } else {

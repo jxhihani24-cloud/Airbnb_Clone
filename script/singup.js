@@ -485,28 +485,71 @@ if (phoneInput && window.intlTelInput) {
     }
 
     function validatePhone() {
-        if (!phoneInput || !phoneMessage) return false;
+    if (!phoneInput || !phoneMessage) return false;
 
-        if (!phoneInput.value.trim()) {
-            phoneMessage.textContent = "";
-            clearValidationState(phoneInput);
+    const rawPhone = phoneInput.value.trim();
+
+    // 1. Empty check
+    if (!rawPhone) {
+        phoneMessage.textContent = "";
+        clearValidationState(phoneInput);
+        return false;
+    }
+
+    // 2. Get full number (intl format if available)
+    const fullPhone = iti ? iti.getNumber() : rawPhone;
+
+    // Normalize function (removes spaces, dashes, etc.)
+    function normalizePhone(phone) {
+        return String(phone || "").replace(/[^\d+]/g, "").trim();
+    }
+
+    const normalizedPhone = normalizePhone(fullPhone);
+
+    // 3. Format validation
+    const isValidFormat = iti ? iti.isValidNumber() : normalizedPhone.length >= 8;
+
+    if (!isValidFormat) {
+        phoneInput.classList.add("is-invalid");
+        phoneInput.classList.remove("is-valid");
+
+        phoneMessage.textContent = "Invalid phone number.";
+        phoneMessage.style.color = "#e0262d";
+
+        return false;
+    }
+
+    // 4. Duplicate check (NEW)
+    const users = getUsers();
+
+    const phoneExists = users.some(user => {
+        // Allow same user in edit mode
+        if (isEditMode && currentUser && user.username === currentUser.username) {
             return false;
         }
 
-        const valid = iti ? iti.isValidNumber() : true;
+        return normalizePhone(user.phoneNumber) === normalizedPhone;
+    });
 
-        phoneInput.classList.toggle("is-valid", valid);
-        phoneInput.classList.toggle("is-invalid", !valid);
+    if (phoneExists) {
+        phoneInput.classList.add("is-invalid");
+        phoneInput.classList.remove("is-valid");
 
-        phoneMessage.textContent = valid
-            ? "Phone number is valid."
-            : "Invalid phone number.";
+        phoneMessage.textContent = "Phone number is already associated with an account.";
+        phoneMessage.style.color = "#e0262d";
 
-        phoneMessage.className = "form-text";
-        phoneMessage.style.color = valid ? "var(--success-color)" : "#e0262d";
-
-        return valid;
+        return false;
     }
+
+    // 5. Valid + unique
+    phoneInput.classList.add("is-valid");
+    phoneInput.classList.remove("is-invalid");
+
+    phoneMessage.textContent = "Phone number is available.";
+    phoneMessage.style.color = "var(--success-color)";
+
+    return true;
+}
 
     if (phoneInput) {
         phoneInput.addEventListener("blur", validatePhone);

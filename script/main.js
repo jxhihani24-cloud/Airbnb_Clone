@@ -105,8 +105,15 @@ function addBaseMapLayer(mapInstance) {
                     attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
                     maxZoom,
                     tileSize,
-                    zoomOffset: tileSize === 512 ? -1 : 0
+                    zoomOffset: tileSize === 512 ? -1 : 0,
+                    noWrap: true
                 }).addTo(mapInstance);
+
+                mapInstance.setMaxBounds([
+                    [-85, -180],
+                    [85, 180]
+                ]);
+                mapInstance.options.maxBoundsViscosity = 1.0;
             },
             error: function (error) {
                 console.warn('Map API AJAX failed, loading fallback OpenStreetMap:', error);
@@ -121,8 +128,15 @@ function addBaseMapLayer(mapInstance) {
 function loadFreeMapFallback(mapInstance) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
+        maxZoom: 19,
+        noWrap: true
     }).addTo(mapInstance);
+
+    mapInstance.setMaxBounds([
+        [-85, -180],
+        [85, 180]
+    ]);
+    mapInstance.options.maxBoundsViscosity = 1.0;
 }
 
 window.HosteraMap = window.HosteraMap || {};
