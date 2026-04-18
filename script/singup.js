@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const type = targetInput.getAttribute("type") === "password" ? "text" : "password";
                     targetInput.setAttribute("type", type);
-                    this.textContent = type === "password" ? "👁" : "👁️";
+                    this.textContent = type === "password" ? "👁" : "🙈";
                 });
             }
             return;
