@@ -24,6 +24,11 @@ function isBookingLinkedToExistingProperty(booking, validPropertyIds) {
     return validPropertyIds.has(String(booking.propertyId));
 }
 
+function getBookingIdentifier(booking) {
+    if (!booking) return null;
+    return booking.bookingId ?? booking.id ?? null;
+}
+
 function cleanupStaleBookings(storage, bookings) {
     const validPropertyIds = getValidPropertyIdSet(storage);
     const cleanedBookings = bookings.filter(booking => isBookingLinkedToExistingProperty(booking, validPropertyIds));
@@ -146,7 +151,7 @@ function displayBookings(userBookings) {
 
         bookingCard.querySelector(".view-details-btn").addEventListener("click", () => openBookingModal(booking));
         bookingCard.querySelector(".cancel-booking-btn").addEventListener("click", () => {
-            if (confirm("Are you sure you want to cancel this booking?")) cancelBooking(booking.bookingId);
+            if (confirm("Are you sure you want to cancel this booking?")) cancelBooking(getBookingIdentifier(booking));
         });
 
         const reviewBtn = bookingCard.querySelector(".review-btn");
@@ -157,18 +162,22 @@ function displayBookings(userBookings) {
 }
 
 function cancelBooking(bookingId) {
+    if (bookingId === null || bookingId === undefined) {
+        alert("❌ Booking not found");
+        return;
+    }
+
     const storage = window.AppStorage;
     const bookings = storage
         ? storage.getLS("bookings", [])
         : JSON.parse(localStorage.getItem("bookings") || "[]");
-    const booking = bookings.find(b => b.bookingId === bookingId);
+    const booking = bookings.find(b => String(getBookingIdentifier(b)) === String(bookingId));
     
     if (!booking) {
         alert("❌ Booking not found");
         return;
     }
     
-    // Check if cancellation deadline passed
     const checkInDate = new Date(booking.checkInDate);
     const today = new Date();
     const daysUntilCheckIn = (checkInDate - today) / (1000 * 60 * 60 * 24);
@@ -178,7 +187,7 @@ function cancelBooking(bookingId) {
         return;
     }
     
-    const updated = bookings.filter(b => b.bookingId !== bookingId);
+    const updated = bookings.filter(b => String(getBookingIdentifier(b)) !== String(bookingId));
     if (storage) storage.setLS("bookings", updated);
     else localStorage.setItem("bookings", JSON.stringify(updated));
     const user = storage
@@ -188,9 +197,7 @@ function cancelBooking(bookingId) {
     alert("✅ Booking cancelled successfully");
 }
 
-// ===== STAR REVIEW MODAL =====
 function openStarReviewModal(booking) {
-    // Remove existing modal if any
     const existing = document.getElementById("starReviewModal");
     if (existing) existing.remove();
 
@@ -275,7 +282,6 @@ function openStarReviewModal(booking) {
     });
 }
 
-// ===== BOOKING DETAIL MODAL =====
 let currentBookingImageIndex = 0;
 let currentBookingImages = [];
 
@@ -324,7 +330,7 @@ function openBookingModal(booking) {
             openStarReviewModal(booking);
         } else {
             if (confirm("Are you sure you want to cancel this booking?")) {
-                cancelBooking(booking.bookingId);
+                cancelBooking(getBookingIdentifier(booking));
                 closeBookingModal();
             }
         }

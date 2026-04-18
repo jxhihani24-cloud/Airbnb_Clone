@@ -1,12 +1,28 @@
-// ===== LOAD CONFIRMATION DATA =====
 document.addEventListener("DOMContentLoaded", () => {
     const storage = window.AppStorage;
+    const currentUser = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+
+    if (!currentUser) {
+        alert("Please log in to view booking confirmation.");
+        window.location.href = "login.html";
+        return;
+    }
+
     const paymentData = storage
         ? storage.getSS("paymentConfirmation", null)
         : JSON.parse(sessionStorage.getItem("paymentConfirmation") || "null");
     
     if (!paymentData) {
         alert("No confirmation data found. Redirecting...");
+        window.location.href = "bookings.html";
+        return;
+    }
+
+    if (!paymentData.bookingData || paymentData.bookingData.userId !== currentUser.username) {
+        alert("This confirmation does not belong to your account.");
+        sessionStorage.removeItem("paymentConfirmation");
         window.location.href = "bookings.html";
         return;
     }
@@ -18,7 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const serviceFee = Math.round(subtotal * 0.1);
     const total = subtotal + serviceFee;
 
-    // Update header based on payment method
     const successIcon = document.querySelector(".success-icon");
     const header = document.querySelector(".confirmation-header h1");
     const subtitle = document.querySelector(".confirmation-subtitle");
@@ -35,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
         subtitle.textContent = "Payment will be collected at check-in";
     }
 
-    // Populate confirmation details
     document.getElementById("confirmationNumber").textContent = paymentData.confirmationNumber;
     document.getElementById("confirmPropertyName").textContent = booking.propertyTitle;
     document.getElementById("confirmLocation").textContent = `${booking.city}, ${booking.country}`;
@@ -45,12 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("confirmHost").textContent = booking.owner;
     document.getElementById("confirmTotal").textContent = total;
 
-    // Guest information
     document.getElementById("confirmGuestName").textContent = paymentData.guestName;
     document.getElementById("confirmGuestEmail").textContent = paymentData.guestEmail;
     document.getElementById("confirmGuestPhone").textContent = paymentData.guestPhone;
 
-    // Show/hide cash payment notice
     const cashNotice = document.getElementById("cashPaymentNotice");
     if (paymentData.paymentMethod === "cash") {
         if (!cashNotice) {
@@ -70,6 +82,5 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Clear session data
     sessionStorage.removeItem("paymentConfirmation");
 });

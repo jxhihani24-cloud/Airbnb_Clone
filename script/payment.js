@@ -1,6 +1,15 @@
-// ===== LOAD BOOKING DATA =====
 document.addEventListener("DOMContentLoaded", () => {
     const storage = window.AppStorage;
+    const currentUser = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+
+    if (!currentUser) {
+        alert("Please log in to continue with payment.");
+        window.location.href = "login.html";
+        return;
+    }
+
     const bookingData = storage
         ? storage.getSS("pendingBooking", null)
         : JSON.parse(sessionStorage.getItem("pendingBooking") || "null");
@@ -11,14 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // Display booking summary
     document.getElementById("paymentPropertyName").textContent = bookingData.propertyTitle;
     document.getElementById("paymentLocation").textContent = `${bookingData.city}, ${bookingData.country}`;
     document.getElementById("paymentCheckIn").textContent = bookingData.checkInDate;
     document.getElementById("paymentCheckOut").textContent = bookingData.checkOutDate;
     document.getElementById("paymentGuests").textContent = bookingData.guests + " guest(s)";
 
-    // Calculate and display prices
     const nights = bookingData.nights;
     const price = bookingData.price;
     const subtotal = nights * price;
@@ -32,20 +39,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("paymentTotal").textContent = total;
     document.getElementById("cashTotalAmount").textContent = total;
 
-    // Handle payment method selection
     const paymentMethodRadios = document.querySelectorAll("input[name='paymentMethod']");
     paymentMethodRadios.forEach(radio => {
         radio.addEventListener("change", handlePaymentMethodChange);
     });
 
-    // Format card number input
     document.getElementById("cardNumber").addEventListener("input", (e) => {
         let value = e.target.value.replace(/\s/g, "");
         let formattedValue = value.replace(/(.{4})/g, "$1 ").trim();
         e.target.value = formattedValue;
     });
 
-    // Format expiry date input
     document.getElementById("expiryDate").addEventListener("input", (e) => {
         let value = e.target.value.replace(/\D/g, "");
         if (value.length >= 2) {
@@ -54,16 +58,13 @@ document.addEventListener("DOMContentLoaded", () => {
         e.target.value = value;
     });
 
-    // Format CVV input
     document.getElementById("cvv").addEventListener("input", (e) => {
         e.target.value = e.target.value.replace(/\D/g, "").substring(0, 3);
     });
 
-    // Handle form submission
     document.getElementById("paymentForm").addEventListener("submit", handlePaymentSubmit);
 });
 
-// ===== HANDLE PAYMENT METHOD CHANGE =====
 function handlePaymentMethodChange(e) {
     const method = e.target.value;
     const cardSection = document.getElementById("cardPaymentSection");
@@ -72,31 +73,26 @@ function handlePaymentMethodChange(e) {
     const cardInputs = cardSection.querySelectorAll("input[required]");
 
     if (method === "card") {
-        // Show card section, hide cash section
         cardSection.style.display = "block";
         cashSection.style.display = "none";
         submitBtn.textContent = "Complete Payment";
         submitBtn.style.background = "var(--button-color)";
         
-        // Make card inputs required
         cardInputs.forEach(input => {
             input.setAttribute("required", "required");
         });
     } else if (method === "cash") {
-        // Hide card section, show cash section
         cardSection.style.display = "none";
         cashSection.style.display = "block";
         submitBtn.textContent = "Confirm Booking (Pay Cash)";
         submitBtn.style.background = "#28a745";
         
-        // Remove required from card inputs
         cardInputs.forEach(input => {
             input.removeAttribute("required");
         });
     }
 }
 
-// ===== LUHN ALGORITHM FOR CARD VALIDATION =====
 function luhnCheck(cardNumber) {
     let sum = 0;
     let isEven = false;
@@ -112,7 +108,6 @@ function luhnCheck(cardNumber) {
     return sum % 10 === 0;
 }
 
-// ===== VALIDATE CARD EXPIRY =====
 function validateCardExpiry(expiryDate) {
     const [month, year] = expiryDate.split('/');
     const currentDate = new Date();
@@ -122,17 +117,13 @@ function validateCardExpiry(expiryDate) {
     const expYear = parseInt(year, 10);
     const expMonth = parseInt(month, 10);
     
-    // Check if year is valid (not in past)
     if (expYear < currentYear) return false;
-    // Check if month is valid (not in past for current year)
     if (expYear === currentYear && expMonth < currentMonth) return false;
-    // Check month is between 01-12
     if (expMonth < 1 || expMonth > 12) return false;
     
     return true;
 }
 
-// ===== VALIDATE PAYMENT FORM =====
 function validatePaymentForm() {
     const method = document.querySelector("input[name='paymentMethod']:checked").value;
 
@@ -170,7 +161,6 @@ function validatePaymentForm() {
     return true;
 }
 
-// ===== HANDLE PAYMENT SUBMISSION =====
 function handlePaymentSubmit(e) {
     const storage = window.AppStorage;
     e.preventDefault();
@@ -179,16 +169,13 @@ function handlePaymentSubmit(e) {
 
     const method = document.querySelector("input[name='paymentMethod']:checked").value;
 
-    // Show loading state
     const btn = e.target.querySelector("button[type='submit']");
     btn.disabled = true;
     btn.textContent = method === "card" ? "Processing..." : "Confirming...";
 
-    // Simulate payment processing
     const processingTime = method === "card" ? 2000 : 1500;
     
     setTimeout(() => {
-        // Get form data
         const guestName = document.getElementById("guestName").value;
         const guestEmail = document.getElementById("guestEmail").value;
         const guestPhone = document.getElementById("guestPhone").value;
@@ -202,7 +189,6 @@ function handlePaymentSubmit(e) {
             return;
         }
 
-        // Check if property is still available for selected dates
         const allBookings = storage
             ? storage.getLS("bookings", [])
             : JSON.parse(localStorage.getItem("bookings") || "[]");
@@ -215,7 +201,6 @@ function handlePaymentSubmit(e) {
             }
         }
 
-        // Create payment record
         const payment = {
             id: Date.now(),
             guestName: guestName,
@@ -229,7 +214,6 @@ function handlePaymentSubmit(e) {
             paymentNotes: method === "cash" ? "To be paid in cash at check-in" : ""
         };
 
-        // Store in localStorage
         const payments = storage
             ? storage.getLS("payments", [])
             : JSON.parse(localStorage.getItem("payments") || "[]");
@@ -237,11 +221,9 @@ function handlePaymentSubmit(e) {
         if (storage) storage.setLS("payments", payments);
         else localStorage.setItem("payments", JSON.stringify(payments));
 
-        // Store payment info for confirmation page
         if (storage) storage.setSS("paymentConfirmation", payment);
         else sessionStorage.setItem("paymentConfirmation", JSON.stringify(payment));
 
-        // Create the actual booking
         const user = storage
             ? storage.getCurrentUser()
             : JSON.parse(localStorage.getItem("currentUser") || "null");
@@ -256,7 +238,7 @@ function handlePaymentSubmit(e) {
         }
 
         const booking = {
-            id: bookingData.bookingId,
+            bookingId: bookingData.bookingId,
             userId: user.username,
             propertyId: bookingData.propertyId,
             propertyTitle: bookingData.propertyTitle,
@@ -279,34 +261,27 @@ function handlePaymentSubmit(e) {
         if (storage) storage.setLS("bookings", bookings);
         else localStorage.setItem("bookings", JSON.stringify(bookings));
 
-        // Send welcome message from host
         sendHostWelcomeMessage(booking, user);
 
-        // Clear pending booking from session
         sessionStorage.removeItem("pendingBooking");
 
-        // Redirect to confirmation page
         window.location.href = "payment-confirmation.html";
     }, processingTime);
 }
 
-// ===== SEND HOST WELCOME MESSAGE =====
 function sendHostWelcomeMessage(booking, user) {
     const storage = window.AppStorage;
     const conversations = storage
         ? storage.getLS("conversations", [])
         : JSON.parse(localStorage.getItem("conversations") || "[]");
     
-    // Check if conversation already exists
     const existingConv = conversations.find(c => 
         c.userId === user.username && c.propertyId === booking.propertyId
     );
     
     if (existingConv) {
-        // Add welcome message to existing conversation
         addWelcomeMessageToConversation(existingConv, booking);
     } else {
-        // Create new conversation with welcome message
         const newConversation = {
             id: Date.now(),
             userId: user.username,
@@ -325,7 +300,6 @@ function sendHostWelcomeMessage(booking, user) {
 }
 
 function addWelcomeMessageToConversation(conversation, booking) {
-    // Get personalized welcome messages based on the booking
     const welcomeMessages = [
         `Hi there! 🎉 Welcome to ${conversation.propertyTitle}! I'm ${conversation.hostName}, your host. Your booking for ${booking.checkInDate} to ${booking.checkOutDate} is confirmed. I can't wait to welcome you! 🏠✨`,
         `Hello! Thank you for choosing ${conversation.propertyTitle}. I'm ${conversation.hostName} and I'm excited to host you from ${booking.checkInDate} to ${booking.checkOutDate}. If you have any questions before your arrival, feel free to ask! 😊`,

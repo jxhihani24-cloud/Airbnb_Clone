@@ -150,14 +150,14 @@
     </style>
 </head>
 <body>
-<!-- ===== NAVBAR START ===== -->
+
 <nav class="navbar">
     <div class="brand">
     <img src="../images/Logo.png" alt="Hostera logo">
     <span style="font-size: 28px;">HOSTERA</span>
 </div>
 
-    <!-- Navigation links -->
+    
     <ul class="nav-links">
         <li><a href="../index.html"><strong>Home</strong></a></li>
         <li><a href="listings.html"><strong>Listings</strong></a></li>
@@ -165,10 +165,10 @@
         <li id="userNavItem"><a id="userNavLink" href="login.html"><strong>Log In</strong></a></li>
     </ul>
 
-    <!-- Right side: theme toggle + button -->
+    
     <div class="right-side">
 
-        <!-- Dark/Light mode switch -->
+        
         <label class="theme-switch">
             <input type="checkbox" id="themeToggle">
             <span class="slider"></span>
@@ -199,7 +199,7 @@
         <i class="bi bi-arrow-left"></i> Back to Listings
     </a>
 
-    <!-- HOST PROFILE HEADER -->
+    
     <div class="host-profile-header">
         <div class="host-info">
             <div class="host-avatar" id="hostAvatar">👤</div>
@@ -226,7 +226,7 @@
         </div>
     </div>
 
-    <!-- HOST REVIEWS -->
+    
     <div style="margin: 40px 0; padding: 30px; background: linear-gradient(135deg, rgba(255, 56, 92, 0.05) 0%, rgba(143, 18, 41, 0.05) 100%); border-radius: 20px; border: 1px solid var(--border-color);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0; font-size: 24px;">Host Reviews</h2>
@@ -235,14 +235,14 @@
         <div id="hostReviewsList" style="display: flex; flex-direction: column; gap: 16px;"></div>
     </div>
 
-    <!-- HOST'S PROPERTIES -->
+    
     <div class="properties-section">
         <h2>Properties by this Host</h2>
         <div id="hostProperties" class="listings-grid"></div>
     </div>
 </section>
 
-<!-- FOOTER -->
+
 <footer class="footer">
     <p style="font-weight: bold;color: white;">© 2026 HOSTERA. All rights reserved.</p>
 
@@ -253,13 +253,13 @@
     </div>
 </footer>
 
-<!-- ===== ENABLING THE SWITCH FROM LIGHT TO DARK MODE ===== -->
+
 <script src="../script/storage-utils.js"></script>
 <script src="../script/main.js"></script>
 <script src="../script/host-profile.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ===== HOST REVIEW MODAL ===== -->
+
 <div id="hostReviewModal" class="modal-overlay" style="z-index: 10000;">
     <div class="listing-modal-content" style="max-width: 500px;">
         <button class="modal-close-btn host-review-modal-close">&times;</button>
@@ -288,7 +288,7 @@
     </div>
 </div>
 
-<!-- CONTACT BUTTON ON NAVIGATION BAR -->
+
 <div id="contactModal" class="modal">
   <div class="contact-modal-content">
     <span class="contact-close">&times;</span>

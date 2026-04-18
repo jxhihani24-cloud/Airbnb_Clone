@@ -1,8 +1,6 @@
-// ===== GLOBAL VARIABLES =====
 let currentConversation = null;
 let currentUser = null;
 
-// ===== INITIALIZE PAGE =====
 document.addEventListener("DOMContentLoaded", () => {
     const storage = window.AppStorage;
     const user = storage
@@ -20,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupEventListeners();
 });
 
-// ===== LOAD CONVERSATIONS =====
 function loadConversations() {
     const storage = window.AppStorage;
     const conversations = storage
@@ -59,27 +56,22 @@ function loadConversations() {
     });
 }
 
-// ===== OPEN CONVERSATION =====
 function openConversation(conversation, clickedItem) {
     currentConversation = conversation;
     const chatContainer = document.getElementById("chatContainer");
     chatContainer.style.display = "block";
 
-    // Update chat header
     document.getElementById("chatHostName").textContent = conversation.hostName;
     document.getElementById("chatPropertyName").textContent = conversation.propertyTitle;
 
-    // Load messages
     loadChatMessages();
 
-    // Highlight conversation in list
     document.querySelectorAll(".conversation-item").forEach(item => {
         item.classList.remove("active");
     });
     if (clickedItem) clickedItem.classList.add("active");
 }
 
-// ===== LOAD CHAT MESSAGES =====
 function loadChatMessages() {
     const chatMessages = document.getElementById("chatMessages");
     chatMessages.innerHTML = "";
@@ -102,11 +94,9 @@ function loadChatMessages() {
         chatMessages.appendChild(msgEl);
     });
 
-    // Scroll to bottom
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// ===== SEND MESSAGE =====
 function sendMessage() {
     const input = document.getElementById("messageInput");
     const message = input.value.trim();
@@ -115,7 +105,6 @@ function sendMessage() {
         return;
     }
 
-    // Add message to conversation
     const now = new Date();
     const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
@@ -128,7 +117,6 @@ function sendMessage() {
 
     currentConversation.messages.push(newMessage);
 
-    // Update in localStorage
     const storage = window.AppStorage;
     const conversations = storage
         ? storage.getLS("conversations", [])
@@ -140,13 +128,11 @@ function sendMessage() {
         else localStorage.setItem("conversations", JSON.stringify(conversations));
     }
 
-    // Clear input and reload
     input.value = "";
     autoResizeTextarea();
     loadChatMessages();
 }
 
-// ===== CLOSE CHAT WINDOW =====
 function closeChatWindow() {
     if (window.innerWidth <= 992) {
         document.getElementById("chatContainer").style.display = "none";
@@ -156,12 +142,10 @@ function closeChatWindow() {
     }
 }
 
-// ===== OPEN NEW MESSAGE MODAL =====
 function openNewMessageModal() {
     const modal = document.getElementById("newMessageModal");
     modal.classList.add("show");
 
-    // Load bookings
     const storage = window.AppStorage;
     const user = storage
         ? storage.getCurrentUser()
@@ -182,7 +166,6 @@ function openNewMessageModal() {
     });
 }
 
-// ===== START CONVERSATION =====
 function startConversation() {
     const select = document.getElementById("bookingSelect");
     const selectedValue = select.value;
@@ -200,7 +183,6 @@ function startConversation() {
         return;
     }
 
-    // Check if conversation already exists
     const storage = window.AppStorage;
     const conversations = storage
         ? storage.getLS("conversations", [])
@@ -210,7 +192,6 @@ function startConversation() {
     );
 
     if (existingConv) {
-        // Add message to existing conversation
         const now = new Date();
         const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
@@ -224,7 +205,6 @@ function startConversation() {
         conversations.splice(conversations.indexOf(existingConv), 1);
         conversations.unshift(existingConv);
     } else {
-        // Create new conversation
         const now = new Date();
         const timestamp = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
@@ -248,25 +228,19 @@ function startConversation() {
     if (storage) storage.setLS("conversations", conversations);
     else localStorage.setItem("conversations", JSON.stringify(conversations));
 
-    // Close modal
     document.getElementById("newMessageModal").classList.remove("show");
     document.getElementById("bookingSelect").value = "";
     document.getElementById("initialMessage").value = "";
 
-    // Reload conversations
     loadConversations();
     alert("✅ Conversation started!");
 }
 
-// ===== SETUP EVENT LISTENERS =====
 function setupEventListeners() {
-    // New message button
     document.getElementById("newMessageBtn").addEventListener("click", openNewMessageModal);
 
-    // Send button
     document.getElementById("sendBtn").addEventListener("click", sendMessage);
 
-    // Enter to send
     document.getElementById("messageInput").addEventListener("keypress", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -274,10 +248,8 @@ function setupEventListeners() {
         }
     });
 
-    // Auto-resize textarea
     document.getElementById("messageInput").addEventListener("input", autoResizeTextarea);
 
-    // Modal close buttons
     document.querySelectorAll(".modal-close-btn").forEach(btn => {
         btn.addEventListener("click", (e) => {
             const modal = e.target.closest(".modal-overlay");
@@ -289,18 +261,15 @@ function setupEventListeners() {
         });
     });
 
-    // Modal overlay click
     document.getElementById("newMessageModal").addEventListener("click", (e) => {
         if (e.target.id === "newMessageModal") {
             e.target.classList.remove("show");
         }
     });
 
-    // Start conversation button
     document.getElementById("startConversationBtn").addEventListener("click", startConversation);
 }
 
-// ===== HELPER FUNCTIONS =====
 function getInitials(name) {
     return name
         .split(" ")

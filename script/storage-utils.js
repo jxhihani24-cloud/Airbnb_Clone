@@ -106,28 +106,24 @@
     }
 
     function removeProperty(propertyId) {
-        // Delete property
         let properties = getLS("properties", []);
         properties = properties.filter(function (p) {
             return p.id != propertyId;
         });
         setLS("properties", properties);
 
-        // Delete related bookings
         let bookings = getLS("bookings", []);
         bookings = bookings.filter(function (b) {
             return b.propertyId != propertyId;
         });
         setLS("bookings", bookings);
 
-        // Delete related reviews
         let reviews = getLS("reviews", []);
         reviews = reviews.filter(function (r) {
             return r.propertyId != propertyId;
         });
         setLS("reviews", reviews);
 
-        // Delete related conversations
         let conversations = getLS("conversations", []);
         conversations = conversations.filter(function (c) {
             return c.propertyId != propertyId;
@@ -144,7 +140,6 @@
 
     function sanitizeInput(text) {
         if (!text) return "";
-        // Remove HTML tags and escape special characters
         return text.replace(/[<>&"']/g, function (match) {
             var escapeMap = {
                 '&': '&amp;',
@@ -173,7 +168,6 @@
             const existingStart = new Date(booking.checkInDate);
             const existingEnd = new Date(booking.checkOutDate);
             
-            // Overlap if: new start before existing end AND new end after existing start
             return newStart < existingEnd && newEnd > existingStart;
         });
     }
@@ -195,7 +189,6 @@
         }
 
         if (typeof user.password === "string") {
-            // For old plain-text passwords, also hash for comparison
             const inputHash = await hashPassword(inputPassword);
             return user.password === inputPassword || user.password === inputHash;
         }

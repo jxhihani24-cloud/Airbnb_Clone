@@ -100,7 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = prompt("Enter your password to confirm account deletion:");
             if (!password) return;
 
-            // Verify password first
             const storage = window.AppStorage;
             const users = storage ? storage.getLS("users", []) : JSON.parse(localStorage.getItem("users") || "[]");
             let passwordOk = false;

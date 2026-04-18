@@ -1,5 +1,4 @@
 
-// ===== UPDATE NAVBAR WITH LOGIN STATUS + DROPDOWN MENU ===== //
 document.addEventListener('DOMContentLoaded', () => {
     const storage = window.AppStorage;
     const currentUser = storage ? storage.getCurrentUser() : JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -65,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.removeItem('currentUser');
             }
 
+            sessionStorage.removeItem('pendingBooking');
+            sessionStorage.removeItem('paymentConfirmation');
+
             window.location.href = window.location.pathname.includes('/pages/')
                 ? 'login.html'
                 : 'pages/login.html';
@@ -76,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ===== MAP TILE API CONFIG WITH JQUERY AJAX =====
 function getMapApiKey() {
     const metaKey = document.querySelector('meta[name="maptiler-api-key"]')?.getAttribute('content') || '';
     const localKey = localStorage.getItem('mapApiKey') || '';
@@ -90,7 +91,6 @@ function addBaseMapLayer(mapInstance) {
     if (apiKey) {
         const tileJsonUrl = `https://api.maptiler.com/maps/topo-v4/tiles.json?key=${apiKey}`;
 
-        // jQuery AJAX request to load map tile config dynamically
         $.ajax({
             url: tileJsonUrl,
             method: 'GET',
@@ -118,7 +118,6 @@ function addBaseMapLayer(mapInstance) {
     }
 }
 
-// Free OpenStreetMap fallback
 function loadFreeMapFallback(mapInstance) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -168,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// ===== INITIALIZE MAP =====
 document.addEventListener("DOMContentLoaded", async () => {
     if (typeof L === "undefined") return;
     const mapEl = document.getElementById("map");
@@ -178,7 +176,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await addBaseMapLayer(map);
 
     const locations = [
-        // Europe
         { name: "France", coords: [46.2276, 2.2137], country: "france" },
         { name: "Germany", coords: [51.1657, 10.4515], country: "germany" },
         { name: "Italy", coords: [41.8719, 12.5674], country: "italy" },
@@ -188,17 +185,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         { name: "Netherlands", coords: [52.1326, 5.2913], country: "netherlands" },
         { name: "Greece", coords: [39.0742, 21.8243], country: "greece" },
         { name: "Albania", coords: [41.1533, 20.1683], country: "albania" },
-        // North America
         { name: "USA", coords: [37.0902, -95.7129], country: "usa" },
         { name: "Canada", coords: [56.1304, -106.3468], country: "canada" },
         { name: "Mexico", coords: [23.6345, -102.5528], country: "mexico" },
 
-        // South America
         { name: "Brazil", coords: [-14.2350, -51.9253], country: "brazil" },
         { name: "Argentina", coords: [-38.4161, -63.6167], country: "argentina" },
         { name: "Chile", coords: [-35.6751, -71.5430], country: "chile" },
 
-        // Asia
         { name: "Japan", coords: [36.2048, 138.2529], country: "japan" },
         { name: "China", coords: [35.8617, 104.1954], country: "china" },
         { name: "India", coords: [20.5937, 78.9629], country: "india" },
@@ -206,13 +200,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         { name: "Indonesia", coords: [-0.7893, 113.9213], country: "indonesia" },
         { name: "UAE", coords: [23.4241, 53.8478], country: "uae" },
 
-        // Africa
         { name: "Egypt", coords: [26.8206, 30.8025], country: "egypt" },
         { name: "South Africa", coords: [-30.5595, 22.9375], country: "southafrica" },
         { name: "Morocco", coords: [31.7917, -7.0926], country: "morocco" },
         { name: "Kenya", coords: [-0.0236, 37.9062], country: "kenya" },
 
-        // Oceania
         { name: "Australia", coords: [-25.2744, 133.7751], country: "australia" },
         { name: "New Zealand", coords: [-40.9006, 174.8860], country: "newzealand" }
     ];
@@ -236,18 +228,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ===== FAQ Accordion with slide effect =====
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.faq-question').forEach(button => {
         button.addEventListener('click', () => {
             const faqItem = button.parentElement;
 
-            // Toggle active class to expand/collapse answer
             faqItem.classList.toggle('active');
         });
     });
 
-    // ===== Newsletter Subscription Handler =====
     const newsletterForm = document.querySelector('.newsletter-form');
     if (newsletterForm) {
         const newsletterInput = newsletterForm.querySelector('input');
@@ -259,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const storage = window.AppStorage;
 
             if (email && email.includes('@')) {
-                // Get existing emails from localStorage
                 const emails = storage
                     ? storage.getLS('subscribedEmails', [])
                     : JSON.parse(localStorage.getItem('subscribedEmails') || '[]');
@@ -282,43 +270,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ===== LOGIN FORM HANDLER ===== //
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.querySelector('.login-form');
 
-    // Only run if login form exists (on login.html page)
     if (!loginForm || !window.location.pathname.includes('login.html')) return;
 
-    // Mark login handling as owned by main.js to avoid duplicate submit handlers.
     window.__hosteraMainLoginHandler = true;
 
     loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         const storage = window.AppStorage;
 
-        // 1. GET INPUT VALUES
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
 
-        // 2. VALIDATE FIELDS ARE FILLED
         if (!username || !password) {
             alert('❌ Please enter username and password!');
             return;
         }
 
-        // 3. GET ALL USERS FROM LOCALSTORAGE
         let users = storage ? storage.getLS('users', []) : JSON.parse(localStorage.getItem('users') || '[]');
 
-        // 4. FIND USER BY USERNAME
         const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
 
-        // 5. CHECK IF USER EXISTS
         if (!user) {
             alert('❌ Username not found! Please sign up first.');
             return;
         }
 
-        // 6. CHECK IF PASSWORD MATCHES
         const passwordOk = storage
             ? await storage.verifyPassword(user, password)
             : user.password === password;
@@ -339,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('currentUser', JSON.stringify(user));
         }
 
-        // 8. SUCCESS & REDIRECT
         if (!localStorage.getItem('justSignedUp')) {
             alert('✅ Welcome back, ' + user.firstName + '!');
         }

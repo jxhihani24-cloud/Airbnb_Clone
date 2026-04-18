@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const firstNameField = document.getElementById("Fname");
     const togglePassBtn = document.querySelector(".toggle-pass");
 
-    // Handle login page separately to avoid collisions with signup/edit logic.
     if (usernameLoginField && passwordLoginField && !firstNameField) {
         if (window.__hosteraMainLoginHandler) {
             if (togglePassBtn) {
@@ -441,7 +440,6 @@ if (phoneInput && window.intlTelInput) {
         const today = new Date();
         const dob = new Date(dateString);
 
-        // Check if DOB is in future
         if (dob > today) {
             return false; // Future date invalid
         }
@@ -453,7 +451,6 @@ if (phoneInput && window.intlTelInput) {
             age--;
         }
 
-        // Check reasonable age range (18-120)
         return age >= 18 && age <= 120;
     }
 
@@ -816,7 +813,7 @@ if (!isEditMode) {
             }
 
             alert("✅ Account created successfully! Welcome " + firstName + "!");
-            window.location.href = "index.html";
+            window.location.href = "../index.html";
         }
     });
 

@@ -1,4 +1,3 @@
-// ===== READ PARAMETERS FROM URL =====
 function getParamsFromURL() {
     const params = new URLSearchParams(window.location.search);
     return {
@@ -11,12 +10,10 @@ function getParamsFromURL() {
     };
 }
 
-// ===== CURRENT PROPERTY FOR BOOKING =====
 let currentProperty = null;
 let selectedCheckInDate = "";
 let selectedCheckOutDate = "";
 
-// ===== REVIEWS MANAGEMENT =====
 function getReviewsByProperty(propertyId) {
     const storage = window.AppStorage;
     const reviews = storage
@@ -126,16 +123,13 @@ function displayReviews(propertyId) {
     });
 }
 
-// ===== INITIAL LOAD WITH FILTERS =====
 document.addEventListener("DOMContentLoaded", () => {
-    // Reload properties to include any user-added listings
     properties = loadAllProperties();
 
     const params = getParamsFromURL();
     selectedCheckInDate = params.checkIn || "";
     selectedCheckOutDate = params.checkOut || "";
 
-    // IF ID EXISTS → show only that property
     if (params.id) {
         const selected = properties.find(p => p.id == params.id);
 
@@ -146,7 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
             applyFilters();
         }
     } else {
-        // normal behavior (filters)
         if (params.city) {
             document.getElementById("searchCity").value = params.city;
         }
@@ -164,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// ===== LOAD PROPERTIES FROM STORAGE ONLY =====
 function loadAllProperties() {
     const storage = window.AppStorage;
     const userProperties = storage
@@ -187,15 +179,28 @@ function loadAllProperties() {
 
 let properties = loadAllProperties();
 
+function isUserLoggedIn() {
+    const storage = window.AppStorage;
+    const currentUser = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+    return !!currentUser;
+}
+
 function renderEmptyState(container, hasAnyProperties) {
     if (!container) return;
 
     if (!hasAnyProperties) {
+        const canAddProperty = isUserLoggedIn();
         container.innerHTML = `
             <div class="listings-empty-state" role="status" aria-live="polite">
                 <h3>No properties yet</h3>
-                <p>Add your first property to see it here and continue with bookings/reviews flow.</p>
-                <a class="empty-state-btn" href="add-property.html">+ Add Property</a>
+                <p>${canAddProperty
+                    ? "Add your first property to see it here and continue with bookings/reviews flow."
+                    : "Log in to add your first property and start hosting."}</p>
+                ${canAddProperty
+                    ? '<a class="empty-state-btn" href="add-property.html">+ Add Property</a>'
+                    : '<a class="empty-state-btn" href="login.html">Log In to Add Property</a>'}
             </div>
         `;
         return;
@@ -222,7 +227,6 @@ function renderEmptyState(container, hasAnyProperties) {
 }
 
 
-// ===== DISPLAY LISTINGS =====
 function displayListings(list) {
     const container = document.querySelector(".listings-grid");
     if (!container) return;
@@ -239,7 +243,6 @@ function displayListings(list) {
         const card = document.createElement("div");
         card.className = "card";
 
-        // Get rating for this property
         const avgRating = getAverageRating(property.id);
         const reviews = getReviewsByProperty(property.id);
         const stars = "★".repeat(Math.round(avgRating)) + "☆".repeat(5 - Math.round(avgRating));
@@ -263,13 +266,11 @@ function displayListings(list) {
             </div>
         `;
 
-        // View details button
         card.querySelector(".view-details-btn").addEventListener("click", (e) => {
             e.stopPropagation();
             openListingModal(property);
         });
 
-        // Book button on card
         card.querySelector(".book-btn").addEventListener("click", (e) => {
             e.stopPropagation();
             openBookingForm(property);
@@ -279,8 +280,6 @@ function displayListings(list) {
     });
 }
 
-// ===== OPEN LISTING MODAL =====
-// ===== CURRENT IMAGE INDEX FOR CAROUSEL =====
 let currentImageIndex = 0;
 let currentPropertyImages = [];
 
@@ -295,11 +294,9 @@ function openListingModal(property) {
     document.getElementById("modalCountry").textContent = country;
     document.getElementById("modalPrice").textContent = `€${property.price} / night`;
 
-    // Make owner name clickable
     const ownerElement = document.getElementById("modalOwner");
     ownerElement.innerHTML = `<a href="host-profile.html?host=${property.owner || ""}" style="color: var(--button-color); text-decoration: none; cursor: pointer; font-weight: 600; transition: opacity 0.2s;">${property.ownerName || "Unknown Host"}</a>`;
 
-    // Make the link hover effect
     const ownerLink = ownerElement.querySelector('a');
     ownerLink.addEventListener('mouseenter', function () {
         this.style.opacity = '0.8';
@@ -308,15 +305,12 @@ function openListingModal(property) {
         this.style.opacity = '1';
     });
 
-    // Setup image carousel
     currentPropertyImages = property.images || ["https://picsum.photos/400/300?random=99"];
     currentImageIndex = 0;
 
-    // Display first image
     document.getElementById("modalImage").src = currentPropertyImages[0];
     updateImageCounter();
 
-    // Create thumbnail gallery
     const thumbnailGallery = document.getElementById("thumbnailGallery");
     thumbnailGallery.innerHTML = "";
 
@@ -340,7 +334,6 @@ function openListingModal(property) {
         openBookingForm(property);
     };
 
-    // Display reviews and rating
     const avgRating = getAverageRating(property.id);
     const reviews = getReviewsByProperty(property.id);
     const stars = "★".repeat(Math.round(avgRating)) + "☆".repeat(5 - Math.round(avgRating));
@@ -351,7 +344,6 @@ function openListingModal(property) {
 
     displayReviews(property.id);
 
-    // Setup review button
     document.getElementById("addReviewBtn").onclick = () => {
     const sessionUser = window.AppStorage
         ? window.AppStorage.getCurrentUser()
@@ -370,30 +362,25 @@ function openListingModal(property) {
     modal.classList.add("show");
 }
 
-// ===== DISPLAY MAIN IMAGE =====
 function displayMainImage() {
     document.getElementById("modalImage").src = currentPropertyImages[currentImageIndex];
 }
 
-// ===== UPDATE THUMBNAIL ACTIVE STATE =====
 function updateThumbnailActive() {
     document.querySelectorAll(".thumbnail").forEach((thumb, index) => {
         thumb.classList.toggle("active", index === currentImageIndex);
     });
 }
 
-// ===== UPDATE IMAGE COUNTER =====
 function updateImageCounter() {
     document.getElementById("imageCounter").textContent = `${currentImageIndex + 1}/${currentPropertyImages.length}`;
 }
 
-// ===== CLOSE LISTING MODAL =====
 function closeListingModal() {
     const modal = document.getElementById("listingModal");
     modal.classList.remove("show");
 }
 
-// ===== MODAL CLOSE BUTTON =====
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".modal-close-btn").addEventListener("click", closeListingModal);
 
@@ -405,7 +392,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// ===== FILTER FUNCTIONALITY =====
 function applyFilters() {
     const destination = document.getElementById("searchCity").value.toLowerCase().trim();
     const maxPrice = parseFloat(document.getElementById("maxPrice").value);
@@ -442,13 +428,11 @@ function applyFilters() {
 
 document.getElementById("applyFilters").addEventListener("click", applyFilters);
 
-// ===== AUTO-APPLY FILTERS WHEN INPUTS CHANGE =====
 document.getElementById("searchCity").addEventListener("keyup", applyFilters);
 document.getElementById("maxPrice").addEventListener("change", applyFilters);
 document.getElementById("countryFilter").addEventListener("change", applyFilters);
 document.getElementById("guestsInput").addEventListener("input", applyFilters);
 
-// ===== CHECK AVAILABILITY FOR DATES =====
 function checkAvailability(propertyId, checkInDate, checkOutDate) {
     const storage = window.AppStorage;
     const bookings = storage
@@ -459,24 +443,20 @@ function checkAvailability(propertyId, checkInDate, checkOutDate) {
 
     return !bookings.some(booking => {
         if (booking.propertyId !== propertyId) return false;
-        // Don't count cancelled bookings as occupying the property
         if (booking.status === 'cancelled' || booking.cancelled === true) return false;
         
         const bookingCheckIn = new Date(storage ? storage.toISODate(booking.checkInDate) : booking.checkInDate);
         const bookingCheckOut = new Date(storage ? storage.toISODate(booking.checkOutDate) : booking.checkOutDate);
 
-        // Check for overlap
         return checkIn < bookingCheckOut && checkOut > bookingCheckIn;
     });
 }
 
-// ===== SETUP BOOKING FORM LISTENERS =====
 function setupBookingFormListeners() {
     const checkInInput = document.getElementById("checkInInput");
     const checkOutInput = document.getElementById("checkOutInput");
     
 
-    // Set minimum date to tomorrow
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const minDate = tomorrow.toISOString().split('T')[0];
@@ -494,13 +474,10 @@ function setupBookingFormListeners() {
     checkOutInput.addEventListener("change", calculatePropertiesAndAvailability);
     
 
-    // Close button
     document.querySelector(".booking-form-close").addEventListener("click", closeBookingForm);
 
-    // Confirm booking button
     document.getElementById("confirmBookBtn").addEventListener("click", confirmBooking);
 
-    // Close when clicking outside
     document.getElementById("bookingFormModal").addEventListener("click", (e) => {
         if (e.target.id === "bookingFormModal") {
             closeBookingForm();
@@ -508,7 +485,6 @@ function setupBookingFormListeners() {
     });
 }
 
-// ===== CALCULATE PRICE AND AVAILABILITY =====
 function calculatePropertiesAndAvailability() {
     if (!currentProperty) return;
 
@@ -524,7 +500,6 @@ function calculatePropertiesAndAvailability() {
     const checkIn = new Date(checkInInput);
     const checkOut = new Date(checkOutInput);
 
-    // Validate dates
     if (checkOut <= checkIn) {
         document.getElementById("availabilityStatus").style.display = "block";
         document.getElementById("availabilityStatus").textContent = "❌ Check-out must be after check-in";
@@ -533,7 +508,6 @@ function calculatePropertiesAndAvailability() {
         return;
     }
 
-    // Check availability
     const isAvailable = checkAvailability(currentProperty.id, checkInInput, checkOutInput);
     const availabilityEl = document.getElementById("availabilityStatus");
 
@@ -549,7 +523,6 @@ function calculatePropertiesAndAvailability() {
         document.getElementById("confirmBookBtn").disabled = true;
     }
 
-    // Calculate nights and price
     const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
     const subtotal = nights * currentProperty.price;
     const serviceFee = Math.round(subtotal * 0.1); // 10% service fee
@@ -562,7 +535,6 @@ function calculatePropertiesAndAvailability() {
     document.getElementById("totalPrice").textContent = total;
 }
 
-// ===== CLEAR PRICES =====
 function clearPrices() {
     document.getElementById("pricePerNight").textContent = "0";
     document.getElementById("numberOfNights").textContent = "0";
@@ -571,16 +543,13 @@ function clearPrices() {
     document.getElementById("totalPrice").textContent = "0";
 }
 
-// ===== OPEN BOOKING FORM MODAL =====
 function openBookingForm(property) {
     currentProperty = property;
     document.getElementById("bookingFormTitle").textContent = `Book "${property.title}"`;
 
-    // Prefill dates from homepage/listings URL if available
     document.getElementById("checkInInput").value = selectedCheckInDate || "";
     document.getElementById("checkOutInput").value = selectedCheckOutDate || "";
 
-    // Show selected guests from listings filter
     const selectedGuests = parseInt(document.getElementById("guestsInput").value) || 1;
     document.getElementById("selectedGuestsDisplay").value = `${selectedGuests} guest(s)`;
 
@@ -588,13 +557,11 @@ function openBookingForm(property) {
     clearPrices();
     document.getElementById("confirmBookBtn").disabled = true;
 
-    // Set min date to tomorrow
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const minDate = tomorrow.toISOString().split('T')[0];
     document.getElementById("checkInInput").min = minDate;
 
-    // If check-in already exists, set check-out minimum correctly
     if (selectedCheckInDate) {
         const checkIn = new Date(selectedCheckInDate);
         checkIn.setDate(checkIn.getDate() + 1);
@@ -604,18 +571,15 @@ function openBookingForm(property) {
     document.getElementById("bookingFormModal").classList.add("show");
     closeListingModal();
 
-    // Recalculate immediately if both dates already exist
     if (selectedCheckInDate && selectedCheckOutDate) {
         calculatePropertiesAndAvailability();
     }
 }
 
-// ===== CLOSE BOOKING FORM MODAL =====
 function closeBookingForm() {
     document.getElementById("bookingFormModal").classList.remove("show");
 }
 
-// ===== CONFIRM BOOKING =====
 function confirmBooking() {
     const storage = window.AppStorage;
     const user = storage
@@ -636,18 +600,15 @@ function confirmBooking() {
         return;
     }
 
-    // capacity validation
     if (guests > currentProperty.guests) {
         alert(`❌ You can't book this property for more than ${currentProperty.guests} guests.`);
         return;
     }
 
-    // Calculate nights between check-in and check-out
     const checkInDateObj = new Date(checkInDate);
     const checkOutDateObj = new Date(checkOutDate);
     const nights = Math.ceil((checkOutDateObj - checkInDateObj) / (1000 * 60 * 60 * 24));
 
-    // Create pending booking for payment
     const pendingBooking = {
         bookingId: Date.now(),
         userId: user.username,
@@ -672,7 +633,6 @@ function confirmBooking() {
     window.location.href = "payment.html";
 }
 
-// ===== REVIEW MODAL FUNCTIONS =====
 let currentPropertyIdForReview = null;
 
 function openReviewModal(propertyId) {
@@ -690,7 +650,6 @@ function closeReviewModal() {
     document.getElementById("reviewModal").classList.remove("show");
 }
 
-// Setup star rating
 document.addEventListener("DOMContentLoaded", () => {
     let selectedRating = 0;
 
@@ -718,7 +677,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Close review modal buttons
     document.querySelector(".review-modal-close").addEventListener("click", closeReviewModal);
     document.getElementById("reviewModal").addEventListener("click", (e) => {
         if (e.target.id === "reviewModal") {
@@ -726,7 +684,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Submit review
     document.getElementById("submitReviewBtn").addEventListener("click", () => {
         let selectedRating = 0;
         document.querySelectorAll("#starRating .star").forEach((s, index) => {
@@ -748,7 +705,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (addReview(currentPropertyIdForReview, selectedRating, reviewText)) {
             alert("✅ Review submitted successfully!");
             closeReviewModal();
-            // Refresh the modal to show new review
             const property = properties.find(p => p.id === currentPropertyIdForReview);
             if (property) {
                 openListingModal(property);
@@ -757,5 +713,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// ===== EXPOSE PROPERTIES DATA FOR HOST PROFILE PAGE =====
 window.propertiesData = properties;

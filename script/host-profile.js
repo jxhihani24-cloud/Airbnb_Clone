@@ -1,22 +1,16 @@
-// Get properties data from parent window or localStorage
 let allProperties = [];
 const storage = window.AppStorage;
 
-// Function to get all available properties (default + user-added)
 function getAllProperties() {
-    // Get default properties from window if available, otherwise use fallback
     const defaultProps = window.defaultPropertiesData || getDefaultProperties();
 
-    // Get user-added properties from localStorage
     const userProps = storage
         ? storage.getLS("properties", [])
         : JSON.parse(localStorage.getItem("properties") || "[]");
 
-    // Merge both lists
     return [...defaultProps, ...userProps];
 }
 
-// ===== REVIEWS MANAGEMENT =====
 function getReviewsByHost(hostUsername) {
     const reviews = storage
         ? storage.getLS("hostReviews", [])
@@ -90,23 +84,18 @@ function displayHostReviews(hostUsername) {
     });
 }
 
-// Get host ID from URL parameters
 function getHostIdFromURL() {
     const params = new URLSearchParams(window.location.search);
     return params.get("host");
 }
 
-// Display host profile
 function displayHostProfile(hostId) {
-    // Get all properties - try to get from window first, then use fallback
     allProperties = getAllProperties();
 
     if (allProperties.length === 0) {
-        // Fallback: use the properties defined in parent window or a default list
         allProperties = window.propertiesData || getDefaultProperties();
     }
 
-    // Find all properties by this host
     const hostProperties = allProperties.filter(p => p.owner === hostId);
 
     if (hostProperties.length === 0) {
@@ -114,28 +103,22 @@ function displayHostProfile(hostId) {
         return;
     }
 
-    // Get unique host information from first property
     const hostInfo = hostProperties[0];
 
-    // Update host profile
     document.getElementById("hostName").textContent = hostInfo.ownerName;
     document.getElementById("totalProperties").textContent = hostProperties.length;
 
-    // Generate avatar with initials
     const initials = hostInfo.ownerName.split(' ').map(n => n[0]).join('');
     document.getElementById("hostAvatar").textContent = initials;
 
-    // Set some stats (can be hardcoded or dynamic)
     const hostReviews = getReviewsByHost(hostId);
     const avgHostRating = getHostAverageRating(hostId);
 
     document.getElementById("totalReviews").textContent = hostReviews.length;
     document.getElementById("avgRating").textContent = avgHostRating > 0 ? avgHostRating : "0";
 
-    // Display host reviews
     displayHostReviews(hostId);
 
-    // Set description
     const descriptions = {
         alice: "Passionate about sharing beautiful Parisian apartments with travelers from around the world.",
         bob: "Experienced host with premium properties in the heart of New York City.",
@@ -171,11 +154,9 @@ function displayHostProfile(hostId) {
 
     document.getElementById("hostDescription").textContent = descriptions[hostId] || "Professional host dedicated to providing excellent guest experiences.";
 
-    // Display host properties
     displayHostProperties(hostProperties);
 }
 
-// Display properties for this host
 function displayHostProperties(properties) {
     const container = document.getElementById("hostProperties");
     container.innerHTML = "";
@@ -198,14 +179,11 @@ function displayHostProperties(properties) {
             </div>
         `;
 
-        // View details button
         card.querySelector(".view-details-btn").addEventListener("click", (e) => {
             e.stopPropagation();
-            // Redirect to listings page with this property ID
             window.location.href = `listings.html?id=${property.id}`;
         });
 
-        // Book button
         card.querySelector(".book-btn").addEventListener("click", (e) => {
             e.stopPropagation();
             window.location.href = `listings.html?id=${property.id}`;
@@ -215,7 +193,6 @@ function displayHostProperties(properties) {
     });
 }
 
-// Fallback function with default properties (same as in listings.js)
 function getDefaultProperties() {
     return [
         { id: 1, title: "Cozy Apartment in Paris", city: "Paris", country: "france", owner: "alice", ownerName: "Alice Dubois", price: 120, images: ["https://picsum.photos/400/300?random=1", "https://picsum.photos/400/300?random=1a", "https://picsum.photos/400/300?random=1b", "https://picsum.photos/400/300?random=1c"] },
@@ -251,7 +228,6 @@ function getDefaultProperties() {
     ];
 }
 
-// Initialize page
 document.addEventListener("DOMContentLoaded", () => {
     const hostId = getHostIdFromURL();
 
@@ -272,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Close review modal buttons
     const reviewModalClose = document.querySelector(".host-review-modal-close");
     if (reviewModalClose) {
         reviewModalClose.addEventListener("click", closeHostReviewModal);
@@ -287,7 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Star rating for host review
     let hostSelectedRating = 0;
     document.querySelectorAll("#hostStarRating .host-star").forEach(star => {
         star.addEventListener("click", function() {
@@ -313,7 +287,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Submit host review
     const submitHostReviewBtn = document.getElementById("submitHostReviewBtn");
     if (submitHostReviewBtn) {
         submitHostReviewBtn.addEventListener("click", () => {
@@ -331,7 +304,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (addHostReview(currentHostIdForReview, currentHostNameForReview, hostSelectedRating, reviewText)) {
                 alert("✅ Review submitted successfully!");
                 closeHostReviewModal();
-                // Refresh reviews
                 displayHostReviews(currentHostIdForReview);
                 const hostReviews = getReviewsByHost(currentHostIdForReview);
                 document.getElementById("totalReviews").textContent = hostReviews.length;
@@ -342,7 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ===== HOST REVIEW MODAL FUNCTIONS =====
 function openHostReviewModal() {
     document.getElementById("hostSelectedRating").textContent = "Select a rating";
     document.getElementById("hostReviewText").value = "";

@@ -3,6 +3,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("addPropertyForm");
     const cancelBtn = document.getElementById("cancelAddProperty");
     const editId = localStorage.getItem("editingPropertyId");
+    const currentUser = storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+
+    if (!currentUser) {
+        alert("❌ You must be logged in to add a property!");
+        window.location.href = "login.html";
+        return;
+    }
 
      if (editId) {
     const pageTitle = document.getElementById("pageTitle");
@@ -18,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if(P) P.textContent="Make changes to your property."
 }
 
-    // If editing, preload the form
     if (editId) {
         const properties = storage
             ? storage.getLS("properties", [])

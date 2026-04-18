@@ -1,4 +1,3 @@
-// ===== MIGRATE OLD DATA TO NEW STORAGE ===== //
 const storage = window.AppStorage;
 
 function getCurrentSessionUser() {
@@ -46,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ===== CHECK IF USER IS LOGGED IN ===== //
 function checkUserLogin() {
     const currentUser = getCurrentSessionUser();
     if (!currentUser) {
@@ -57,7 +55,6 @@ function checkUserLogin() {
     return currentUser;
 }
 
-// ===== GET ONLY CURRENT USER'S PROPERTIES ===== //
 function getMyProperties() {
     const currentUser = getCurrentSessionUser();
     if (!currentUser) return [];
@@ -65,7 +62,6 @@ function getMyProperties() {
     return getStoredProperties().filter(prop => prop.owner === currentUser.username);
 }
 
-// ===== RENDER MY PROPERTIES ===== //
 function renderMyProperties() {
     const container = document.getElementById("myProperties");
     if (!container) return;
@@ -146,7 +142,6 @@ function renderMyProperties() {
     });
 }
 
-// ===== POST PROPERTY ===== //
 function postProperty() {
     const currentUser = getCurrentSessionUser();
     if (!currentUser) {
@@ -206,7 +201,6 @@ function postProperty() {
 
     alert('✅ Property posted!');
     clearPropertyForm();
-    //toggleModal();
     const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
 modal.hide();
     renderMyProperties();
@@ -226,7 +220,6 @@ function clearPropertyForm() {
     document.getElementById("images").value = "";
 }
 
-// ===== MODAL TOGGLE ===== //
 function toggleModal() {
     const modal = document.getElementById("modal");
     if (!modal) return;
@@ -234,17 +227,14 @@ function toggleModal() {
     modal.classList.toggle("show");
 }
 
-// ===== REMOVE PROPERTY ===== //
 function removeProperty(id) {
     if (!confirm('🗑️ Delete this property? This cannot be undone.')) return;
     if (!confirm('⚠️ This will delete all bookings, reviews, and messages for this property. Are you absolutely sure?')) return;
     
     try {
-        // Use cascading delete from storage-utils
         if (window.AppStorage && typeof window.AppStorage.removeProperty === 'function') {
             window.AppStorage.removeProperty(id);
         } else {
-            // Fallback if storage-utils not loaded
             let allProperties = getStoredProperties();
             allProperties = allProperties.filter(item => item.id !== id);
             setStoredProperties(allProperties);
@@ -258,35 +248,6 @@ function removeProperty(id) {
     }
 }
 
-// ===== EDIT PROPERTY ===== //
-function editProperty(id) {
-    let allProperties = getStoredProperties();
-    const property = allProperties.find(prop => prop.id === id);
-
-    if (!property) return;
-
-    document.getElementById("title").value = property.title || "";
-    document.getElementById("city").value = property.city || "";
-    document.getElementById("country").value = property.country || "";
-    document.getElementById("propertyType").value = property.propertyType || "";
-    document.getElementById("price").value = property.price || "";
-    document.getElementById("guests").value = property.guests || "";
-    document.getElementById("bedrooms").value = property.bedrooms || "";
-    document.getElementById("bathrooms").value = property.bathrooms || "";
-    document.getElementById("description").value = property.description || "";
-    document.getElementById("amenities").value = property.amenities ? property.amenities.join(", ") : "";
-    document.getElementById("images").value = property.images ? property.images.join(", ") : "";
-
-    const postBtn = document.querySelector('.modal-content button');
-    postBtn.textContent = 'Update';
-    postBtn.onclick = () => updateProperty(id);
-
-    //toggleModal();
-    const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
-modal.hide();
-}
-
-// ===== UPDATE PROPERTY ===== //
 function updateProperty(id) {
     const title = document.getElementById("title").value.trim();
     const city = document.getElementById("city").value.trim();
@@ -338,14 +299,12 @@ function updateProperty(id) {
         postBtn.onclick = postProperty;
 
         clearPropertyForm();
-        //toggleModal();
         const modal = bootstrap.Modal.getInstance(document.getElementById('addPropertyModal'));
 modal.hide();
         renderMyProperties();
     }
 }
 
-// ===== IMAGE SLIDER ===== //
 function goToImg(id, index) {
     let allProperties = getStoredProperties();
     const property = allProperties.find(p => p.id === id);
@@ -365,12 +324,10 @@ function goToImg(id, index) {
     });
 }
 
-// ===== INIT PROPERTY PAGE ===== //
 document.addEventListener("DOMContentLoaded", () => {
     renderMyProperties();
 });
 
-// EDIT PROPERTY //
 function editProperty(id) {
     localStorage.setItem("editingPropertyId", id);
     window.location.href = "add-property.html";
