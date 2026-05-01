@@ -1,0 +1,248 @@
+.add-property-hero {
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+
+.add-property-hero-box {
+    background: linear-gradient(135deg, rgba(224,38,45,0.12), rgba(27,30,226,0.10));
+    border: 1px solid var(--border-color);
+    border-radius: 28px;
+    padding: 40px 28px;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.add-property-kicker {
+    display: inline-block;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #e0262d;
+}
+
+.add-property-hero-box h1 {
+    margin-bottom: 12px;
+    color: var(--text-color);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+}
+
+.add-property-hero-box p {
+    margin: 0 auto;
+    max-width: 760px;
+    color: var(--text-color);
+    opacity: 0.8;
+    font-size: 1.05rem;
+}
+
+.add-property-card {
+    background: var(--card-bg);
+    border-radius: 28px;
+    padding: 32px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+.add-property-card h2 {
+    color: var(--text-color);
+    margin: 0;
+}
+
+.section-note {
+    color: var(--text-color);
+    opacity: 0.72;
+}
+
+.form-section-title {
+    color: var(--text-color);
+    font-weight: 800;
+    margin-bottom: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.dark-mode .form-section-title {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.form-label {
+    color: var(--text-color);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.property-input,
+.property-select,
+.property-textarea {
+    background: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    border-radius: 16px !important;
+    min-height: 52px;
+    box-shadow: none !important;
+    padding: 12px 16px;
+}
+
+/* Placeholder adapts to theme */
+.property-input::placeholder,
+.property-textarea::placeholder {
+    color: var(--text-color) !important;
+    opacity: 0.55;
+}
+
+/* Remove border colors from select and description */
+.property-select,
+.property-textarea {
+    border: none !important;
+}
+
+/* Keep a soft border for regular inputs only */
+.property-input {
+    border: 1px solid var(--border-color) !important;
+}
+
+/* Better select arrow */
+.property-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 48px;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-color) 50%),
+        linear-gradient(135deg, var(--text-color) 50%, transparent 50%);
+    background-position:
+        calc(100% - 22px) calc(50% - 3px),
+        calc(100% - 16px) calc(50% - 3px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+/* Focus */
+.property-input:focus,
+.property-select:focus,
+.property-textarea:focus {
+    background: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    box-shadow: 0 0 0 0.18rem rgba(224, 38, 45, 0.12) !important;
+    outline: none !important;
+}
+
+.form-help {
+    margin-top: 8px;
+    font-size: 0.92rem;
+    color: var(--text-color);
+    opacity: 0.66;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.publish-btn {
+    background: var(--button-color) !important;
+    color: var(--button-text) !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 12px 20px !important;
+    font-weight: 800 !important;
+    min-width: 180px;
+}
+
+.publish-btn:hover {
+    opacity: 0.94;
+    transform: translateY(-1px);
+}
+
+.cancel-btn {
+    background: transparent !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 16px !important;
+    padding: 12px 20px !important;
+    font-weight: 700 !important;
+    min-width: 120px;
+}
+
+.close-page-btn {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    text-decoration: none;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 34px;
+    line-height: 1;
+    border: none;
+    transition: 0.2s ease;
+}
+
+.close-page-btn:hover {
+    background: rgba(0,0,0,0.08);
+    color: var(--text-color);
+    transform: scale(1.05);
+}
+
+.dark-mode .close-page-btn:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+@media (max-width: 768px) {
+    .add-property-hero-box {
+        padding: 32px 20px;
+        border-radius: 22px;
+    }
+
+    .add-property-card {
+        padding: 22px 18px;
+        border-radius: 22px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .publish-btn,
+    .cancel-btn {
+        width: 100%;
+    }
+}
+
+/* ===== CONSISTENCY OVERRIDES ===== */
+.add-property-hero-box,
+.add-property-card {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--soft-shadow);
+}
+
+.property-input,
+.property-select,
+.property-textarea,
+.publish-btn,
+.cancel-btn {
+    border-radius: var(--radius-md) !important;
+    font-family: inherit;
+}
+
+.publish-btn:hover {
+    background-color: var(--hover-color) !important;
+}
+
+.add-property-hero {
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-5);
+}
+
+.add-property-card {
+    padding: var(--space-5);
+}
+
+.form-actions {
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}

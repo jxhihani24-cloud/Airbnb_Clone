@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="maptiler-api-key" content="6nKFZACThQvFkojSKb7Q">
+    <title>Hostera - Home Page</title>
+
+    <link rel="icon" type="image/png" href="images/Logo.png"> 
+
+    <script>
+  if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.classList.add("dark-mode");
+  }
+</script>
+    
+     
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+
+<script>
+function goToListings() {
+    const destination = document.getElementById("homeCity").value.trim();
+    const guests = document.getElementById("homeGuests").value.trim();
+    const checkIn = document.getElementById("homeCheckIn").value;
+    const checkOut = document.getElementById("homeCheckOut").value;
+
+    const params = new URLSearchParams();
+
+    if (destination) params.set("city", destination);
+    if (guests) params.set("guests", guests);
+    if (checkIn) params.set("checkIn", checkIn);
+    if (checkOut) params.set("checkOut", checkOut);
+
+    window.location.href = "pages/listings.html?" + params.toString();
+}
+</script>
+
+
+<body>    
+
+<nav class="navbar shadow-sm">
+   
+    <div class="brand">
+    <img src="images/Logo.png" alt="Hostera logo">
+    <span style="font-size: 28px;">HOSTERA</span>
+</div>
+
+    <ul class="nav-links">
+        <li class="nav-item"><a href="index.html" class="nav-link" style="color:var(--text-color)"><strong>Home</strong></a></li>
+        <li class="nav-item"><a href="pages/listings.html" class="nav-link" style="color:var(--text-color)"><strong>Listings</strong></a></li>
+        <li class="nav-item"><a href="pages/property.html" class="nav-link" style="color:var(--text-color)"><strong>Property</strong></a></li>
+        <li class="nav-item" id="userMenu">
+    <a href="pages/login.html" class="nav-link" style="color:var(--text-color)"><strong>Log In</strong></a>
+</li>
+
+    </ul>
+    <div class="right-side">
+         
+        <label class="theme-switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+
+        
+        <button class="nav-btn">Contact</button>
+    </div>
+</nav>
+
+
+<script src="script/storage-utils.js"></script>
+<script src="script/main.js"></script>
+ 
+<section class="hero">
+    <div class="hero-overlay"></div>
+
+    <div class="container hero-content">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="hero-panel text-center">
+                    <span class="hero-badge">Trusted stays around the world</span>
+                    <h1>Find your next stay</h1>
+                    <p>Discover unique homes, villas, and apartments worldwide.</p>
+
+                    <div class="search-box">
+    <div class="search-field grow-field">
+        <label for="homeCity">Destination</label>
+        <input type="text" id="homeCity" placeholder="Where are you going?">
+    </div>
+
+    <div class="search-field">
+        <label for="homeCheckIn">Check in</label>
+        <input type="date" id="homeCheckIn">
+    </div>
+
+    <div class="search-field">
+        <label for="homeCheckOut">Check out</label>
+        <input type="date" id="homeCheckOut">
+    </div>
+<div class="search-field guests-field">
+    <label for="homeGuests">Guests</label>
+    <input type="number" id="homeGuests" min="1" max="15" value="1" placeholder="Guests">
+</div>
+
+    <button onclick="goToListings()" class="search-btn-home">Search</button>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="listings home-section">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <h2>Popular Stays</h2>
+            </div>
+        </div>
+
+        <div id="popularStaysContainer" class="row g-4">
+            
+        </div>
+    </div>
+</section>
+
+<section class="map home-section">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                
+                <h2>Explore locations</h2>
+            </div>
+        </div>
+        <div id="map"></div>
+    </div>
+</section>
+
+<section class="why home-section">
+    <div class="container">
+        <div class="section-heading centered-heading">
+            <span class="section-kicker" style="color:red">Why Hostera</span>
+            <h2>Why choose us?</h2>
+            <p class="section-sub">Simple, reliable, and built for travelers</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="why-item">
+                    <h3>Best prices</h3>
+                    <p>We compare listings to get you the best deals.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="why-item">
+                    <h3>Verified stays</h3>
+                    <p>All properties are checked for quality.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="why-item">
+                    <h3>Easy booking</h3>
+                    <p>Fast and simple booking process.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="reviews home-section">
+    <div class="container">
+        <div class="section-heading centered-heading">
+            <span class="section-kicker" style="color:red">Trust & Feedback</span>
+            <h2>What partners and guests say about Hostera</h2>
+            <div style="margin-top:14px; display:flex; justify-content:center;">
+                <button id="openReviewModalBtn" class="nav-btn" type="button">Leave a Website Review</button>
+            </div>
+        </div>
+
+        <div id="homeReviewsContainer" class="row g-4 justify-content-center">
+            
+        </div>
+    </div>
+</section>
+
+<section class="faq home-section">
+    <div class="container faq-wrap">
+        <div class="section-heading centered-heading">
+            <span class="section-kicker" style="color:red">Help</span>
+            <h2>Frequently Asked Questions</h2>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" style="background-color: var(--button-color);">How do I book a listing?   <span class="faq-arrow">▼</span> </button>
+            <div class="faq-answer">
+                <p>Simply search for a location, choose a listing, and follow the booking steps.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">Are there cancellation fees? <span class="faq-arrow">▼</span> </button>
+            <div class="faq-answer">
+                <p>Most listings allow free cancellation within a certain time frame. Check the listing details.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">Is it safe to book? <span class="faq-arrow">▼</span> </button>
+            <div class="faq-answer">
+                <p>Yes! All hosts are verified, and your payment is secure.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="newsletter home-section">
+    <div class="container">
+        <div class="newsletter-box">
+            <span class="section-kicker" style="color:red">Stay updated</span>
+            <h2>Get the best deals straight to your inbox</h2>
+            <p>Subscribe and stay updated with our latest listings and promotions.</p>
+
+            <div class="newsletter-form">
+                <input type="email" placeholder="Enter your email">
+                <button>Subscribe</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<footer class="footer">
+    <p style="font-weight: bold;color: white;">© 2026 HOSTERA. All rights reserved.</p>
+   
+    <div class="social">
+        <a href="#"><img src="https://img.icons8.com/color/24/000000/facebook.png"/></a>
+        <a href="#"><img src="images/tiktok.png"></a>
+        <a href="#"><img src="https://img.icons8.com/color/24/000000/instagram-new.png"/></a>
+    </div>
+</footer>
+
+
+<script>
+
+function getAverageRatingForProperty(propertyId) {
+    const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+    const propertyReviews = reviews.filter(r => r.propertyId === propertyId);
+    if (propertyReviews.length === 0) return 0;
+    const sum = propertyReviews.reduce((acc, r) => acc + r.rating, 0);
+    return parseFloat((sum / propertyReviews.length).toFixed(1));
+}
+
+function escapeHtmlText(text) {
+    const div = document.createElement("div");
+    div.textContent = text || "";
+    return div.innerHTML;
+}
+
+function getCurrentSessionUser() {
+    const storage = window.AppStorage;
+    return storage
+        ? storage.getCurrentUser()
+        : JSON.parse(localStorage.getItem("currentUser") || "null");
+}
+
+function hasCompletedAnyStay(user) {
+    if (!user || !user.username) return false;
+    const storage = window.AppStorage;
+    const bookings = storage
+        ? storage.getLS("bookings", [])
+        : JSON.parse(localStorage.getItem("bookings") || "[]");
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return bookings.some(b => {
+        if (!b || b.userId !== user.username) return false;
+        if (b.cancelled === true || String(b.status || "").toLowerCase().includes("cancel")) return false;
+        if (!b.checkOutDate) return false;
+        const checkOutDate = new Date(storage && storage.toISODate ? storage.toISODate(b.checkOutDate) : b.checkOutDate);
+        return checkOutDate < today;
+    });
+}
+
+function getPlatformReviews() {
+    return JSON.parse(localStorage.getItem("platformReviews") || "[]");
+}
+
+function savePlatformReviews(reviews) {
+    localStorage.setItem("platformReviews", JSON.stringify(reviews));
+}
+
+function openPlatformReviewModal() {
+    const modal = document.getElementById("platformReviewModal");
+    if (!modal) return;
+    modal.style.display = "flex";
+    modal.classList.add("show");
+}
+
+function closePlatformReviewModal() {
+    const modal = document.getElementById("platformReviewModal");
+    if (!modal) return;
+    modal.classList.remove("show");
+    modal.style.display = "none";
+}
+
+function submitPlatformReview(e) {
+    e.preventDefault();
+
+    const reviewerType = document.getElementById("platformReviewerType").value;
+    const reviewText = document.getElementById("platformReviewText").value.trim();
+    const reviewerNameInput = document.getElementById("platformReviewerName").value.trim();
+
+    if (!reviewText) {
+        alert("Please write a review before submitting.");
+        return;
+    }
+
+    let reviewerName = reviewerNameInput;
+    let sourceType = reviewerType;
+    const user = getCurrentSessionUser();
+
+    if (reviewerType === "Guest") {
+        if (!user) {
+            alert("Please log in first. Guests can submit reviews only after completing a stay.");
+            return;
+        }
+
+        if (!hasCompletedAnyStay(user)) {
+            alert("You can leave a website guest review only after completing at least one stay.");
+            return;
+        }
+
+        reviewerName = ((user.firstName || "") + " " + (user.lastName || "")).trim() || user.username;
+        sourceType = "Guest";
+    } else {
+        if (!reviewerName) {
+            alert("Please enter your company or reviewer name.");
+            return;
+        }
+    }
+
+    const reviews = getPlatformReviews();
+    reviews.push({
+        id: Date.now(),
+        text: reviewText,
+        author: reviewerName,
+        source: sourceType,
+        createdAt: new Date().toISOString()
+    });
+    savePlatformReviews(reviews);
+
+    closePlatformReviewModal();
+    document.getElementById("platformReviewForm").reset();
+    populateHomeReviews();
+    alert("✅ Thank you! Your review has been added.");
+}
+
+function populateHomeReviews() {
+    const container = document.getElementById("homeReviewsContainer");
+    if (!container) return;
+
+    const partnerTestimonials = [
+        {
+            text: "Hostera is new, but the team is transparent and professional. We trust them and want to work together.",
+            author: "Luna Hospitality Group",
+            source: "Partner"
+        },
+        {
+            text: "The team communicates clearly and follows through. We see strong potential in Hostera.",
+            author: "Northline Ventures",
+            source: "Partner"
+        },
+        {
+            text: "Hostera is a young company with a clear direction. We trust the team and look forward to growing together.",
+            author: "Atlas Travel Capital",
+            source: "Partner"
+        }
+    ];
+
+    const platformReviews = getPlatformReviews()
+        .filter(r => r && r.text && r.author && r.source)
+        .slice(-6)
+        .reverse();
+
+    const combinedReviews = [...partnerTestimonials, ...platformReviews];
+    container.innerHTML = "";
+
+    combinedReviews.forEach(review => {
+        const col = document.createElement("div");
+        col.className = "col-12 col-md-6 col-xl-4";
+        col.innerHTML = `
+            <div class="review-card">
+                <p>"${escapeHtmlText(review.text)}"</p>
+                <span>
+                    - ${escapeHtmlText(review.author)}
+                    <small style="display:block; margin-top:6px; opacity:0.7; font-weight:600;">${escapeHtmlText(review.source)}</small>
+                </span>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+}
+
+function populatePopularStays() {
+    const userProperties = JSON.parse(localStorage.getItem("properties")) || [];
+    const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+
+    const propertiesWithRating = userProperties.map(prop => ({
+        ...prop,
+        rating: getAverageRatingForProperty(prop.id),
+        reviewCount: reviews.filter(r => r.propertyId === prop.id).length
+    }));
+
+    const sorted = propertiesWithRating.sort((a, b) => {
+        if (b.rating !== a.rating) return b.rating - a.rating;
+        if (b.reviewCount !== a.reviewCount) return b.reviewCount - a.reviewCount;
+        return a.price - b.price;
+    });
+
+    const topProperties = sorted.slice(0, 6);
+    const container = document.getElementById("popularStaysContainer");
+    container.innerHTML = "";
+
+    if (topProperties.length === 0) {
+        container.innerHTML = "<p style='text-align:center; opacity:0.6;'>No rated stays yet. Be the first to review!</p>";
+        return;
+    }
+
+    topProperties.forEach(property => {
+        const img = property.images && property.images.length ? property.images[0] : "https://picsum.photos/400/300?random=99";
+        const stars = "★".repeat(Math.round(property.rating)) + "☆".repeat(5 - Math.round(property.rating));
+        const ratingDisplay = property.rating > 0 ? property.rating : "New";
+        const reviewLabel = property.reviewCount > 0 ? `(${property.reviewCount} review${property.reviewCount !== 1 ? "s" : ""})` : "No reviews yet";
+
+        const col = document.createElement("div");
+        col.className = "col-12 col-sm-6 col-xl-4";
+        col.innerHTML = `
+            <a href="./pages/listings.html?id=${property.id}" class="card-link" style="text-decoration:none;">
+                <div class="home-card" style="position:relative; cursor:pointer;">
+                    <img src="${img}" alt="${property.title}" style="width:100%; height:220px; object-fit:cover; border-radius:12px 12px 0 0;" onerror="this.src='https://picsum.photos/400/300?random=${property.id}'">
+                    <div style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.65); padding:5px 10px; border-radius:20px; font-size:12px; color:white;">
+                        <span style="color:white; font-weight:bold;">${ratingDisplay}</span> ${property.rating > 0 ? stars : ""}
+                    </div>
+                    <div class="home-card-body">
+                        <h3 style="margin:0 0 4px;">${property.title}</h3>
+                        <p style="font-size:12px; opacity:0.7; margin:0 0 4px;">${property.city}, ${property.country.charAt(0).toUpperCase() + property.country.slice(1)}</p>
+                        <p style="font-size:12px; opacity:0.6; margin:0 0 6px;">${reviewLabel}</p>
+                        <p style="font-weight:600; margin:0;">€${property.price} / night</p>
+                    </div>
+                </div>
+            </a>
+        `;
+        container.appendChild(col);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    populatePopularStays();
+});
+
+// ===== MAP INITIALIZATION =====
+function initializeMap() {
+    if (typeof L === "undefined") return;
+    if (!document.getElementById("map")) return;
+
+    const userProperties = JSON.parse(localStorage.getItem("properties")) || [];
+
+    // Group properties by location (city, country)
+    const locationMap = {};
+    userProperties.forEach(prop => {
+        const key = `${prop.city},${prop.country}`;
+        if (!locationMap[key]) {
+            locationMap[key] = {
+                city: prop.city,
+                country: prop.country,
+                lat: prop.lat || 0,
+                lng: prop.lng || 0,
+                count: 0,
+                properties: []
+            };
+        }
+        locationMap[key].count++;
+        locationMap[key].properties.push(prop);
+    });
+
+    const locations = Object.values(locationMap);
+
+    // Initialize Leaflet map
+    const map = L.map('map', {
+    worldCopyJump: false,
+    maxBounds: [
+        [-85, -180],
+        [85, 180]
+    ],
+    maxBoundsViscosity: 1.0
+}).setView([20, 0], 2);
+    if (window.HosteraMap && typeof window.HosteraMap.addBaseMapLayer === "function") {
+        window.HosteraMap.addBaseMapLayer(map);
+    } else {
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+    }
+
+    // Custom red pin icon
+    const redPinIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    // Add markers for each location
+    locations.forEach(location => {
+        if (location.lat && location.lng) {
+            const marker = L.marker([location.lat, location.lng], {
+                icon: redPinIcon
+            }).addTo(map);
+
+            const popupContent = `
+                <div style="text-align: center; padding: 10px; min-width: 180px;">
+                    <p style="margin: 0 0 5px 0; font-weight: 600; color: #333;">${location.city}</p>
+                    <p style="margin: 0 0 10px 0; font-size: 12px; color: #666;">${location.country.charAt(0).toUpperCase() + location.country.slice(1)}</p>
+                    <a href="pages/listings.html?city=${encodeURIComponent(location.city)}&country=${location.country}"
+                       style="color: #ff385c; text-decoration: none; font-weight: 600; cursor: pointer;">
+                        See Listings →
+                    </a>
+                </div>
+            `;
+
+            marker.bindPopup(popupContent);
+        }
+    });
+}
+
+// Initialize when page loads
+document.addEventListener("DOMContentLoaded", () => {
+        const openBtn = document.getElementById("openReviewModalBtn");
+        const closeBtn = document.getElementById("closePlatformReviewModal");
+        const modal = document.getElementById("platformReviewModal");
+        const form = document.getElementById("platformReviewForm");
+
+        if (openBtn) openBtn.addEventListener("click", openPlatformReviewModal);
+        if (closeBtn) closeBtn.addEventListener("click", closePlatformReviewModal);
+        if (modal) {
+                modal.addEventListener("click", (event) => {
+                        if (event.target === modal) closePlatformReviewModal();
+                });
+        }
+        if (form) form.addEventListener("submit", submitPlatformReview);
+
+        // Keep UI features robust even if an optional section fails.
+        populatePopularStays();
+        populateHomeReviews();
+
+        try {
+            initializeMap();
+        } catch (error) {
+            console.error("Map initialization failed:", error);
+        }
+});
+</script>
+
+
+<div id="platformReviewModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:520px; width:90%;">
+        <span id="closePlatformReviewModal" class="close">&times;</span>
+        <h2>Leave a Website Review</h2>
+        <p style="opacity:0.8; margin-bottom:14px;">Guests must have completed at least one stay. Partners can submit testimonials directly.</p>
+
+        <form id="platformReviewForm" style="display:flex; flex-direction:column; gap:10px;">
+            <label for="platformReviewerType" style="font-weight:700;">Reviewer Type</label>
+            <select id="platformReviewerType" required style="padding:10px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-color);">
+                <option value="Guest">Guest</option>
+                <option value="Partner">Partner</option>
+            </select>
+
+            <label for="platformReviewerName" style="font-weight:700;">Name / Company (for Partner)</label>
+            <input id="platformReviewerName" type="text" placeholder="Example: Northline Ventures" style="padding:10px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-color);">
+
+            <label for="platformReviewText" style="font-weight:700;">Review</label>
+            <textarea id="platformReviewText" rows="4" required placeholder="Share your experience with Hostera..." style="padding:10px; border-radius:10px; border:1px solid var(--border-color); background:var(--bg-color); color:var(--text-color);"></textarea>
+
+            <button type="submit" class="nav-btn" style="margin-top:6px;">Submit Review</button>
+        </form>
+    </div>
+</div>
+
+
+<div id="contactModal" class="modal">
+  <div class="contact-modal-content">
+    <span class="contact-close" onclick="closeModal()">&times;</span>
+
+    <h2>Contact Support</h2>
+
+    <div class="support-section">
+      <h3>For Hosts</h3>
+      <p>📞 +1 800 123 456</p>
+      <p>📧 hosts@hostera.com</p>
+    </div>
+
+    <div class="support-section">
+      <h3>For Guests</h3>
+      <p>📞 +1 800 987 654</p>
+      <p>📧 support@hostera.com</p>
+    </div>
+
+    <div class="support-section">
+      <h3>General</h3>
+      <p>📧 info@hostera.com</p>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
