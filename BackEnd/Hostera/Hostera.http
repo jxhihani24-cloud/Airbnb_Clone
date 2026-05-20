@@ -1,0 +1,6 @@
+@Hostera_HostAddress = http://localhost:5290
+
+GET {{Hostera_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
