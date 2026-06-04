@@ -18,7 +18,7 @@ public class BookingsController : ControllerBase
     {
         _context = context;
     }
-    
+
     private Guid GetLoggedInUserId()
     {
         return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -51,61 +51,77 @@ public class BookingsController : ControllerBase
             return BadRequest(new { message = "Check-out date must be after check-in date" });
         }
 
-        var alreadyBooked = await _context.Bookings.AnyAsync(b =>
-            b.PropertyId == request.PropertyId &&
-            request.CheckInDate < b.CheckOutDate &&
-            request.CheckOutDate > b.CheckInDate &&
-            b.Status != "Cancelled"
-        );
-
-        if (alreadyBooked)
+        // Use transaction to prevent race conditions
+        Booking booking = null;
+        using (var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable))
         {
-            return BadRequest(new { message = "This property is already booked for those dates" });
+            try
+            {
+                // Re-check availability inside transaction with lock
+                var alreadyBooked = await _context.Bookings.AnyAsync(b =>
+                    b.PropertyId == request.PropertyId &&
+                    request.CheckInDate < b.CheckOutDate &&
+                    request.CheckOutDate > b.CheckInDate &&
+                    b.Status != "Cancelled"
+                );
+
+                if (alreadyBooked)
+                {
+                    await transaction.RollbackAsync();
+                    return BadRequest(new { message = "This property is already booked for those dates" });
+                }
+
+                int nights = request.CheckOutDate.DayNumber - request.CheckInDate.DayNumber;
+
+                decimal subtotal = property.Price * nights;
+
+                decimal serviceFee = Math.Round(subtotal * 0.10m, 2);
+
+                decimal total = subtotal + serviceFee;
+
+                booking = new Booking
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    PropertyId = request.PropertyId,
+                    CheckInDate = request.CheckInDate,
+                    CheckOutDate = request.CheckOutDate,
+                    Guests = request.Guests,
+                    PricePerNight = property.Price,
+                    TotalAmount = total,
+                    Status = "Confirmed"
+                };
+
+                var payment = new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    BookingId = booking.Id,
+                    Method = request.PaymentMethod,
+                    Status = request.PaymentMethod.ToLower() == "cash" ? "Pending" : "Completed",
+                    Amount = total
+                };
+
+                _context.Bookings.Add(booking);
+                _context.Payments.Add(payment);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return BadRequest(new { message = "Booking failed: " + ex.Message });
+            }
         }
-
-        int nights = request.CheckOutDate.DayNumber - request.CheckInDate.DayNumber;
-
-        decimal subtotal = property.Price * nights;
-
-        decimal serviceFee = Math.Round(subtotal * 0.10m, 2);
-
-        decimal total = subtotal + serviceFee;
-
-        var booking = new Booking
-        {
-            Id = Guid.NewGuid(),
-            UserId = userId,
-            PropertyId = request.PropertyId,
-            CheckInDate = request.CheckInDate,
-            CheckOutDate = request.CheckOutDate,
-            Guests = request.Guests,
-            PricePerNight = property.Price,
-            TotalAmount = total,
-            Status = "Confirmed"
-        };
-
-        var payment = new Payment
-        {
-            Id = Guid.NewGuid(),
-            BookingId = booking.Id,
-            Method = request.PaymentMethod,
-            Status = request.PaymentMethod.ToLower() == "cash" ? "Pending" : "Completed",
-            Amount = total
-        };
-
-        _context.Bookings.Add(booking);
-        _context.Payments.Add(payment);
-
-        await _context.SaveChangesAsync();
 
         return Ok(new
         {
             message = "Booking created successfully",
             bookingId = booking.Id,
-            total
+            total = booking.TotalAmount
         });
     }
-    
+
     [Authorize]
     [HttpGet("mine/{userId}")]
     public async Task<IActionResult> GetMyBookings(Guid userId)
@@ -148,7 +164,7 @@ public class BookingsController : ControllerBase
 
         return Ok(bookings);
     }
-    
+
     [Authorize]
     [HttpDelete("cancel/{bookingId}")]
     public async Task<IActionResult> CancelBooking(Guid bookingId)

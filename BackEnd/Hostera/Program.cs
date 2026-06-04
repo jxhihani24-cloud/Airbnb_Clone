@@ -1,6 +1,8 @@
 using Hostera.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Diagnostics;
 using Hostera.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -62,6 +64,42 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Encoding.UTF8.GetBytes(key)
             )
         };
+        // Return JSON body on auth failures/challenges so frontend can safely parse responses
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = async context =>
+            {
+                context.NoResult();
+
+                if (context.Response.HasStarted)
+                    return;
+
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    message = "Authentication failed",
+                    detail = context.Exception?.Message
+                });
+            },
+
+            OnChallenge = async context =>
+            {
+                context.HandleResponse();
+
+                if (context.Response.HasStarted)
+                    return;
+
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    message = "Unauthorized"
+                });
+            }
+        };
     });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -80,6 +118,27 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Global exception handler that returns JSON
+app.UseExceptionHandler(errApp =>
+{
+    errApp.Run(async context =>
+    {
+        var feature = context.Features.Get<IExceptionHandlerFeature>();
+        var ex = feature?.Error;
+
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/json";
+
+        var payload = JsonSerializer.Serialize(new
+        {
+            message = "An unexpected error occurred.",
+            detail = app.Environment.IsDevelopment() ? ex?.Message : null
+        });
+
+        await context.Response.WriteAsync(payload);
+    });
+});
 
 app.UseSwagger();
 

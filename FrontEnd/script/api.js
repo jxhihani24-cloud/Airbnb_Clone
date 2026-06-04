@@ -96,10 +96,17 @@ async function uploadImage(file) {
         body: formData
     });
 
-    const data = await response.json();
+    const raw = await response.text();
+    let data = null;
+
+    try {
+        data = raw ? JSON.parse(raw) : null;
+    } catch {
+        data = raw;
+    }
 
     if (!response.ok) {
-        throw new Error(data.message || "Image upload failed");
+        throw new Error(typeof data === "object" ? (data?.message || "Image upload failed") : (data || "Image upload failed"));
     }
 
     return data.imageUrl;

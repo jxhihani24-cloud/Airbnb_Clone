@@ -87,7 +87,19 @@ async function displayReviews(propertyId) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    properties = await loadAllProperties();
+    try {
+        properties = await loadAllProperties();
+
+        if (!properties) {
+            console.error("Failed to load properties: received null/undefined");
+            properties = [];
+        }
+
+        console.log("Loaded properties:", properties.length);
+    } catch (e) {
+        console.error("Error loading properties:", e);
+        properties = [];
+    }
 
     const params = getParamsFromURL();
     selectedCheckInDate = params.checkIn || "";
@@ -97,10 +109,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const selected = properties.find(p => String(p.id) === String(params.id));
 
         if (selected) {
-            displayListings([selected]);
-            openListingModal(selected);
+            await displayListings([selected]);
+            await openListingModal(selected);
         } else {
-            applyFilters();
+            await applyFilters();
         }
     } else {
         if (params.city) {
@@ -115,14 +127,25 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById("guestsInput").value = params.guests;
         }
 
-        applyFilters();
+        await applyFilters();
     }
 
     setupBookingFormListeners();
 });
 
 async function loadAllProperties() {
-    return await apiRequest("/Properties/all");
+    const allProperties = await apiRequest("/Properties/all");
+
+    // Get current user ID if logged in
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+    const currentUserId = currentUser?.id;
+
+    // Filter out properties owned by current user
+    if (currentUserId) {
+        return allProperties.filter(prop => prop.ownerId !== currentUserId);
+    }
+
+    return allProperties;
 }
 
 let properties = [];
@@ -144,11 +167,11 @@ function renderEmptyState(container, hasAnyProperties) {
             <div class="listings-empty-state" role="status" aria-live="polite">
                 <h3>No properties yet</h3>
                 <p>${canAddProperty
-                    ? "Add your first property to see it here and continue with bookings/reviews flow."
-                    : "Log in to add your first property and start hosting."}</p>
+                ? "Add your first property to see it here and continue with bookings/reviews flow."
+                : "Log in to add your first property and start hosting."}</p>
                 ${canAddProperty
-                    ? '<a class="empty-state-btn" href="add-property.html">+ Add Property</a>'
-                    : '<a class="empty-state-btn" href="login.html">Log In to Add Property</a>'}
+                ? '<a class="empty-state-btn" href="add-property.html">+ Add Property</a>'
+                : '<a class="empty-state-btn" href="login.html">Log In to Add Property</a>'}
             </div>
         `;
         return;
@@ -164,18 +187,18 @@ function renderEmptyState(container, hasAnyProperties) {
 
     const clearFiltersBtn = document.getElementById("clearFiltersBtn");
     if (clearFiltersBtn) {
-        clearFiltersBtn.addEventListener("click", () => {
+        clearFiltersBtn.addEventListener("click", async () => {
             document.getElementById("searchCity").value = "";
             document.getElementById("maxPrice").value = "";
             document.getElementById("countryFilter").value = "";
             document.getElementById("guestsInput").value = "";
-            applyFilters();
+            await applyFilters();
         });
     }
 }
 
 
-function displayListings(list) {
+async function displayListings(list) {
     const container = document.querySelector(".listings-grid");
     if (!container) return;
     container.innerHTML = "";
@@ -185,53 +208,67 @@ function displayListings(list) {
         return;
     }
 
-    list.forEach(property => {
-        const img = property.images && property.images.length ? property.images[0] : "https://picsum.photos/400/300?random=99";
+    for (const property of list) {
+        try {
+            const img = property.images && property.images.length ? property.images[0] : "https://picsum.photos/400/300?random=99";
 
-        const card = document.createElement("div");
-        card.className = "card";
+            const card = document.createElement("div");
+            card.className = "card";
 
-        const avgRating = getAverageRating(property.id);
-        const reviews = getReviewsByProperty(property.id);
-        const stars = "★".repeat(Math.round(avgRating)) + "☆".repeat(5 - Math.round(avgRating));
+            let avgRating = 0;
+            let reviews = [];
 
-        card.innerHTML = `
-            <img src="${img}" alt="${property.title}">
-            <div class="card-info">
-                <h4>${property.title}</h4>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <p><strong>Location:</strong> ${property.city}, ${(property.country || "unknown").charAt(0).toUpperCase() + (property.country || "unknown").slice(1)}</p>
-                    <span style="font-size: 12px; color: var(--button-color);">${stars}</span>
+            try {
+                avgRating = await getAverageRating(property.id);
+                reviews = await getReviewsByProperty(property.id);
+            } catch (e) {
+                console.warn(`Failed to load reviews for property ${property.id}:`, e);
+                avgRating = 0;
+                reviews = [];
+            }
+
+            const stars = "★".repeat(Math.round(avgRating)) + "☆".repeat(5 - Math.round(avgRating));
+
+            card.innerHTML = `
+                <img src="${img}" alt="${property.title}">
+                <div class="card-info">
+                    <h4>${property.title}</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <p><strong>Location:</strong> ${property.city}, ${(property.country || "unknown").charAt(0).toUpperCase() + (property.country || "unknown").slice(1)}</p>
+                        <span style="font-size: 12px; color: var(--button-color);">${stars}</span>
+                    </div>
+                    <p style="font-size: 12px; opacity: 0.7;">⭐ ${avgRating} (${reviews.length})</p>
+                    <p><strong>Price:</strong> €${property.price} / night</p>
+                    <p><strong>Capacity:</strong> ${property.guests || 0} guest(s)</p>
+                    <p style="font-size:12px; color:var(--text-color);"><b>By:</b> ${property.ownerName}</p>
+                    <div class="card-buttons">
+                        <button class="view-details-btn" style="background-color: #666;">View Details</button>
+                        <button class="book-btn" style="background-color:var(--button-color)">📅 Book Now</button>
+                    </div>
                 </div>
-                <p style="font-size: 12px; opacity: 0.7;">⭐ ${avgRating} (${reviews.length})</p>
-                <p><strong>Price:</strong> €${property.price} / night</p>
-                <p><strong>Capacity:</strong> ${property.guests || 0} guest(s)</p>
-                <p style="font-size:12px; color:var(--text-color);"><b>By:</b> ${property.ownerName}</p>
-                <div class="card-buttons">
-                    <button class="view-details-btn" style="background-color: #666;">View Details</button>
-                    <button class="book-btn" style="background-color:var(--button-color)">📅 Book Now</button>
-                </div>
-            </div>
-        `;
+            `;
 
-        card.querySelector(".view-details-btn").addEventListener("click", (e) => {
-            e.stopPropagation();
-            openListingModal(property);
-        });
+            card.querySelector(".view-details-btn").addEventListener("click", async (e) => {
+                e.stopPropagation();
+                await openListingModal(property);
+            });
 
-        card.querySelector(".book-btn").addEventListener("click", (e) => {
-            e.stopPropagation();
-            openBookingForm(property);
-        });
+            card.querySelector(".book-btn").addEventListener("click", (e) => {
+                e.stopPropagation();
+                openBookingForm(property);
+            });
 
-        container.appendChild(card);
-    });
+            container.appendChild(card);
+        } catch (e) {
+            console.error(`Error rendering property ${property.id}:`, e);
+        }
+    }
 }
 
 let currentImageIndex = 0;
 let currentPropertyImages = [];
 
-function openListingModal(property) {
+async function openListingModal(property) {
     const modal = document.getElementById("listingModal");
     const rawCountry = property.country || "unknown";
     const country = rawCountry.charAt(0).toUpperCase() + rawCountry.slice(1);
@@ -282,8 +319,8 @@ function openListingModal(property) {
         openBookingForm(property);
     };
 
-    const avgRating = getAverageRating(property.id);
-    const reviews = getReviewsByProperty(property.id);
+    const avgRating = await getAverageRating(property.id);
+    const reviews = await getReviewsByProperty(property.id);
     const stars = "★".repeat(Math.round(avgRating)) + "☆".repeat(5 - Math.round(avgRating));
 
     document.getElementById("avgRating").textContent = avgRating;
@@ -292,15 +329,15 @@ function openListingModal(property) {
 
     await displayReviews(property.id);
 
-   document.getElementById("addReviewBtn").onclick = () => {
-    const sessionUser = requireLogin();
+    document.getElementById("addReviewBtn").onclick = () => {
+        const sessionUser = requireLogin();
 
-    if (!sessionUser) {
-        return;
-    }
+        if (!sessionUser) {
+            return;
+        }
 
-    openReviewModal(property.id);
-};
+        openReviewModal(property.id);
+    };
 
     modal.classList.add("show");
 }
@@ -335,18 +372,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function applyFilters() {
+async function applyFilters() {
     const destination = document.getElementById("searchCity").value.toLowerCase().trim();
     const maxPrice = parseFloat(document.getElementById("maxPrice").value);
     const country = document.getElementById("countryFilter").value.toLowerCase();
     const guests = parseInt(document.getElementById("guestsInput").value);
 
     const filtered = properties.filter(prop => {
-                const propCity = (prop.city || "").toLowerCase();
-                const propCountry = (prop.country || "").toLowerCase();
+        const propCity = (prop.city || "").toLowerCase();
+        const propCountry = (prop.country || "").toLowerCase();
 
         const matchesDestination = destination
-                        ? propCity.includes(destination) || propCountry.includes(destination)
+            ? propCity.includes(destination) || propCountry.includes(destination)
             : true;
 
         const matchesPrice = maxPrice ? prop.price <= maxPrice : true;
@@ -366,15 +403,33 @@ function applyFilters() {
         filtered.sort((a, b) => a.guests - b.guests);
     }
 
-    displayListings(filtered);
+    await displayListings(filtered);
 }
 
-document.getElementById("applyFilters").addEventListener("click", applyFilters);
+const applyFiltersBtn = document.getElementById("applyFilters");
+if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener("click", applyFilters);
+}
 
-document.getElementById("searchCity").addEventListener("keyup", applyFilters);
-document.getElementById("maxPrice").addEventListener("change", applyFilters);
-document.getElementById("countryFilter").addEventListener("change", applyFilters);
-document.getElementById("guestsInput").addEventListener("input", applyFilters);
+const searchCityInput = document.getElementById("searchCity");
+if (searchCityInput) {
+    searchCityInput.addEventListener("keyup", applyFilters);
+}
+
+const maxPriceInput = document.getElementById("maxPrice");
+if (maxPriceInput) {
+    maxPriceInput.addEventListener("change", applyFilters);
+}
+
+const countryFilterSelect = document.getElementById("countryFilter");
+if (countryFilterSelect) {
+    countryFilterSelect.addEventListener("change", applyFilters);
+}
+
+const guestsInput = document.getElementById("guestsInput");
+if (guestsInput) {
+    guestsInput.addEventListener("input", applyFilters);
+}
 
 function checkAvailability(propertyId, checkInDate, checkOutDate) {
     return true;
@@ -383,7 +438,7 @@ function checkAvailability(propertyId, checkInDate, checkOutDate) {
 function setupBookingFormListeners() {
     const checkInInput = document.getElementById("checkInInput");
     const checkOutInput = document.getElementById("checkOutInput");
-    
+
 
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -400,7 +455,7 @@ function setupBookingFormListeners() {
     });
 
     checkOutInput.addEventListener("change", calculatePropertiesAndAvailability);
-    
+
 
     document.querySelector(".booking-form-close").addEventListener("click", closeBookingForm);
 
@@ -605,44 +660,44 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.getElementById("submitReviewBtn").onclick = async () => {
-    let selectedRating = 0;
+        let selectedRating = 0;
 
-    document.querySelectorAll("#starRating .star").forEach((s, index) => {
-        if (s.style.opacity !== "0.3") {
-            selectedRating = index + 1;
+        document.querySelectorAll("#starRating .star").forEach((s, index) => {
+            if (s.style.opacity !== "0.3") {
+                selectedRating = index + 1;
+            }
+        });
+
+        const reviewText = document.getElementById("reviewText").value.trim();
+
+        if (selectedRating === 0) {
+            alert("Please select a rating");
+            return;
         }
-    });
 
-    const reviewText = document.getElementById("reviewText").value.trim();
+        if (!reviewText) {
+            alert("Please write a review");
+            return;
+        }
 
-    if (selectedRating === 0) {
-        alert("Please select a rating");
-        return;
-    }
-
-    if (!reviewText) {
-        alert("Please write a review");
-        return;
-    }
-
-    const success = await addReview(
-        currentPropertyIdForReview,
-        selectedRating,
-        reviewText
-    );
-
-    if (success) {
-        closeReviewModal();
-
-        const property = properties.find(
-            p => String(p.id) === String(currentPropertyIdForReview)
+        const success = await addReview(
+            currentPropertyIdForReview,
+            selectedRating,
+            reviewText
         );
 
-        if (property) {
-            await openListingModal(property);
+        if (success) {
+            closeReviewModal();
+
+            const property = properties.find(
+                p => String(p.id) === String(currentPropertyIdForReview)
+            );
+
+            if (property) {
+                await openListingModal(property);
+            }
         }
-    }
-};
+    };
 });
 
 window.propertiesData = properties;

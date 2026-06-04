@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Hostera")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0c9cb9ddb40c41ce9b7e96275e66c494af3153f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Hostera")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Hostera")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
