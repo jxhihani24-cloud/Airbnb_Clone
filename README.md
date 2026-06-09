@@ -1,42 +1,50 @@
-# Airbnb Clone | Full-Stack Web Application Project
+# Hostera | Full-Stack Property Rental Platform
 
-A full-stack Airbnb Clone developed using modern web development technologies and Object-Oriented Programming (OOP) principles.
+A full-stack property rental platform developed using ASP.NET Core Web API, PostgreSQL, Entity Framework Core, and modern web technologies.
 
-This project simulates the core functionality of the Airbnb platform, allowing users to browse properties, manage listings, make reservations, and interact with a property rental system through a structured and scalable architecture.
+This project simulates a real-world accommodation booking platform where guests can browse properties, make reservations, communicate with hosts, leave reviews, and manage bookings, while property owners can publish and manage rental listings.
 
-The project demonstrates how real-world accommodation booking systems can be modeled and implemented using object-oriented design, database management, and modern web technologies.
+The project demonstrates how object-oriented design, database management, and full-stack web development can be used to build a scalable property rental management system.
 
 ## Overview
 
-This project implements a property rental and booking platform inspired by Airbnb.
+This project implements a complete property rental platform inspired by modern accommodation booking services.
 
 The system allows management of:
 
-* users and property hosts
+* users and property owners
 * property listings
 * reservations and bookings
+* rental payments
+* reviews and ratings
+* messaging and conversations
+* host profiles
 * property availability
-* user authentication and authorization
-* property reviews and ratings
+* image uploads
 * booking history
-* search and filtering functionality
-* rental transactions and payments
+* account management
+* user authentication and authorization
 
-The goal of the project is to demonstrate how object-oriented design and full-stack development concepts can be used to build a scalable accommodation rental platform.
+The goal of the project is to demonstrate how a full-stack web application can be designed and implemented using modern software engineering principles and object-oriented architecture.
 
 ## Features
 
-* User registration and authentication
-* Role-based access for guests and hosts
+* User registration and login
+* JWT-based authentication and authorization
 * Property listing creation and management
 * Property search and filtering
+* Property image upload support
 * Reservation and booking management
-* Property availability tracking
-* Reviews and rating system
-* User profile management
-* Responsive user interface
-* Database-driven data persistence
-* Structured full-stack architecture
+* Booking cancellation and status tracking
+* Payment processing workflow
+* Payment confirmation system
+* Reviews and ratings
+* Host profile management
+* Messaging system between guests and hosts
+* User account management
+* Dark and light mode support
+* Responsive web interface
+* RESTful API integration
 
 ## Object-Oriented Design
 
@@ -44,60 +52,92 @@ The system follows fundamental OOP principles:
 
 ### Encapsulation
 
-User information, booking details, property data, and transaction records are protected within dedicated classes and modules.
+Sensitive information such as user credentials, booking details, payment records, and property information are protected inside dedicated classes and models.
 
 ### Inheritance
 
-Specialized user roles such as hosts and guests extend common user functionality.
+Application entities and models are structured to promote reusable functionality and shared behavior.
 
 ### Abstraction
 
-Complex booking, reservation, and property management operations are separated from user-facing interactions.
+Complex operations such as authentication, booking validation, payment processing, and database communication are separated from user-facing functionality.
 
 ### Polymorphism
 
-Different system entities can perform role-specific behaviors while sharing common interfaces.
+Different entities within the platform can perform different actions depending on their role and responsibilities.
 
 ## Project Structure
 
 Main system components included in the project:
 
-* User – manages user information and authentication
-* Host – manages property listings and reservations
-* Guest – searches and books properties
-* Property – stores accommodation details and availability
-* Booking – manages reservation operations
-* Reservation – handles booking requests and confirmations
-* Review – stores ratings and user feedback
-* Payment – manages rental transactions
-* SearchService – handles filtering and property discovery
-* AuthenticationService – manages login and user sessions
-* DatabaseManager – handles data persistence and retrieval
-* Frontend Components – user interface and user interaction logic
-* Backend API – communication layer between client and server
+### Backend Components
+
+* Authentication Module – handles registration, login, and JWT token management
+* User Module – manages user accounts and profile information
+* Property Module – manages rental property listings and details
+* Booking Module – handles reservations and booking workflows
+* Payment Module – processes booking payments and confirmations
+* Review Module – manages property reviews and ratings
+* Messaging Module – handles conversations between guests and hosts
+* Upload Module – manages property image uploads
+* Entity Framework DbContext – handles database communication
+* PostgreSQL Database – stores system data and relationships
+
+### Frontend Components
+
+* Home Page – property discovery and search
+* Listings Page – displays available rental properties
+* Property Details Page – displays property information and reviews
+* Add Property Page – allows hosts to create and edit listings
+* Login Page – user authentication
+* Signup Page – user registration
+* Account Page – user profile management
+* Bookings Page – reservation tracking and management
+* Payment Page – booking payment workflow
+* Payment Confirmation Page – booking confirmation details
+* Messages Page – communication between guests and hosts
+* Host Profile Page – displays host information and listings
 
 ## Technologies Used
 
-* Full-Stack Web Development
-* Object-Oriented Programming (OOP)
-* Frontend Development
-* Backend Development
-* Database Management
-* RESTful APIs
-* Authentication & Authorization
+### Backend
+
+* C#
+* ASP.NET Core Web API
+* Entity Framework Core
+* PostgreSQL
+* Npgsql
+* JWT Authentication
+* BCrypt Password Hashing
+* Swagger / OpenAPI
+
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript (ES6)
+* Bootstrap 5
+* Local Storage
 * Responsive Web Design
-* MVC Architecture
-* Software Engineering Principles
+
+### Software Engineering
+
+* Object-Oriented Programming (OOP)
+* RESTful APIs
+* Client-Server Architecture
+* CRUD Operations
+* Authentication & Authorization
+* Database Design
 
 ## System Architecture
 
 The application follows a layered architecture consisting of:
 
-* Presentation Layer (User Interface)
+* Presentation Layer (Frontend Interface)
+* API Layer (ASP.NET Core Web API)
 * Business Logic Layer
-* Service Layer
-* Data Access Layer
-* Database Layer
+* Data Access Layer (Entity Framework Core)
+* Database Layer (PostgreSQL)
 
 This architecture improves maintainability, scalability, and separation of concerns throughout the system.
 
@@ -105,24 +145,28 @@ This architecture improves maintainability, scalability, and separation of conce
 
 This project demonstrates practical experience with:
 
+* Full-Stack Web Application Development
+* ASP.NET Core API Development
+* PostgreSQL Database Integration
+* Entity Framework Core ORM
+* Authentication and Authorization
+* REST API Design
+* Database Modeling
+* Frontend–Backend Communication
+* Property Rental System Development
+* Booking and Payment Workflows
 * Object-Oriented Analysis and Design
-* Full-Stack Application Development
-* Authentication and User Management
-* Database Design and Integration
-* REST API Development
-* Reservation and Booking Systems
-* Software Architecture and Design Patterns
-* Scalable Web Application Development
+* Software Architecture Principles
 
 ## Future Improvements
 
 Potential enhancements include:
 
-* Online payment gateway integration
-* Real-time messaging between hosts and guests
+* Real-time messaging using SignalR
+* Email notifications and verification
+* Payment gateway integration
 * Advanced recommendation system
-* Interactive maps and geolocation services
-* Admin dashboard and analytics
-* Email notifications and booking confirmations
+* Administrative dashboard
 * Mobile application support
 * Cloud deployment and scalability improvements
+* Multi-language support
